@@ -1,0 +1,21 @@
+{
+  "name": "stumbleclone",
+  "version": "1.0.0",
+  "description": "Découverte aléatoire du web, inspiré de StumbleUpon",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "Dany",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "ejs": "^5.0.2",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
