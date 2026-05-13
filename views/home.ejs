@@ -1,0 +1,33 @@
+<%- include('partials/header', { title }) %>
+
+<section class="hero">
+  <h1>Redécouvre le web.</h1>
+  <p class="tagline">
+    Un clic, un site. Explore l'internet selon tes centres d'intérêt,
+    vote pour ce que tu aimes, garde les pépites.
+  </p>
+  <div class="hero-actions">
+    <a href="/signup" class="btn btn-primary btn-large">Commencer à explorer</a>
+    <a href="/login" class="btn btn-secondary">J'ai déjà un compte</a>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feature-card">
+    <span class="feature-icon">🎲</span>
+    <h2>Stumble</h2>
+    <p>Un bouton, et tu te retrouves sur un site que tu n'aurais jamais cherché.</p>
+  </div>
+  <div class="feature-card">
+    <span class="feature-icon">👍</span>
+    <h2>Vote</h2>
+    <p>Pouce vert ou rouge — l'algo apprend tes goûts au fil des clics.</p>
+  </div>
+  <div class="feature-card">
+    <span class="feature-icon">⭐</span>
+    <h2>Favoris</h2>
+    <p>Les sites que tu aimes sont automatiquement sauvegardés pour y revenir.</p>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
