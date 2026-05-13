@@ -2,6 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 
+// Initialise la BDD et applique le schéma au démarrage
+require('./db/database');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
