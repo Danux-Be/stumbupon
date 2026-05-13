@@ -15,4 +15,15 @@ db.pragma('foreign_keys = ON');
 const schema = fs.readFileSync(SCHEMA_PATH, 'utf8');
 db.exec(schema);
 
+// Migrations : colonnes ajoutées après le schéma initial
+const userCols = db.prepare('PRAGMA table_info(users)').all().map(c => c.name);
+if (!userCols.includes('language')) {
+  db.exec("ALTER TABLE users ADD COLUMN language TEXT DEFAULT 'fr'");
+}
+
+const siteCols = db.prepare('PRAGMA table_info(sites)').all().map(c => c.name);
+if (!siteCols.includes('language')) {
+  db.exec('ALTER TABLE sites ADD COLUMN language TEXT');
+}
+
 module.exports = db;

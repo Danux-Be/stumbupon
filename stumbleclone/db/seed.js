@@ -29,22 +29,68 @@ const CATEGORIES = [
   { name: 'Curiosités',    slug: 'curiosites',    emoji: '🤔' },
 ];
 
-const insert = db.prepare(
+// Traductions : [slug, fr, en, nl, de]
+const TRANSLATIONS = [
+  ['art',           'Art',           'Art',          'Kunst',          'Kunst'],
+  ['photographie',  'Photographie',  'Photography',  'Fotografie',     'Fotografie'],
+  ['science',       'Science',       'Science',      'Wetenschap',     'Wissenschaft'],
+  ['technologie',   'Technologie',   'Technology',   'Technologie',    'Technologie'],
+  ['programmation', 'Programmation', 'Programming',  'Programmeren',   'Programmierung'],
+  ['histoire',      'Histoire',      'History',      'Geschiedenis',   'Geschichte'],
+  ['philosophie',   'Philosophie',   'Philosophy',   'Filosofie',      'Philosophie'],
+  ['musique',       'Musique',       'Music',        'Muziek',         'Musik'],
+  ['cinema',        'Cinéma',        'Cinema',       'Film',           'Kino'],
+  ['litterature',   'Littérature',   'Literature',   'Literatuur',     'Literatur'],
+  ['jeux-video',    'Jeux vidéo',    'Video Games',  'Videospellen',   'Videospiele'],
+  ['cuisine',       'Cuisine',       'Cooking',      'Koken',          'Kochen'],
+  ['voyage',        'Voyage',        'Travel',       'Reizen',         'Reisen'],
+  ['nature',        'Nature',        'Nature',       'Natuur',         'Natur'],
+  ['sport',         'Sport',         'Sport',        'Sport',          'Sport'],
+  ['humour',        'Humour',        'Humor',        'Humor',          'Humor'],
+  ['diy',           'DIY/Bricolage', 'DIY',          'Knutselen',      'Heimwerken'],
+  ['design',        'Design',        'Design',       'Ontwerp',        'Design'],
+  ['architecture',  'Architecture',  'Architecture', 'Architectuur',   'Architektur'],
+  ['mathematiques', 'Mathématiques', 'Mathematics',  'Wiskunde',       'Mathematik'],
+  ['astronomie',    'Astronomie',    'Astronomy',    'Astronomie',     'Astronomie'],
+  ['psychologie',   'Psychologie',   'Psychology',   'Psychologie',    'Psychologie'],
+  ['economie',      'Économie',      'Economics',    'Economie',       'Wirtschaft'],
+  ['politique',     'Politique',     'Politics',     'Politiek',       'Politik'],
+  ['curiosites',    'Curiosités',    'Curiosities',  'Curiositeiten',  'Kuriositäten'],
+];
+
+const insertCat = db.prepare(
   'INSERT OR IGNORE INTO categories (name, slug, emoji) VALUES (@name, @slug, @emoji)'
 );
+const insertTr = db.prepare(
+  'INSERT OR IGNORE INTO category_translations (category_id, language, name) VALUES (?, ?, ?)'
+);
+const getCatId = db.prepare('SELECT id FROM categories WHERE slug = ?');
 
-const seedCategories = db.transaction(() => {
-  let inserted = 0;
+const seedAll = db.transaction(() => {
+  let catInserted = 0;
+  let trInserted = 0;
+
   for (const cat of CATEGORIES) {
-    const info = insert.run(cat);
-    if (info.changes > 0) inserted++;
+    const info = insertCat.run(cat);
+    if (info.changes > 0) catInserted++;
   }
-  return inserted;
+
+  for (const [slug, fr, en, nl, de] of TRANSLATIONS) {
+    const row = getCatId.get(slug);
+    if (!row) continue;
+    const id = row.id;
+    for (const [lang, name] of [['fr', fr], ['en', en], ['nl', nl], ['de', de]]) {
+      const info = insertTr.run(id, lang, name);
+      if (info.changes > 0) trInserted++;
+    }
+  }
+
+  return { catInserted, trInserted };
 });
 
-const inserted = seedCategories();
-console.log(`Seed catégories : ${inserted} ajoutée(s), ${CATEGORIES.length - inserted} déjà présente(s).`);
+const { catInserted, trInserted } = seedAll();
+console.log(`Catégories : ${catInserted} ajoutée(s).`);
+console.log(`Traductions : ${trInserted} ajoutée(s).`);
 
-// Affichage de toutes les catégories pour vérification
 const all = db.prepare('SELECT id, emoji, name, slug FROM categories ORDER BY id').all();
 console.table(all);

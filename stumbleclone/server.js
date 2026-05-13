@@ -1,17 +1,21 @@
 require('dotenv').config();
-const express = require('express');
-const path = require('path');
-const session = require('express-session');
+const express     = require('express');
+const path        = require('path');
+const session     = require('express-session');
+const cookieParser = require('cookie-parser');
 
-// Initialise la BDD et applique le schéma au démarrage
+// Initialise la BDD et applique le schéma + migrations au démarrage
 require('./db/database');
 const BetterSQLiteStore = require('./db/session-store');
 const { generateToken } = require('./middleware/csrf');
+const { i18next, middleware: i18nMiddleware } = require('./lib/i18n');
+const { applyLang } = require('./middleware/lang');
+
 const authRoutes      = require('./routes/auth');
 const interestsRoutes = require('./routes/interests');
 const settingsRoutes  = require('./routes/settings');
 
-const app = express();
+const app  = express();
 const PORT = process.env.PORT || 3000;
 
 // Moteur de templates EJS
@@ -20,6 +24,9 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Fichiers statiques (CSS, JS, images)
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Cookies (nécessaire pour la détection de langue)
+app.use(cookieParser());
 
 // Sessions persistantes dans SQLite
 app.use(session({
@@ -31,13 +38,17 @@ app.use(session({
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 jours
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   },
 }));
 
 // Parsing des formulaires
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+// i18n — doit être après cookieParser et session
+app.use(i18nMiddleware.handle(i18next));
+app.use(applyLang);
 
 // Rend l'utilisateur et le token CSRF disponibles dans tous les templates
 app.use((req, res, next) => {

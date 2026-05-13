@@ -1,8 +1,8 @@
-<%- include('partials/header', { title }) %>
+<%- include('partials/header', { title: t('signup_title') }) %>
 
 <div class="form-page">
   <div class="form-card">
-    <h1>Créer un compte</h1>
+    <h1><%= t('signup_title') %></h1>
 
     <% if (error) { %>
       <p class="form-error"><%= error %></p>
@@ -12,7 +12,7 @@
       <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
       <div class="form-group">
-        <label for="username">Pseudo</label>
+        <label for="username"><%= t('signup_username') %></label>
         <input
           type="text" id="username" name="username"
           value="<%= fields.username || '' %>"
@@ -20,11 +20,11 @@
           pattern="[a-zA-Z0-9_\-]+"
           autocomplete="username"
         />
-        <span class="form-hint">3 à 20 caractères, lettres, chiffres, _ ou -</span>
+        <span class="form-hint"><%= t('signup_username_hint') %></span>
       </div>
 
       <div class="form-group">
-        <label for="email">Email</label>
+        <label for="email"><%= t('signup_email') %></label>
         <input
           type="email" id="email" name="email"
           value="<%= fields.email || '' %>"
@@ -33,21 +33,21 @@
       </div>
 
       <div class="form-group">
-        <label for="password">Mot de passe</label>
+        <label for="password"><%= t('signup_password') %></label>
         <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password" />
-        <span class="form-hint">8 caractères minimum</span>
+        <span class="form-hint"><%= t('signup_password_hint') %></span>
       </div>
 
       <div class="form-group">
-        <label for="confirm">Confirmer le mot de passe</label>
+        <label for="confirm"><%= t('signup_confirm') %></label>
         <input type="password" id="confirm" name="confirm" required minlength="8" autocomplete="new-password" />
       </div>
 
-      <button type="submit" class="btn btn-primary btn-block">Créer mon compte</button>
+      <button type="submit" class="btn btn-primary btn-block"><%= t('signup_submit') %></button>
     </form>
 
     <p class="form-footer">
-      Déjà un compte ? <a href="/login">Se connecter</a>
+      <%= t('signup_has_account') %> <a href="/login"><%= t('signup_login_link') %></a>
     </p>
   </div>
 </div>
