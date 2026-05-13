@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<%= currentLang %>">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,16 +14,24 @@
     <a href="/" class="logo">🌀 StumbleClone</a>
     <nav>
       <% if (locals.user) { %>
-        <span class="nav-username">Bonjour, <strong><%= user.username %></strong></span>
-        <a href="/favorites">Favoris</a>
+        <span class="nav-username"><%- t('nav_greeting', { name: `<strong>${user.username}</strong>` }) %></span>
+        <a href="/favorites"><%= t('nav_favorites') %></a>
         <form method="POST" action="/logout" style="display:inline">
           <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>" />
-          <button type="submit" class="btn btn-secondary btn-sm">Déconnexion</button>
+          <button type="submit" class="btn btn-secondary btn-sm"><%= t('nav_logout') %></button>
         </form>
       <% } else { %>
-        <a href="/login">Connexion</a>
-        <a href="/signup" class="btn btn-primary">S'inscrire</a>
+        <a href="/login"><%= t('nav_login') %></a>
+        <a href="/signup" class="btn btn-primary"><%= t('nav_signup') %></a>
       <% } %>
+
+      <div class="lang-selector">
+        <% for (const [code, label] of Object.entries(langLabels)) { %>
+          <a href="/lang/<%= code %>"
+             class="lang-link<%= currentLang === code ? ' lang-link--active' : '' %>"
+             title="<%= label %>"><%= code.toUpperCase() %></a>
+        <% } %>
+      </div>
     </nav>
   </header>
   <main>

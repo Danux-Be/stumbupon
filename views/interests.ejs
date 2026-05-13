@@ -1,9 +1,9 @@
-<%- include('partials/header', { title }) %>
+<%- include('partials/header', { title: t('interests_title') }) %>
 
 <div class="interests-page">
   <div class="interests-header">
-    <h1>Tes centres d'intérêt</h1>
-    <p>Choisis au moins <strong>3 thèmes</strong> pour personnaliser tes découvertes.</p>
+    <h1><%= t('interests_title') %></h1>
+    <p><%- t('interests_desc') %></p>
   </div>
 
   <% if (error) { %>
@@ -13,7 +13,9 @@
   <form method="POST" action="/interests" x-data="{ count: <%= selected.length %> }">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
-    <p class="interests-count" x-text="`${count} sélectionné${count > 1 ? 's' : ''}`"></p>
+    <p class="interests-count" x-text="`${count} <%- t('interests_count', { count: '${count}' }).replace('${count}', '').trim() %>`"
+       x-init="$el.textContent = '<%= t('interests_count', { count: selected.length }) %>'">
+    </p>
 
     <div class="categories-grid">
       <% for (const cat of categories) { %>
@@ -25,14 +27,14 @@
             <%= selected.includes(cat.id) ? 'checked' : '' %>
           />
           <span class="category-emoji"><%= cat.emoji %></span>
-          <span class="category-name"><%= cat.name %></span>
+          <span class="category-name"><%= cat.localName %></span>
         </label>
       <% } %>
     </div>
 
     <div class="interests-actions">
       <button type="submit" class="btn btn-primary btn-large" x-bind:disabled="count < 3">
-        Enregistrer mes choix
+        <%= t('interests_submit') %>
       </button>
     </div>
   </form>

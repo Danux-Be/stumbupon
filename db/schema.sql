@@ -72,6 +72,16 @@ CREATE TABLE IF NOT EXISTS reports (
   FOREIGN KEY (reported_by) REFERENCES users(id) ON DELETE SET NULL
 );
 
+-- Traductions des noms de catégories (i18n)
+CREATE TABLE IF NOT EXISTS category_translations (
+  category_id INTEGER NOT NULL,
+  language    TEXT NOT NULL,
+  name        TEXT NOT NULL,
+  PRIMARY KEY (category_id, language),
+  FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+);
+
 CREATE INDEX IF NOT EXISTS idx_sites_status ON sites(status);
 CREATE INDEX IF NOT EXISTS idx_votes_user ON votes(user_id);
 CREATE INDEX IF NOT EXISTS idx_views_user ON views(user_id);
+CREATE INDEX IF NOT EXISTS idx_cat_translations ON category_translations(category_id, language);

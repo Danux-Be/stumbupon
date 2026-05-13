@@ -128,6 +128,25 @@ main { flex: 1; }
 .nav-username { color: var(--color-text-muted); font-size: 0.9rem; }
 .btn-sm { padding: 0.3rem 0.8rem; font-size: 0.85rem; }
 
+/* Sélecteur de langue */
+.lang-selector { display: flex; gap: 0.2rem; margin-left: 0.5rem; }
+.lang-link {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: background 0.1s, color 0.1s;
+}
+.lang-link:hover { background: #eef0fb; color: var(--color-primary); text-decoration: none; }
+.lang-link--active { background: var(--color-primary); color: #fff; }
+.lang-link--active:hover { background: var(--color-primary-dark); color: #fff; }
+
+/* Boutons langue dans settings */
+.lang-buttons { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.8rem; }
+
 /* Formulaires */
 .form-page {
   display: flex;
