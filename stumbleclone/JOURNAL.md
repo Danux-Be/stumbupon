@@ -132,4 +132,55 @@ Signup `tester88` → redirect `/interests` → POST 4 catégories → redirect 
 
 ---
 
+## i18n — Internationalisation ✅
+**Commit :** `9a43d77`
+
+### Fichiers créés
+| Fichier | Rôle |
+|---|---|
+| `lib/i18n.js` | Configuration i18next avec fs-backend, 4 langues préchargées |
+| `middleware/lang.js` | Détection langue (session > cookie > Accept-Language > fr), expose `t()` et `currentLang` |
+| `locales/fr/translation.json` | 40 clés en français |
+| `locales/en/translation.json` | 40 clés en anglais |
+| `locales/nl/translation.json` | 40 clés en néerlandais |
+| `locales/de/translation.json` | 40 clés en allemand |
+
+### Fichiers modifiés
+| Fichier | Modification |
+|---|---|
+| `db/schema.sql` | Table `category_translations` + index |
+| `db/database.js` | Migrations auto : colonnes `language` sur `users` et `sites` |
+| `db/seed.js` | 100 traductions de catégories (25 × 4 langues) |
+| `server.js` | `cookie-parser`, `i18nMiddleware`, `applyLang` |
+| `views/partials/header.ejs` | `<html lang="...">` dynamique, sélecteur FR/EN/NL/DE, textes via `t()` |
+| `views/partials/footer.ejs` | Tagline via `t()` |
+| `views/*.ejs` | Tous les textes UI via `t()`, noms de catégories traduits |
+| `routes/auth.js` | Erreurs via `req.t()`, stockage `language` à l'inscription/login, route `GET /lang/:code` |
+| `routes/interests.js` | Catégories avec JOIN `category_translations` selon `currentLang` |
+| `routes/settings.js` | Idem + section langue dans settings |
+| `public/style.css` | Styles sélecteur de langue, boutons langue dans settings |
+
+### Comportements implémentés
+- Détection automatique via `Accept-Language` header à la première visite
+- Cookie `lang` (1 an) posé lors d'un changement explicite
+- Préférence utilisateur connecté stockée en BDD (`users.language`) et session
+- `GET /lang/:code` — change langue, redirige vers la page précédente
+- Noms de catégories traduits via `LEFT JOIN category_translations`, fallback sur nom FR
+- `<html lang="">` mis à jour dynamiquement pour le SEO et l'accessibilité
+
+### Tests validés
+- FR (défaut) : `Redécouvre le web.`
+- EN (`Accept-Language: en`) : `Rediscover the web.`
+- NL (cookie `lang=nl`) : `Herontdek het web.`
+- `GET /lang/de` → 302 ✓
+- `html lang="en"` avec Accept-Language anglais ✓
+
+### Dépendances ajoutées
+- `i18next` — moteur de traduction
+- `i18next-fs-backend` — chargement des fichiers JSON
+- `i18next-http-middleware` — intégration Express
+- `cookie-parser` — lecture du cookie `lang`
+
+---
+
 <!-- Les étapes suivantes seront ajoutées au fil du développement -->
