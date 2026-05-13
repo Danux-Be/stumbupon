@@ -1,0 +1,71 @@
+<%- include('partials/header', { title }) %>
+
+<div class="settings-page">
+  <h1>Paramètres</h1>
+
+  <% if (success === 'interests') { %>
+    <p class="alert alert-success">Centres d'intérêt mis à jour.</p>
+  <% } else if (success === 'password') { %>
+    <p class="alert alert-success">Mot de passe modifié avec succès.</p>
+  <% } else if (error === 'interests-min') { %>
+    <p class="alert alert-error">Choisis au moins 3 centres d'intérêt.</p>
+  <% } else if (error) { %>
+    <p class="alert alert-error"><%= error %></p>
+  <% } %>
+
+  <!-- Centres d'intérêt -->
+  <section class="settings-section">
+    <h2>Centres d'intérêt</h2>
+    <p>Modifie les thèmes qui orientent tes découvertes.</p>
+
+    <form method="POST" action="/settings/interests" x-data="{ count: <%= selected.length %> }">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <p class="interests-count" x-text="`${count} sélectionné${count > 1 ? 's' : ''}`"></p>
+
+      <div class="categories-grid categories-grid--compact">
+        <% for (const cat of categories) { %>
+          <label class="category-card" x-on:click="count = $el.querySelector('input').checked ? count - 1 : count + 1">
+            <input
+              type="checkbox"
+              name="categories"
+              value="<%= cat.id %>"
+              <%= selected.includes(cat.id) ? 'checked' : '' %>
+            />
+            <span class="category-emoji"><%= cat.emoji %></span>
+            <span class="category-name"><%= cat.name %></span>
+          </label>
+        <% } %>
+      </div>
+
+      <button type="submit" class="btn btn-primary" x-bind:disabled="count < 3">
+        Mettre à jour mes intérêts
+      </button>
+    </form>
+  </section>
+
+  <!-- Mot de passe -->
+  <section class="settings-section">
+    <h2>Changer de mot de passe</h2>
+
+    <form method="POST" action="/settings/password" class="form-card form-card--inline">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+      <div class="form-group">
+        <label for="current">Mot de passe actuel</label>
+        <input type="password" id="current" name="current" required autocomplete="current-password" />
+      </div>
+      <div class="form-group">
+        <label for="newpass">Nouveau mot de passe</label>
+        <input type="password" id="newpass" name="newpass" required minlength="8" autocomplete="new-password" />
+        <span class="form-hint">8 caractères minimum</span>
+      </div>
+      <div class="form-group">
+        <label for="confirm">Confirmer</label>
+        <input type="password" id="confirm" name="confirm" required minlength="8" autocomplete="new-password" />
+      </div>
+      <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
+    </form>
+  </section>
+</div>
+
+<%- include('partials/footer') %>

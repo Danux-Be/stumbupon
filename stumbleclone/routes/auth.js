@@ -48,7 +48,8 @@ router.post('/signup', authLimiter, verifyToken, async (req, res) => {
     req.session.userId   = result.lastInsertRowid;
     req.session.username = username;
     req.session.isAdmin  = 0;
-    res.redirect('/');
+    // Redirige vers le choix des catégories à la première connexion
+    res.redirect('/interests');
   });
 });
 

@@ -7,7 +7,9 @@ const session = require('express-session');
 require('./db/database');
 const BetterSQLiteStore = require('./db/session-store');
 const { generateToken } = require('./middleware/csrf');
-const authRoutes = require('./routes/auth');
+const authRoutes      = require('./routes/auth');
+const interestsRoutes = require('./routes/interests');
+const settingsRoutes  = require('./routes/settings');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -48,6 +50,8 @@ app.use(generateToken);
 
 // Routes
 app.use(authRoutes);
+app.use(interestsRoutes);
+app.use(settingsRoutes);
 
 app.get('/', (req, res) => {
   res.render('home', { title: 'StumbleClone' });

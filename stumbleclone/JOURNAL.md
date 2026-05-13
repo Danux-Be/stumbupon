@@ -101,4 +101,35 @@ Signup → POST 302 → redirect `/` → header affiche `Bonjour, testuser`.
 
 ---
 
+## Étape 4 — Catégories d'intérêt ✅
+**Commit :** `à venir`
+
+### Fichiers créés
+| Fichier | Rôle |
+|---|---|
+| `routes/interests.js` | `GET/POST /interests` — choix et mise à jour des catégories |
+| `routes/settings.js` | `GET /settings`, `POST /settings/interests`, `POST /settings/password` |
+| `views/interests.ejs` | Grille de cartes-catégories cliquables avec compteur Alpine.js |
+| `views/settings.ejs` | Page paramètres : intérêts + changement de mot de passe |
+
+### Fichiers modifiés
+| Fichier | Modification |
+|---|---|
+| `routes/auth.js` | Signup redirige vers `/interests` au lieu de `/` |
+| `server.js` | Montage de `interestsRoutes` et `settingsRoutes` |
+| `public/style.css` | Styles grille catégories, cartes toggle, page settings, alertes |
+
+### Comportements implémentés
+- Signup → `/interests` (sélection obligatoire, min 3 catégories)
+- Cartes catégories style toggle (`:has(input:checked)`) avec emoji + nom
+- Compteur en temps réel via Alpine.js, bouton désactivé sous 3 sélections
+- Sauvegarde atomique (transaction : DELETE + INSERT) pour éviter les doublons
+- `/settings` : modification des intérêts (même grille pré-cochée) + changement de mot de passe sécurisé (vérifie l'ancien)
+- Messages de succès/erreur via query params (`?success=interests`, `?error=...`)
+
+### Test validé
+Signup `tester88` → redirect `/interests` → POST 4 catégories → redirect `/settings?success=interests` → BDD : `Art, Philosophie, Programmation, Science`.
+
+---
+
 <!-- Les étapes suivantes seront ajoutées au fil du développement -->
