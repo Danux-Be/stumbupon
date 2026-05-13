@@ -102,7 +102,7 @@ Signup → POST 302 → redirect `/` → header affiche `Bonjour, testuser`.
 ---
 
 ## Étape 4 — Catégories d'intérêt ✅
-**Commit :** `à venir`
+**Commit :** `d1008bb`
 
 ### Fichiers créés
 | Fichier | Rôle |
