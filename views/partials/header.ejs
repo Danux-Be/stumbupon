@@ -12,8 +12,17 @@
   <header class="site-header">
     <a href="/" class="logo">🌀 StumbleClone</a>
     <nav>
-      <a href="/login">Connexion</a>
-      <a href="/signup" class="btn btn-primary">S'inscrire</a>
+      <% if (locals.user) { %>
+        <span class="nav-username">Bonjour, <strong><%= user.username %></strong></span>
+        <a href="/favorites">Favoris</a>
+        <form method="POST" action="/logout" style="display:inline">
+          <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>" />
+          <button type="submit" class="btn btn-secondary btn-sm">Déconnexion</button>
+        </form>
+      <% } else { %>
+        <a href="/login">Connexion</a>
+        <a href="/signup" class="btn btn-primary">S'inscrire</a>
+      <% } %>
     </nav>
   </header>
   <main>

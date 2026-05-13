@@ -124,6 +124,55 @@ main { flex: 1; }
 .feature-card h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
 .feature-card p { color: var(--color-text-muted); font-size: 0.95rem; }
 
+/* Nav connecté */
+.nav-username { color: var(--color-text-muted); font-size: 0.9rem; }
+.btn-sm { padding: 0.3rem 0.8rem; font-size: 0.85rem; }
+
+/* Formulaires */
+.form-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 3rem 1rem;
+}
+.form-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 420px;
+}
+.form-card h1 { font-size: 1.6rem; margin-bottom: 1.5rem; text-align: center; }
+.form-group { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 1.2rem; }
+.form-group label { font-weight: 600; font-size: 0.9rem; }
+.form-group input {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: var(--font);
+  transition: border-color 0.15s;
+}
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(92, 107, 192, 0.15);
+}
+.form-hint { font-size: 0.8rem; color: var(--color-text-muted); }
+.form-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+}
+.btn-block { width: 100%; text-align: center; margin-top: 0.5rem; }
+.form-footer { text-align: center; margin-top: 1.2rem; color: var(--color-text-muted); font-size: 0.9rem; }
+
 /* Footer */
 .site-footer {
   text-align: center;
