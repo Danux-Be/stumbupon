@@ -20,6 +20,7 @@
   <link rel="canonical" href="<%= baseUrl %>/stumble/<%= site.id %>" />
   <link rel="stylesheet" href="/style.css" />
   <meta name="csrf" content="<%= csrfToken %>" />
+  <script>if(localStorage.getItem('sc-animations')==='1')document.documentElement.classList.add('sc-anim');</script>
 </head>
 <body class="stumble-iframe-page">
 
@@ -151,6 +152,24 @@
     var SITE_ID = '<%= site.id %>';
     var userVote = <%= userVote === null || userVote === undefined ? 'null' : userVote %>;
     var score    = <%= score %>;
+    var ANIMATIONS = document.documentElement.classList.contains('sc-anim');
+
+    // Navigation vers le site suivant (avec animation si activée)
+    function navigateNext() {
+      if (!ANIMATIONS) { window.location.href = '/stumble'; return; }
+      var bar      = document.querySelector('.stumble-bar');
+      var card     = document.querySelector('.stumble-card');
+      var iframeEl = document.getElementById('stumble-iframe');
+      var cWrap    = document.getElementById('stumble-card-wrap');
+      var isCard   = !cWrap || cWrap.style.display !== 'none';
+      var target   = isCard ? card : iframeEl;
+      if (bar)    bar.style.animation    = 'sc-bar-out 200ms ease-in both';
+      if (target) {
+        target.style.transformOrigin = 'right center';
+        target.style.animation = 'sc-flip-out 260ms cubic-bezier(0.4,0,0.2,1) both';
+      }
+      setTimeout(function() { window.location.href = '/stumble'; }, 280);
+    }
 
     // ── Votes (fetch, pas de rechargement d'iframe) ────────────────────────
     function postVote(dir) {
@@ -179,7 +198,7 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: '_csrf=' + encodeURIComponent(CSRF) + '&site_id=' + SITE_ID,
-      }).then(function() { window.location.href = '/stumble'; });
+      }).then(function() { navigateNext(); });
     });
 
     // ── Rejet admin rapide ─────────────────────────────────────────────────
@@ -191,9 +210,14 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: '_csrf=' + encodeURIComponent(CSRF),
-        }).then(function() { window.location.href = '/stumble'; });
+        }).then(function() { navigateNext(); });
       });
     }
+
+    // ── Interception des liens "Site suivant" ──────────────────────────────
+    document.querySelectorAll('a[href="/stumble"]').forEach(function(a) {
+      a.addEventListener('click', function(e) { e.preventDefault(); navigateNext(); });
+    });
 
     // ── Détection du blocage iframe (X-Frame-Options → about:blank) ───────
     var iframe   = document.getElementById('stumble-iframe');
@@ -244,7 +268,7 @@
         case ' ':
         case 'ArrowRight':
           e.preventDefault();
-          window.location.href = '/stumble';
+          navigateNext();
           break;
         case 'l': case 'L':
           e.preventDefault();

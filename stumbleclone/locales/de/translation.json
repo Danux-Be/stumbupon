@@ -216,5 +216,9 @@
   "lang_fr": "Französisch", "lang_en": "Englisch", "lang_nl": "Niederländisch", "lang_de": "Deutsch",
   "lang_es": "Spanisch", "lang_it": "Italienisch", "lang_pt": "Portugiesisch", "lang_da": "Dänisch",
   "lang_pl": "Polnisch", "lang_ru": "Russisch", "lang_el": "Griechisch", "lang_zh": "Chinesisch",
-  "lang_ja": "Japanisch", "lang_ar": "Arabisch"
+  "lang_ja": "Japanisch", "lang_ar": "Arabisch",
+
+  "settings_anim_title": "Animationen",
+  "settings_anim_desc": "Aktiviere animierte Übergänge beim Navigieren zwischen Websites.",
+  "settings_anim_label": "Flip-Animation aktivieren"
 }

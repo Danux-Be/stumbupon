@@ -303,6 +303,10 @@
   "settings_digest_title": "Weekly digest",
   "settings_digest_desc": "Receive an email every Monday with 5 sites picked for your interests.",
   "settings_digest_label": "Receive the weekly digest",
+
+  "settings_anim_title": "Animations",
+  "settings_anim_desc": "Enable animated transitions when navigating between sites.",
+  "settings_anim_label": "Enable flip animation",
   "settings_save": "Save",
   "success_digest": "Email preference updated.",
 
