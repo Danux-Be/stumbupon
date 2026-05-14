@@ -245,6 +245,9 @@ router.get('/stumble/:id', (req, res) => {
     guestLimit: GUEST_LIMIT,
     flashLessOfThis: req.query.lessofthis === '1',
     flashReported: req.query.reported || null,
+    ogTitle: site.title,
+    ogDescription: site.description || '',
+    ogUrl: `${res.locals.baseUrl}/stumble/${site.id}`,
   });
 });
 

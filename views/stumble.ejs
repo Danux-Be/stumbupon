@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= site.title %> — StumbleClone</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>" />
+  <meta name="description" content="<%= (site.description || '').slice(0, 160) %>" />
+  <!-- OpenGraph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="StumbleClone" />
+  <meta property="og:title" content="<%= site.title %>" />
+  <meta property="og:description" content="<%= (site.description || '').slice(0, 200) %>" />
+  <meta property="og:url" content="<%= baseUrl %>/stumble/<%= site.id %>" />
+  <meta property="og:image" content="<%= baseUrl %>/icons/icon-512.svg" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="<%= site.title %>" />
+  <meta name="twitter:description" content="<%= (site.description || '').slice(0, 200) %>" />
+  <link rel="canonical" href="<%= baseUrl %>/stumble/<%= site.id %>" />
   <link rel="stylesheet" href="/style.css" />
   <meta name="csrf" content="<%= csrfToken %>" />
 </head>
