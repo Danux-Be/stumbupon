@@ -6,7 +6,7 @@ const router = express.Router();
 
 const getUserLangPref = db.prepare('SELECT content_languages FROM users WHERE id = ?');
 
-// 50 candidats pondérés, non encore vus, non rejetés, filtrés par langue
+// Candidats pondérés par centres d'intérêt, non encore vus, non rejetés
 const queryCandidates = db.prepare(`
   SELECT s.id, s.url, s.title, s.description, s.language,
          SUM(ui.weight) AS total_weight
@@ -36,6 +36,39 @@ const queryCandidatesAny = db.prepare(`
   ORDER BY RANDOM()
   LIMIT 50
 `);
+
+// Filtrage collaboratif : sites aimés par des utilisateurs au goût similaire
+// "Similaire" = a liké au moins un site que l'utilisateur courant a aussi liké
+const queryCollabCandidates = db.prepare(`
+  SELECT s.id, s.url, s.title, s.description, s.language,
+         COUNT(DISTINCT v2.user_id) AS collab_score
+  FROM votes v2
+  JOIN sites s ON s.id = v2.site_id
+  WHERE v2.direction = 1
+    AND v2.user_id IN (
+      SELECT v1.user_id
+      FROM votes v1
+      WHERE v1.site_id IN (
+        SELECT site_id FROM votes WHERE user_id = ? AND direction = 1 LIMIT 100
+      )
+        AND v1.direction = 1
+        AND v1.user_id != ?
+      GROUP BY v1.user_id
+      ORDER BY COUNT(*) DESC
+      LIMIT 30
+    )
+    AND s.status = 'approved'
+    AND s.id NOT IN (SELECT site_id FROM views WHERE user_id = ?)
+    AND s.id NOT IN (SELECT site_id FROM votes WHERE user_id = ? AND direction = -1)
+    AND (? = 'all' OR INSTR(',' || ? || ',', ',' || s.language || ',') > 0)
+  GROUP BY s.id
+  ORDER BY collab_score DESC
+  LIMIT 30
+`);
+
+const countUserUpvotes = db.prepare(
+  'SELECT COUNT(*) AS n FROM votes WHERE user_id = ? AND direction = 1'
+);
 
 const querySiteById = db.prepare(`
   SELECT s.id, s.url, s.title, s.description, s.language, s.quality_score, s.can_embed
@@ -71,13 +104,42 @@ const queryScore = db.prepare(
 );
 
 function weightedPick(candidates) {
-  const total = candidates.reduce((s, c) => s + c.total_weight, 0);
+  const total = candidates.reduce((s, c) => s + (c.total_weight || 0), 0);
+  if (total <= 0) return candidates[Math.floor(Math.random() * candidates.length)];
   let r = Math.random() * total;
   for (const c of candidates) {
-    r -= c.total_weight;
+    r -= (c.total_weight || 0);
     if (r <= 0) return c;
   }
   return candidates[candidates.length - 1];
+}
+
+// Fusionne les candidats par intérêt et par filtrage collaboratif.
+// Le signal collab booste le poids des sites déjà présents et ajoute
+// les sites de découverte (ceux trouvés uniquement via collab).
+function mergeWithCollab(interestCandidates, collabCandidates) {
+  if (!collabCandidates.length) return interestCandidates;
+
+  const maxCollab = Math.max(...collabCandidates.map(c => c.collab_score));
+  const collabMap = new Map(collabCandidates.map(c => [c.id, c.collab_score]));
+  const maxInterest = Math.max(...interestCandidates.map(c => c.total_weight), 1);
+
+  // Boost intérêts existants avec signal collab (30% du poids max d'intérêt)
+  const boostFactor = maxInterest * 0.3;
+  const result = interestCandidates.map(c => ({
+    ...c,
+    total_weight: c.total_weight + (collabMap.get(c.id) || 0) / maxCollab * boostFactor,
+  }));
+
+  // Ajoute les candidats purement collaboratifs (découverte hors centres d'intérêt)
+  const interestIds = new Set(interestCandidates.map(c => c.id));
+  for (const c of collabCandidates) {
+    if (!interestIds.has(c.id)) {
+      result.push({ ...c, total_weight: (c.collab_score / maxCollab) * boostFactor * 0.7 });
+    }
+  }
+
+  return result;
 }
 
 router.get('/stumble', requireLogin, (req, res) => {
@@ -93,6 +155,15 @@ router.get('/stumble', requireLogin, (req, res) => {
 
   if (!candidates.length) {
     return res.redirect('/settings?error=no-sites');
+  }
+
+  // Filtrage collaboratif activé dès que l'utilisateur a posé ≥ 5 likes
+  const upvoteCount = countUserUpvotes.get(userId).n;
+  if (upvoteCount >= 5) {
+    const collabCandidates = queryCollabCandidates.all(
+      userId, userId, userId, userId, langPref, langPref
+    );
+    candidates = mergeWithCollab(candidates, collabCandidates);
   }
 
   const site = weightedPick(candidates);
