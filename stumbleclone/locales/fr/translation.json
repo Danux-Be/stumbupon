@@ -305,6 +305,8 @@
   "reset_invalid": "Ce lien est invalide ou a expiré. Fais une nouvelle demande.",
   "reset_success": "Mot de passe modifié avec succès. Tu peux maintenant te connecter.",
 
+  "stumble_share": "Partager",
+
   "settings_digest_title": "Digest hebdomadaire",
   "settings_digest_desc": "Reçois chaque lundi un email avec 5 sites sélectionnés selon tes centres d'intérêt.",
   "settings_digest_label": "Recevoir le digest hebdomadaire",
