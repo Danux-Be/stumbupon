@@ -20,7 +20,12 @@
   <link rel="canonical" href="<%= baseUrl %>/stumble/<%= site.id %>" />
   <link rel="stylesheet" href="/style.css" />
   <meta name="csrf" content="<%= csrfToken %>" />
-  <script>if(localStorage.getItem('sc-animations')==='1')document.documentElement.classList.add('sc-anim');</script>
+  <script>
+    (function(){
+      if(localStorage.getItem('sc-animations')==='1') document.documentElement.classList.add('sc-anim');
+      if(localStorage.getItem('sc-bar-pos')==='bottom') document.documentElement.classList.add('bar-bottom');
+    })();
+  </script>
 </head>
 <body class="stumble-iframe-page">
 

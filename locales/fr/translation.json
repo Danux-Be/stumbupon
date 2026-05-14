@@ -335,6 +335,16 @@
   "settings_digest_desc": "Reçois chaque lundi un email avec 5 sites sélectionnés selon tes centres d'intérêt.",
   "settings_digest_label": "Recevoir le digest hebdomadaire",
 
+  "settings_group_discovery":     "Découverte",
+  "settings_group_interface":     "Interface",
+  "settings_group_notifications": "Notifications",
+  "settings_group_account":       "Compte & sécurité",
+
+  "settings_bar_title":  "Position de la barre",
+  "settings_bar_desc":   "Afficher la barre d'outils en haut ou en bas de la page de découverte.",
+  "settings_bar_top":    "En haut",
+  "settings_bar_bottom": "En bas",
+
   "settings_anim_title": "Animations",
   "settings_anim_desc": "Active les transitions animées lors du passage d'un site à l'autre.",
   "settings_anim_label": "Activer l'animation flip",
