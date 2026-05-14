@@ -5,4 +5,5 @@ db/stumble.db-shm
 db/stumble.db-wal
 backups/
 logs/
+db/stumbleclone.md
 *.log
