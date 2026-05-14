@@ -305,6 +305,12 @@
   "reset_invalid": "Ce lien est invalide ou a expiré. Fais une nouvelle demande.",
   "reset_success": "Mot de passe modifié avec succès. Tu peux maintenant te connecter.",
 
+  "settings_digest_title": "Digest hebdomadaire",
+  "settings_digest_desc": "Reçois chaque lundi un email avec 5 sites sélectionnés selon tes centres d'intérêt.",
+  "settings_digest_label": "Recevoir le digest hebdomadaire",
+  "settings_save": "Enregistrer",
+  "success_digest": "Préférence email mise à jour.",
+
   "lang_fr": "Français", "lang_en": "Anglais", "lang_nl": "Néerlandais", "lang_de": "Allemand",
   "lang_es": "Espagnol", "lang_it": "Italien", "lang_pt": "Portugais", "lang_da": "Danois",
   "lang_pl": "Polonais", "lang_ru": "Russe", "lang_el": "Grec", "lang_zh": "Chinois",

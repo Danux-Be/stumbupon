@@ -111,4 +111,10 @@ if (!siteCols4.includes('last_checked_at')) {
   db.exec('ALTER TABLE sites ADD COLUMN flag_reason TEXT DEFAULT NULL');
 }
 
+// Digest email hebdomadaire (opt-in par défaut)
+const userCols6 = db.prepare('PRAGMA table_info(users)').all().map(c => c.name);
+if (!userCols6.includes('email_digest')) {
+  db.exec('ALTER TABLE users ADD COLUMN email_digest INTEGER DEFAULT 1');
+}
+
 module.exports = db;

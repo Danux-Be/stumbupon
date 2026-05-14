@@ -11,6 +11,8 @@
     <p class="alert alert-success"><%= t('success_lang') %></p>
   <% } else if (success === 'content_langs') { %>
     <p class="alert alert-success"><%= t('success_content_langs') %></p>
+  <% } else if (success === 'digest') { %>
+    <p class="alert alert-success"><%= t('success_digest') %></p>
   <% } else if (error === 'interests-min') { %>
     <p class="alert alert-error"><%= t('error_interests_min') %></p>
   <% } else if (error === 'delete_password_wrong') { %>
@@ -110,6 +112,23 @@
         </a>
       <% } %>
     </div>
+  </section>
+
+  <!-- Digest hebdomadaire -->
+  <section class="settings-section">
+    <h2><%= t('settings_digest_title') %></h2>
+    <p><%= t('settings_digest_desc') %></p>
+    <form method="POST" action="/settings/digest">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <label class="lang-check-label" style="margin-top:0.8rem">
+        <input type="checkbox" name="digest" value="1" <%= emailDigest ? 'checked' : '' %> />
+        <%= t('settings_digest_label') %>
+      </label>
+      <br/>
+      <button type="submit" class="btn btn-primary" style="margin-top:0.8rem">
+        <%= t('settings_save') %>
+      </button>
+    </form>
   </section>
 
   <!-- Données personnelles (RGPD) -->
