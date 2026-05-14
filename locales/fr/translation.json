@@ -308,6 +308,7 @@
   "stumble_share": "Partager",
   "guest_banner": "{{count}} / {{limit}} sites découverts en invité —",
   "guest_banner_cta": "S'inscrire gratuitement",
+  "guest_join_stat": "sites découverts",
   "guest_join_title": "Tu as découvert {{limit}} sites !",
   "guest_join_desc": "Inscris-toi gratuitement pour continuer à explorer, voter et retrouver tes coups de cœur.",
   "guest_join_perk1": "Découvertes personnalisées selon tes intérêts",
