@@ -1,0 +1,68 @@
+<%- include('partials/header', { title: t('about_title') }) %>
+
+<div class="legal-page">
+  <h1><%= t('about_title') %></h1>
+  <p class="legal-updated"><%= t('about_tagline') %></p>
+
+  <section>
+    <h2><%= t('about_s1_title') %></h2>
+    <p><%- t('about_s1_body') %></p>
+  </section>
+
+  <section>
+    <h2><%= t('about_s2_title') %></h2>
+    <ol class="about-steps">
+      <li><%- t('about_s2_step1') %></li>
+      <li><%- t('about_s2_step2') %></li>
+      <li><%- t('about_s2_step3') %></li>
+      <li><%- t('about_s2_step4') %></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><%= t('about_s3_title') %></h2>
+    <div class="about-principles">
+      <div class="about-principle">
+        <span class="about-principle__icon">🎯</span>
+        <div>
+          <strong><%= t('about_p1_title') %></strong>
+          <p><%= t('about_p1_body') %></p>
+        </div>
+      </div>
+      <div class="about-principle">
+        <span class="about-principle__icon">🚫</span>
+        <div>
+          <strong><%= t('about_p2_title') %></strong>
+          <p><%= t('about_p2_body') %></p>
+        </div>
+      </div>
+      <div class="about-principle">
+        <span class="about-principle__icon">🌐</span>
+        <div>
+          <strong><%= t('about_p3_title') %></strong>
+          <p><%= t('about_p3_body') %></p>
+        </div>
+      </div>
+      <div class="about-principle">
+        <span class="about-principle__icon">🔍</span>
+        <div>
+          <strong><%= t('about_p4_title') %></strong>
+          <p><%= t('about_p4_body') %></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><%= t('about_s4_title') %></h2>
+    <p><%- t('about_s4_body') %></p>
+    <a href="/submit" class="btn btn-primary" style="margin-top:1rem"><%= t('nav_submit') %> →</a>
+  </section>
+
+  <section>
+    <h2><%= t('about_s5_title') %></h2>
+    <p><%- t('about_s5_body') %></p>
+  </section>
+</div>
+
+<%- include('partials/footer') %>
