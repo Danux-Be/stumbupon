@@ -1235,53 +1235,99 @@ body.stumble-iframe-page {
 
 /* ─── Page mur inscription invité ───────────────────────────────────────── */
 .stumble-join {
-  min-height: 100vh;
+  min-height: calc(100vh - 120px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem;
-  background: var(--color-bg);
+  padding: 3rem 1.5rem 5rem;
+  position: relative;
 }
-.stumble-join__card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  padding: 2.5rem 2rem;
-  max-width: 460px;
+.stumble-join::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(var(--color-primary-rgb), 0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.stumble-join__inner {
+  max-width: 520px;
   width: 100%;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
 }
-.stumble-join__emoji { font-size: 3rem; display: block; margin-bottom: 1rem; }
+.stumble-join__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+.stumble-join__stat-number {
+  font-size: clamp(3.5rem, 10vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stumble-join__stat-label {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
 .stumble-join__title {
-  font-size: 1.6rem;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-  margin-bottom: 0.75rem;
+  line-height: 1.15;
   color: var(--color-text);
+  margin: 0;
 }
 .stumble-join__desc {
   color: var(--color-text-muted);
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
-}
-.stumble-join__perks {
-  list-style: none;
-  text-align: left;
-  margin: 0 0 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  padding: 1rem 1.25rem;
-  background: var(--color-bg);
-  border-radius: var(--radius);
-  font-size: 0.92rem;
-  color: var(--color-text);
+  line-height: 1.65;
+  max-width: 400px;
+  font-size: 1.05rem;
+  margin: 0;
 }
 .stumble-join__actions {
   display: flex;
-  flex-direction: column;
   gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.stumble-join__perks {
+  list-style: none;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+}
+.stumble-join__perks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+  font-size: 0.88rem;
+  color: var(--color-text);
+  text-align: left;
+  box-shadow: var(--shadow-sm);
+  line-height: 1.45;
+}
+.stumble-join__perk-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.05rem; }
+@media (max-width: 480px) {
+  .stumble-join__perks { grid-template-columns: 1fr; }
+  .stumble-join__actions { flex-direction: column; width: 100%; }
+  .stumble-join__actions .btn { width: 100%; text-align: center; }
 }
 
 /* ─── Raccourcis clavier — hint bar ─────────────────────────────────────── */

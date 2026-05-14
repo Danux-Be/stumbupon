@@ -282,6 +282,7 @@
   "stumble_share": "Share",
   "guest_banner": "{{count}} / {{limit}} sites discovered as guest —",
   "guest_banner_cta": "Sign up for free",
+  "guest_join_stat": "sites discovered",
   "guest_join_title": "You've discovered {{limit}} sites!",
   "guest_join_desc": "Create a free account to keep exploring, vote on sites and save your favourites.",
   "guest_join_perk1": "Personalised picks based on your interests",
