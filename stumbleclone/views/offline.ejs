@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hors ligne — StumbleClone</title>
+  <link rel="stylesheet" href="/style.css"/>
+  <style>
+    .offline-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      gap: 1rem;
+    }
+    .offline-icon { font-size: 4rem; }
+    .offline-title { font-size: 1.5rem; font-weight: 800; color: var(--color-text); }
+    .offline-desc  { color: var(--color-text-muted); max-width: 380px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="offline-page">
+    <span class="offline-icon">📡</span>
+    <h1 class="offline-title">Tu es hors ligne</h1>
+    <p class="offline-desc">
+      Pas de réseau disponible pour le moment. Reconnecte-toi et réessaie.
+    </p>
+    <a href="/" class="btn btn-primary" onclick="location.reload()">Réessayer</a>
+  </div>
+</body>
+</html>
