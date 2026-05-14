@@ -23,6 +23,7 @@ const reportRoutes    = require('./routes/report');
 const tastesRoutes    = require('./routes/tastes');
 const legalRoutes     = require('./routes/legal');
 const accountRoutes   = require('./routes/account');
+const searchRoutes    = require('./routes/search');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -84,6 +85,7 @@ app.use(reportRoutes);
 app.use(tastesRoutes);
 app.use(legalRoutes);
 app.use(accountRoutes);
+app.use(searchRoutes);
 
 const db = require('./db/database');
 const stmtRecentSites = db.prepare(`

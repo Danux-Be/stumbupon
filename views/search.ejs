@@ -1,0 +1,50 @@
+<%- include('partials/header', { title: t('search_title') }) %>
+
+<div class="search-page">
+
+  <form class="search-form" method="GET" action="/search" role="search">
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input
+        class="search-input"
+        type="search"
+        name="q"
+        value="<%= q %>"
+        placeholder="<%= t('search_placeholder') %>"
+        autofocus
+        autocomplete="off"
+        aria-label="<%= t('search_placeholder') %>"
+      />
+      <button type="submit" class="btn btn-primary"><%= t('search_submit') %></button>
+    </div>
+  </form>
+
+  <% if (error) { %>
+    <p class="alert alert-error"><%= error %></p>
+  <% } else if (q && !results.length) { %>
+    <p class="search-empty"><%- t('search_no_results', { q: `<strong>${q}</strong>` }) %></p>
+  <% } else if (results.length) { %>
+    <p class="search-count"><%- t('search_results_count', { count: results.length, q: `<strong>${q}</strong>` }) %></p>
+
+    <ul class="search-results">
+      <% for (const r of results) { %>
+      <li class="search-result">
+        <div class="search-result__cats">
+          <% for (const cat of r.categories) { %>
+            <span class="stumble-tag stumble-tag--sm"><%= cat.emoji %> <%= cat.localName %></span>
+          <% } %>
+        </div>
+        <a href="/stumble/<%= r.id %>" class="search-result__title">
+          <%- r.title_snippet || r.title %>
+        </a>
+        <p class="search-result__desc"><%- r.desc_snippet || r.description || '' %></p>
+        <a href="<%= r.url %>" target="_blank" rel="noopener noreferrer"
+           class="search-result__url"><%= r.url %></a>
+      </li>
+      <% } %>
+    </ul>
+  <% } %>
+
+</div>
+
+<%- include('partials/footer') %>

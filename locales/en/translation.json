@@ -279,6 +279,13 @@
   "reset_invalid": "This link is invalid or has expired. Please submit a new request.",
   "reset_success": "Password changed successfully. You can now log in.",
 
+  "search_title": "Search",
+  "search_placeholder": "Search a site…",
+  "search_submit": "Search",
+  "search_no_results": "No results for {{q}}.",
+  "search_results_count": "{{count}} result(s) for {{q}}",
+  "search_error": "Invalid query. Try simpler keywords.",
+
   "stumble_share": "Share",
   "guest_banner": "{{count}} / {{limit}} sites discovered as guest —",
   "guest_banner_cta": "Sign up for free",

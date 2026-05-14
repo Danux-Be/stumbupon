@@ -117,4 +117,40 @@ if (!userCols6.includes('email_digest')) {
   db.exec('ALTER TABLE users ADD COLUMN email_digest INTEGER DEFAULT 1');
 }
 
+// FTS5 — recherche full-text sur les sites approuvés
+db.exec(`
+  CREATE VIRTUAL TABLE IF NOT EXISTS sites_fts USING fts5(
+    title, description, url,
+    tokenize='unicode61',
+    content='sites',
+    content_rowid='id'
+  )
+`);
+db.exec(`
+  CREATE TRIGGER IF NOT EXISTS sites_fts_ai AFTER INSERT ON sites BEGIN
+    INSERT INTO sites_fts(rowid, title, description, url)
+    VALUES (new.id, COALESCE(new.title,''), COALESCE(new.description,''), COALESCE(new.url,''));
+  END
+`);
+db.exec(`
+  CREATE TRIGGER IF NOT EXISTS sites_fts_ad AFTER DELETE ON sites BEGIN
+    INSERT INTO sites_fts(sites_fts, rowid, title, description, url)
+    VALUES ('delete', old.id, COALESCE(old.title,''), COALESCE(old.description,''), COALESCE(old.url,''));
+  END
+`);
+db.exec(`
+  CREATE TRIGGER IF NOT EXISTS sites_fts_au AFTER UPDATE ON sites BEGIN
+    INSERT INTO sites_fts(sites_fts, rowid, title, description, url)
+    VALUES ('delete', old.id, COALESCE(old.title,''), COALESCE(old.description,''), COALESCE(old.url,''));
+    INSERT INTO sites_fts(rowid, title, description, url)
+    VALUES (new.id, COALESCE(new.title,''), COALESCE(new.description,''), COALESCE(new.url,''));
+  END
+`);
+// Population initiale si l'index est vide (rebuild = méthode recommandée pour content=)
+const ftsSiteCount = db.prepare("SELECT COUNT(*) AS n FROM sites WHERE status='approved'").get().n;
+const ftsRowCount = db.prepare("SELECT COUNT(*) AS n FROM sites_fts").get().n;
+if (ftsSiteCount > 0 && ftsRowCount === 0) {
+  db.exec("INSERT INTO sites_fts(sites_fts) VALUES('rebuild')");
+}
+
 module.exports = db;
