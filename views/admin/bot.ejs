@@ -1,0 +1,63 @@
+<%- include('../partials/header') %>
+
+<div class="admin-page">
+  <div class="admin-page-header">
+    <a href="/admin" class="admin-back">← <%= t('admin_title') %></a>
+    <h1><%= t('admin_bot_title') %></h1>
+  </div>
+
+  <div class="settings-section" style="margin-bottom:1.5rem">
+    <h2><%= t('admin_bot_run_title') %></h2>
+    <p style="color:var(--color-text-muted);font-size:0.9rem;margin-bottom:0.8rem"><%= t('admin_bot_run_desc') %></p>
+    <code class="bot-cmd">node bot/index.js --source=hn --limit=20</code>
+    <div style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:0.4rem">
+      <% ['hn','wiby','lobsters','reddit','marginalia','all'].forEach(src => { %>
+        <code class="bot-cmd" style="padding:0.3rem 0.6rem;font-size:0.8rem;display:inline">--source=<%= src %></code>
+      <% }) %>
+    </div>
+  </div>
+
+  <% if (sourceStats.length > 0) { %>
+    <h2 style="margin-bottom:1rem"><%= t('admin_bot_stats_title') %></h2>
+    <div class="admin-stats" style="margin-bottom:2rem">
+      <% sourceStats.forEach(s => { %>
+        <div class="stat-card" style="text-align:left;min-width:200px">
+          <span class="stat-value" style="font-size:1.2rem">🤖 <%= s.source %></span>
+          <div style="font-size:0.85rem;color:var(--color-text-muted);margin-top:0.5rem;display:flex;flex-direction:column;gap:0.2rem">
+            <span>✅ <%= s.approved %> approuvés</span>
+            <span>⏳ <%= s.pending %> en attente</span>
+            <span>❌ <%= s.rejected %> rejetés</span>
+            <span style="margin-top:0.3rem;opacity:0.7">
+              Dernière exécution : <%= new Date(s.last_run).toLocaleString() %>
+            </span>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <% if (recent.length > 0) { %>
+    <h2 style="margin-bottom:1rem"><%= t('admin_bot_recent_title') %></h2>
+    <div class="bot-log">
+      <% recent.forEach(r => { %>
+        <div class="bot-log-row bot-log-row--<%= r.status %>">
+          <span class="bot-log-status">
+            <%= r.status === 'approved' ? '✅' : r.status === 'pending' ? '⏳' : '❌' %>
+          </span>
+          <a href="<%= r.url %>" target="_blank" rel="noopener noreferrer" class="bot-log-url">
+            <%= r.url.slice(0, 80) %><%= r.url.length > 80 ? '…' : '' %>
+          </a>
+          <span class="bot-log-score"><%= r.score !== null ? r.score + '/100' : '' %></span>
+          <span class="bot-log-source"><%= r.source %></span>
+          <span class="bot-log-date"><%= new Date(r.processed_at).toLocaleDateString() %></span>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="favorites-empty">
+      <p><%= t('admin_bot_empty') %></p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

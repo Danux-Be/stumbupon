@@ -1,30 +1,102 @@
 <%- include('partials/header', { title: 'StumbleClone' }) %>
 
-<section class="hero">
-  <h1><%= t('home_hero_title') %></h1>
-  <p class="tagline"><%= t('home_hero_desc') %></p>
-  <div class="hero-actions">
-    <a href="/signup" class="btn btn-primary btn-large"><%= t('home_cta_primary') %></a>
-    <a href="/login" class="btn btn-secondary"><%= t('home_cta_secondary') %></a>
-  </div>
-</section>
+<% if (userStats) { %>
+  <!-- ── Vue utilisateur connecté ──────────────────────────────────────── -->
+  <section class="dashboard">
+    <div class="dashboard-inner">
+      <h1 class="dashboard-title">
+        <%= t('home_dashboard_title', { name: user.username }) %>
+      </h1>
+      <p class="dashboard-subtitle"><%= t('home_dashboard_subtitle') %></p>
 
-<section class="features">
-  <div class="feature-card">
-    <span class="feature-icon">🎲</span>
-    <h2><%= t('home_feat_stumble_title') %></h2>
-    <p><%= t('home_feat_stumble_desc') %></p>
+      <a href="/stumble" class="btn btn-primary btn-xl">
+        🎲 <%= t('nav_stumble') %>
+      </a>
+
+      <div class="dashboard-stats">
+        <a href="/favorites" class="dashboard-stat">
+          <span class="dashboard-stat__value">⭐ <%= userStats.favorites %></span>
+          <span class="dashboard-stat__label"><%= t('home_dashboard_favorites', { count: userStats.favorites }) %></span>
+        </a>
+        <div class="dashboard-stat">
+          <span class="dashboard-stat__value">🌍 <%= userStats.discovered %></span>
+          <span class="dashboard-stat__label"><%= t('home_dashboard_discovered', { count: userStats.discovered }) %></span>
+        </div>
+        <div class="dashboard-stat">
+          <span class="dashboard-stat__value">📚 <%= stats.site_count %></span>
+          <span class="dashboard-stat__label"><%= t('home_stats_sites', { count: stats.site_count }) %></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<% } else { %>
+  <!-- ── Landing page publique ─────────────────────────────────────────── -->
+  <section class="hero">
+    <h1><%= t('home_hero_title') %></h1>
+    <p class="tagline"><%= t('home_hero_desc') %></p>
+    <div class="hero-actions">
+      <a href="/signup" class="btn btn-primary btn-large"><%= t('home_cta_primary') %></a>
+      <a href="/login"  class="btn btn-secondary"><%= t('home_cta_secondary') %></a>
+    </div>
+  </section>
+
+  <!-- ── Barre de stats ─────────────────────────────────────────────────── -->
+  <div class="home-stats-bar">
+    <span>🌐 <%= t('home_stats_sites', { count: stats.site_count }) %></span>
+    <span class="home-stats-bar__sep">·</span>
+    <span>🧭 <%= t('home_stats_users', { count: stats.user_count }) %></span>
   </div>
-  <div class="feature-card">
-    <span class="feature-icon">👍</span>
-    <h2><%= t('home_feat_vote_title') %></h2>
-    <p><%= t('home_feat_vote_desc') %></p>
-  </div>
-  <div class="feature-card">
-    <span class="feature-icon">⭐</span>
-    <h2><%= t('home_feat_favorites_title') %></h2>
-    <p><%= t('home_feat_favorites_desc') %></p>
-  </div>
-</section>
+
+  <!-- ── Fonctionnalités ───────────────────────────────────────────────── -->
+  <section class="features">
+    <div class="feature-card">
+      <span class="feature-icon">🎲</span>
+      <h2><%= t('home_feat_stumble_title') %></h2>
+      <p><%= t('home_feat_stumble_desc') %></p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">👍</span>
+      <h2><%= t('home_feat_vote_title') %></h2>
+      <p><%= t('home_feat_vote_desc') %></p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⭐</span>
+      <h2><%= t('home_feat_favorites_title') %></h2>
+      <p><%= t('home_feat_favorites_desc') %></p>
+    </div>
+  </section>
+
+  <!-- ── Sites récemment découverts ───────────────────────────────────── -->
+  <% if (recentSites && recentSites.length) { %>
+  <section class="home-recent">
+    <h2 class="home-recent__title"><%= t('home_recent_title') %></h2>
+    <div class="home-recent__grid">
+      <% recentSites.forEach(function(site) {
+           var hostname = site.url;
+           try { hostname = new URL(site.url).hostname; } catch(e) {}
+      %>
+        <div class="home-recent__card">
+          <div class="home-recent__tags">
+            <% (site.categories || []).slice(0, 3).forEach(function(cat) { %>
+              <span class="stumble-tag stumble-tag--sm"><%= cat.emoji %> <%= cat.localName %></span>
+            <% }) %>
+          </div>
+          <h3 class="home-recent__card-title"><%= site.title %></h3>
+          <% if (site.description) { %>
+            <p class="home-recent__card-desc"><%= site.description.slice(0, 100) %><%= site.description.length > 100 ? '…' : '' %></p>
+          <% } %>
+          <span class="home-recent__card-url"><%= hostname %></span>
+        </div>
+      <% }) %>
+    </div>
+
+    <div class="home-recent__cta">
+      <a href="/signup" class="btn btn-primary btn-large"><%= t('home_cta_primary') %> →</a>
+    </div>
+  </section>
+  <% } %>
+
+<% } %>
 
 <%- include('partials/footer') %>

@@ -1,4 +1,8 @@
 node_modules/
 .env
 db/stumble.db
+db/stumble.db-shm
+db/stumble.db-wal
+backups/
+logs/
 *.log

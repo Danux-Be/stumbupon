@@ -1,0 +1,51 @@
+<%- include('../partials/header') %>
+
+<div class="admin-page">
+  <h1><%= t('admin_title') %></h1>
+
+  <div class="admin-stats">
+    <div class="stat-card">
+      <span class="stat-value"><%= stats.users %></span>
+      <span class="stat-label"><%= t('admin_stat_users') %></span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value"><%= stats.sites %></span>
+      <span class="stat-label"><%= t('admin_stat_sites') %></span>
+    </div>
+    <div class="stat-card <%= stats.pending > 0 ? 'stat-card--alert' : '' %>">
+      <span class="stat-value"><%= stats.pending %></span>
+      <span class="stat-label"><%= t('admin_stat_pending') %></span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value"><%= stats.votes %></span>
+      <span class="stat-label"><%= t('admin_stat_votes') %></span>
+    </div>
+    <div class="stat-card <%= stats.reports > 0 ? 'stat-card--alert' : '' %>">
+      <span class="stat-value"><%= stats.reports %></span>
+      <span class="stat-label"><%= t('admin_stat_reports') %></span>
+    </div>
+    <div class="stat-card <%= stats.quarantine > 0 ? 'stat-card--alert' : '' %>">
+      <span class="stat-value"><%= stats.quarantine %></span>
+      <span class="stat-label"><%= t('admin_stat_quarantine') %></span>
+    </div>
+    <div class="stat-card <%= stats.optout > 0 ? 'stat-card--alert' : '' %>">
+      <span class="stat-value"><%= stats.optout %></span>
+      <span class="stat-label"><%= t('admin_stat_optout') %></span>
+    </div>
+  </div>
+
+  <div class="admin-nav">
+    <a href="/admin/pending" class="btn btn-primary">
+      <%= t('admin_pending_title') %><% if (stats.pending > 0) { %> (<%= stats.pending %>)<% } %>
+    </a>
+    <a href="/admin/reports" class="btn <%= stats.reports > 0 ? 'btn-primary' : 'btn-secondary' %>">
+      <%= t('admin_reports_title') %><% if (stats.reports > 0) { %> (<%= stats.reports %>)<% } %>
+    </a>
+    <a href="/admin/optout" class="btn <%= stats.optout > 0 ? 'btn-primary' : 'btn-secondary' %>">
+      <%= t('admin_optout_title') %><% if (stats.optout > 0) { %> (<%= stats.optout %>)<% } %>
+    </a>
+    <a href="/admin/bot" class="btn btn-secondary">🤖 <%= t('admin_bot_title') %></a>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

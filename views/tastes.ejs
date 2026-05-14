@@ -1,0 +1,58 @@
+<%- include('partials/header') %>
+
+<div class="tastes-page">
+  <div class="tastes-header">
+    <h1><%= t('tastes_title') %></h1>
+    <p class="tastes-desc"><%= t('tastes_desc') %></p>
+  </div>
+
+  <% if (updated) { %>
+    <div class="alert alert-success" style="margin-bottom:1.2rem"><%= t('tastes_updated') %></div>
+  <% } %>
+  <% if (lessofthis) { %>
+    <div class="alert alert-info" style="margin-bottom:1.2rem"><%= t('stumble_less_done') %></div>
+  <% } %>
+
+  <% if (!tastes.length) { %>
+    <div class="favorites-empty">
+      <p><%= t('tastes_empty') %></p>
+      <a href="/settings" class="btn btn-primary" style="margin-top:1rem"><%= t('tastes_interests_link') %></a>
+    </div>
+  <% } else { %>
+    <div class="tastes-grid">
+      <% tastes.forEach(cat => { %>
+        <div class="taste-card">
+          <div class="taste-card-top">
+            <span class="taste-emoji"><%= cat.emoji %></span>
+            <span class="taste-name"><%= cat.localName %></span>
+          </div>
+          <div class="taste-weight-row">
+            <form method="POST" action="/tastes/weight" style="display:inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <input type="hidden" name="category_id" value="<%= cat.id %>" />
+              <input type="hidden" name="direction" value="-" />
+              <button type="submit" class="weight-btn weight-btn--minus"
+                <%= parseFloat(cat.weight) <= 0.1 ? 'disabled' : '' %>>−</button>
+            </form>
+            <div class="weight-bar-wrap" title="<%= cat.weight.toFixed(1) %>">
+              <div class="weight-bar-fill" style="width:<%= Math.round((cat.weight / 2.0) * 100) %>%"></div>
+            </div>
+            <span class="weight-value"><%= parseFloat(cat.weight).toFixed(1) %></span>
+            <form method="POST" action="/tastes/weight" style="display:inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <input type="hidden" name="category_id" value="<%= cat.id %>" />
+              <input type="hidden" name="direction" value="+" />
+              <button type="submit" class="weight-btn weight-btn--plus"
+                <%= parseFloat(cat.weight) >= 2.0 ? 'disabled' : '' %>>+</button>
+            </form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+    <p style="margin-top:1.5rem;font-size:0.85rem;color:var(--color-text-muted);text-align:center">
+      <a href="/settings"><%= t('tastes_interests_link') %></a>
+    </p>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

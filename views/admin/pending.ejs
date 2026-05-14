@@ -1,0 +1,58 @@
+<%- include('../partials/header') %>
+
+<div class="admin-page">
+  <div class="admin-page-header">
+    <a href="/admin" class="admin-back">← <%= t('admin_title') %></a>
+    <h1><%= t('admin_pending_title') %> (<%= sites.length %>)</h1>
+  </div>
+
+  <% if (sites.length === 0) { %>
+    <div class="favorites-empty">
+      <p><%= t('admin_pending_empty') %></p>
+    </div>
+  <% } else { %>
+    <div class="admin-list">
+      <% sites.forEach(site => { %>
+        <div class="admin-card">
+          <div class="fav-meta">
+            <% (catsBySite[site.id] || []).forEach(cat => { %>
+              <span class="stumble-tag"><%= cat.emoji %> <%= cat.localName %></span>
+            <% }) %>
+            <span class="stumble-tag">🌐 <%= site.language || '?' %></span>
+          </div>
+
+          <h2 class="fav-title"><%= site.title %></h2>
+          <p class="admin-url">
+            <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer"><%= site.url %></a>
+          </p>
+          <% if (site.description) { %>
+            <p class="fav-desc"><%= site.description %></p>
+          <% } %>
+
+          <div class="admin-card-meta">
+            <span><%= t('admin_submitted_by') %> <strong><%= site.submitter || t('admin_bot') %></strong></span>
+            <span><%= new Date(site.created_at).toLocaleDateString() %></span>
+            <% if (site.risk_score !== null && site.risk_score !== undefined) { %>
+              <span class="risk-badge risk-badge--<%= site.risk_score >= 60 ? 'high' : site.risk_score >= 35 ? 'medium' : 'low' %>">
+                Risque : <%= site.risk_score %>/100
+              </span>
+            <% } %>
+          </div>
+
+          <div class="admin-actions">
+            <form method="POST" action="/admin/approve/<%= site.id %>" style="display:inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit" class="btn btn-approve"><%= t('admin_approve') %></button>
+            </form>
+            <form method="POST" action="/admin/reject/<%= site.id %>" style="display:inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit" class="btn btn-reject"><%= t('admin_reject') %></button>
+            </form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

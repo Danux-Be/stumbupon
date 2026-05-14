@@ -1,6 +1,11 @@
   </main>
   <footer class="site-footer">
     <p>&copy; <%= new Date().getFullYear() %> StumbleClone — <%= t('footer_tagline') %></p>
+    <p class="footer-legal">
+      <a href="/legal"><%= t('legal_title') %></a> ·
+      <a href="/privacy"><%= t('privacy_title') %></a> ·
+      <a href="/optout"><%= t('optout_title') %></a>
+    </p>
   </footer>
   <script src="/app.js"></script>
 </body>

@@ -1,12 +1,22 @@
 const { i18next, middleware: i18nMiddleware } = require('../lib/i18n');
 
-const SUPPORTED = ['fr', 'en', 'nl', 'de'];
+const SUPPORTED = ['fr', 'en', 'nl', 'de', 'es', 'it', 'pt', 'da', 'pl', 'ru', 'el', 'zh', 'ja', 'ar'];
 
 const LANG_LABELS = {
   fr: 'Français',
   en: 'English',
   nl: 'Nederlands',
   de: 'Deutsch',
+  es: 'Español',
+  it: 'Italiano',
+  pt: 'Português',
+  da: 'Dansk',
+  pl: 'Polski',
+  ru: 'Русский',
+  el: 'Ελληνικά',
+  zh: '中文',
+  ja: '日本語',
+  ar: 'العربية',
 };
 
 function detectLang(req) {

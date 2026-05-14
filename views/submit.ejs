@@ -1,0 +1,76 @@
+<%- include('partials/header') %>
+
+<div class="interests-page">
+  <div class="interests-header">
+    <h1><%= t('submit_title') %></h1>
+    <p><%= t('submit_desc') %></p>
+  </div>
+
+  <% if (!emailVerified) { %>
+    <div class="alert alert-error">
+      <%= t('submit_unverified_warning') %>
+      <form method="POST" action="/resend-verification" style="display:inline;margin-left:0.5rem">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <button type="submit" class="btn btn-secondary btn-sm"><%= t('submit_resend_email') %></button>
+      </form>
+    </div>
+  <% } %>
+
+  <% if (success) { %>
+    <div class="alert alert-success"><%= t('submit_success') %></div>
+  <% } %>
+  <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+
+  <form method="POST" action="/submit" class="submit-form">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+    <div class="form-group">
+      <label for="url"><%= t('submit_url') %></label>
+      <input type="url" id="url" name="url" value="<%= prefill.url || '' %>"
+             placeholder="https://exemple.com" required />
+      <span class="form-hint"><%= t('submit_url_hint') %></span>
+    </div>
+
+    <div class="form-group">
+      <label for="title"><%= t('submit_site_title') %></label>
+      <input type="text" id="title" name="title" value="<%= prefill.title || '' %>"
+             placeholder="<%= t('submit_site_title_placeholder') %>" maxlength="200" />
+      <span class="form-hint"><%= t('submit_site_title_hint') %></span>
+    </div>
+
+    <div class="form-group">
+      <label for="description"><%= t('submit_description') %></label>
+      <textarea id="description" name="description" rows="3" maxlength="500"
+                placeholder="<%= t('submit_description_placeholder') %>"><%= prefill.description || '' %></textarea>
+    </div>
+
+    <div class="form-group">
+      <label><%= t('submit_categories') %></label>
+      <div class="categories-grid categories-grid--compact" style="margin-top:0.5rem">
+        <% categories.forEach(cat => { %>
+          <label class="category-card">
+            <input type="checkbox" name="categories" value="<%= cat.id %>"
+                   <%= (prefill.chosen || []).includes(cat.id) ? 'checked' : '' %> />
+            <span class="category-emoji"><%= cat.emoji %></span>
+            <span class="category-name"><%= cat.localName %></span>
+          </label>
+        <% }) %>
+      </div>
+      <span class="form-hint"><%= t('submit_categories_hint') %></span>
+    </div>
+
+    <% if (turnstileSiteKey) { %>
+      <div class="cf-turnstile" data-sitekey="<%= turnstileSiteKey %>" style="margin-bottom:1rem"></div>
+    <% } %>
+
+    <button type="submit" class="btn btn-primary"><%= t('submit_submit') %></button>
+  </form>
+
+<% if (turnstileSiteKey) { %>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<% } %>
+</div>
+
+<%- include('partials/footer') %>

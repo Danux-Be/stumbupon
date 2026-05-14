@@ -1,0 +1,47 @@
+<%- include('../partials/header') %>
+
+<div class="admin-page">
+  <div class="admin-page-header">
+    <a href="/admin" class="admin-back">← <%= t('admin_title') %></a>
+    <h1><%= t('admin_optout_title') %></h1>
+  </div>
+
+  <% if (!requests.length) { %>
+    <div class="favorites-empty"><p><%= t('admin_optout_empty') %></p></div>
+  <% } else { %>
+    <div class="admin-list">
+      <% requests.forEach(r => { %>
+        <div class="admin-card">
+          <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.4rem">
+            <strong style="word-break:break-all"><%= r.url %></strong>
+            <span class="risk-badge risk-badge--<%= r.status === 'pending' ? 'medium' : r.status === 'done' ? 'low' : 'high' %>">
+              <%= r.status %>
+            </span>
+          </div>
+          <div class="admin-card-meta">
+            <% if (r.name) { %><span>👤 <%= r.name %></span><% } %>
+            <span>✉️ <%= r.email %></span>
+            <span>🗓 <%= new Date(r.created_at).toLocaleDateString() %></span>
+          </div>
+          <% if (r.reason) { %>
+            <p style="font-size:0.88rem;color:var(--color-text-muted);margin-bottom:1rem;font-style:italic">"<%= r.reason %>"</p>
+          <% } %>
+          <% if (r.status === 'pending') { %>
+            <div class="admin-actions">
+              <form method="POST" action="/admin/optout/<%= r.id %>/approve">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <button type="submit" class="btn-approve"><%= t('admin_optout_approve') %></button>
+              </form>
+              <form method="POST" action="/admin/optout/<%= r.id %>/reject">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <button type="submit" class="btn-reject"><%= t('admin_optout_reject') %></button>
+              </form>
+            </div>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

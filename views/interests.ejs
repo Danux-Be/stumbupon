@@ -10,16 +10,16 @@
     <p class="form-error interests-error"><%= error %></p>
   <% } %>
 
-  <form method="POST" action="/interests" x-data="{ count: <%= selected.length %> }">
+  <form method="POST" action="/interests" id="interests-form">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
-    <p class="interests-count" x-text="`${count} <%- t('interests_count', { count: '${count}' }).replace('${count}', '').trim() %>`"
-       x-init="$el.textContent = '<%= t('interests_count', { count: selected.length }) %>'">
+    <p class="interests-count">
+      <span id="interests-count"><%= selected.length %></span>&nbsp;<%- t('interests_count', { count: '' }).trim() %>
     </p>
 
     <div class="categories-grid">
       <% for (const cat of categories) { %>
-        <label class="category-card" x-on:click="count = $el.querySelector('input').checked ? count - 1 : count + 1">
+        <label class="category-card">
           <input
             type="checkbox"
             name="categories"
@@ -33,11 +33,39 @@
     </div>
 
     <div class="interests-actions">
-      <button type="submit" class="btn btn-primary btn-large" x-bind:disabled="count < 3">
+      <button type="submit" class="btn btn-primary btn-large" id="interests-submit"
+              <%= selected.length < 3 ? 'disabled' : '' %>>
         <%= t('interests_submit') %>
       </button>
     </div>
   </form>
+
+  <script>
+    (function () {
+      var form    = document.getElementById('interests-form');
+      var counter = document.getElementById('interests-count');
+      var submit  = document.getElementById('interests-submit');
+      if (!form || !counter || !submit) return;
+
+      function recount() {
+        var n = form.querySelectorAll('input[type="checkbox"]:checked').length;
+        counter.textContent = n;
+        submit.disabled = n < 3;
+      }
+
+      // approach 1 : change event bubbles depuis la checkbox
+      form.addEventListener('change', function (e) {
+        if (e.target.type === 'checkbox') recount();
+      });
+
+      // approach 2 : click sur le label + délai pour laisser le browser toggler
+      form.querySelectorAll('.category-card').forEach(function (label) {
+        label.addEventListener('click', function () {
+          setTimeout(recount, 0);
+        });
+      });
+    })();
+  </script>
 </div>
 
 <%- include('partials/footer') %>
