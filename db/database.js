@@ -98,4 +98,10 @@ if (!userCols4.includes('password_reset_token')) {
   db.exec('ALTER TABLE users ADD COLUMN password_reset_expires DATETIME DEFAULT NULL');
 }
 
+// Bannissement utilisateur
+const userCols5 = db.prepare('PRAGMA table_info(users)').all().map(c => c.name);
+if (!userCols5.includes('is_banned')) {
+  db.exec('ALTER TABLE users ADD COLUMN is_banned INTEGER DEFAULT 0');
+}
+
 module.exports = db;

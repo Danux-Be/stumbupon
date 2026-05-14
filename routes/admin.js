@@ -17,6 +17,7 @@ const queryCatsForSites = db.prepare(`
 router.get('/admin', requireAdmin, (req, res) => {
   const stats = {
     users:     db.prepare('SELECT COUNT(*) AS n FROM users').get().n,
+    banned:    db.prepare('SELECT COUNT(*) AS n FROM users WHERE is_banned = 1').get().n,
     sites:     db.prepare("SELECT COUNT(*) AS n FROM sites WHERE status='approved'").get().n,
     pending:   db.prepare("SELECT COUNT(*) AS n FROM sites WHERE status='pending'").get().n,
     votes:     db.prepare('SELECT COUNT(*) AS n FROM votes').get().n,
@@ -156,6 +157,56 @@ router.get('/admin/bot', requireAdmin, (req, res) => {
     sourceStats,
     recent,
   });
+});
+
+// ── Gestion utilisateurs ─────────────────────────────────────────────────────
+
+router.get('/admin/users', requireAdmin, (req, res) => {
+  const users = db.prepare(`
+    SELECT u.id, u.username, u.email, u.is_admin, u.is_banned,
+           u.email_verified, u.created_at,
+           COUNT(DISTINCT s.id)  AS site_count,
+           COUNT(DISTINCT v.rowid) AS vote_count
+    FROM users u
+    LEFT JOIN sites s ON s.submitted_by = u.id
+    LEFT JOIN votes v ON v.user_id = u.id
+    GROUP BY u.id
+    ORDER BY u.created_at DESC
+  `).all();
+
+  res.render('admin/users', {
+    title: req.t('admin_users_title'),
+    users,
+    currentUserId: req.session.userId,
+  });
+});
+
+router.post('/admin/users/:id/ban', requireAdmin, verifyToken, (req, res) => {
+  const id = Number(req.params.id);
+  if (id === req.session.userId) return res.redirect('/admin/users');
+  db.prepare('UPDATE users SET is_banned = 1 WHERE id = ?').run(id);
+  // Invalide toutes les sessions actives de l'utilisateur banni
+  db.prepare("DELETE FROM sessions WHERE json_extract(sess, '$.userId') = ?").run(id);
+  res.redirect('/admin/users');
+});
+
+router.post('/admin/users/:id/unban', requireAdmin, verifyToken, (req, res) => {
+  db.prepare('UPDATE users SET is_banned = 0 WHERE id = ?').run(req.params.id);
+  res.redirect('/admin/users');
+});
+
+router.post('/admin/users/:id/promote', requireAdmin, verifyToken, (req, res) => {
+  const id = Number(req.params.id);
+  if (id === req.session.userId) return res.redirect('/admin/users');
+  db.prepare('UPDATE users SET is_admin = 1 WHERE id = ?').run(id);
+  res.redirect('/admin/users');
+});
+
+router.post('/admin/users/:id/demote', requireAdmin, verifyToken, (req, res) => {
+  const id = Number(req.params.id);
+  if (id === req.session.userId) return res.redirect('/admin/users');
+  db.prepare('UPDATE users SET is_admin = 0 WHERE id = ?').run(id);
+  res.redirect('/admin/users');
 });
 
 router.get('/admin/optout', requireAdmin, (req, res) => {

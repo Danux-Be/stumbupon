@@ -8,6 +8,10 @@
       <span class="stat-value"><%= stats.users %></span>
       <span class="stat-label"><%= t('admin_stat_users') %></span>
     </div>
+    <div class="stat-card <%= stats.banned > 0 ? 'stat-card--alert' : '' %>">
+      <span class="stat-value"><%= stats.banned %></span>
+      <span class="stat-label"><%= t('admin_stat_banned') %></span>
+    </div>
     <div class="stat-card">
       <span class="stat-value"><%= stats.sites %></span>
       <span class="stat-label"><%= t('admin_stat_sites') %></span>
@@ -44,6 +48,7 @@
     <a href="/admin/optout" class="btn <%= stats.optout > 0 ? 'btn-primary' : 'btn-secondary' %>">
       <%= t('admin_optout_title') %><% if (stats.optout > 0) { %> (<%= stats.optout %>)<% } %>
     </a>
+    <a href="/admin/users" class="btn btn-secondary">👥 <%= t('admin_users_title') %></a>
     <a href="/admin/bot" class="btn btn-secondary">🤖 <%= t('admin_bot_title') %></a>
   </div>
 </div>
