@@ -28,11 +28,11 @@
     <div class="stumble-bar__actions">
       <div class="vote-bar">
         <button class="vote-btn <%= userVote === 1  ? 'vote-btn--active' : '' %>"
-                id="vote-up">👍</button>
+                id="vote-up" title="Like (↑ / L)">👍</button>
         <span class="vote-score <%= score > 0 ? 'vote-score--pos' : score < 0 ? 'vote-score--neg' : '' %>"
               id="vote-score"><%= score > 0 ? '+' : '' %><%= score %></span>
         <button class="vote-btn <%= userVote === -1 ? 'vote-btn--active' : '' %>"
-                id="vote-down">👎</button>
+                id="vote-down" title="Dislike (↓ / D)">👎</button>
       </div>
 
       <button class="btn btn-ghost btn-sm" id="less-btn">
@@ -56,7 +56,14 @@
               title="<%= t('stumble_admin_reject') %>">🗑</button>
       <% } %>
 
-      <a href="/stumble" class="btn btn-primary btn-sm"><%= t('stumble_next') %> →</a>
+      <a href="/stumble" class="btn btn-primary btn-sm" title="Site suivant (Espace / →)"><%= t('stumble_next') %> →</a>
+
+      <div class="stumble-kbd-hint">
+        <kbd>↑</kbd> like &nbsp;·&nbsp;
+        <kbd>↓</kbd> dislike &nbsp;·&nbsp;
+        <kbd>Space</kbd> suivant &nbsp;·&nbsp;
+        <kbd>O</kbd> ouvrir
+      </div>
     </div>
   </div>
 
@@ -187,6 +194,34 @@
         }
       });
     }
+
+    // ── Raccourcis clavier ─────────────────────────────────────────────────
+    document.addEventListener('keydown', function(e) {
+      var tag = document.activeElement ? document.activeElement.tagName : '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      if (e.ctrlKey || e.altKey || e.metaKey) return;
+      switch (e.key) {
+        case ' ':
+        case 'ArrowRight':
+          e.preventDefault();
+          window.location.href = '/stumble';
+          break;
+        case 'ArrowUp':
+        case 'l': case 'L':
+          e.preventDefault();
+          postVote(1);
+          break;
+        case 'ArrowDown':
+        case 'd': case 'D':
+          e.preventDefault();
+          postVote(-1);
+          break;
+        case 'o': case 'O':
+          e.preventDefault();
+          window.open('<%= site.url %>', '_blank', 'noopener,noreferrer');
+          break;
+      }
+    });
 
     // ── Flash auto-dismiss ─────────────────────────────────────────────────
     var flash = document.getElementById('stumble-flash');
