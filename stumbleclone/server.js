@@ -63,11 +63,12 @@ app.use(express.json());
 app.use(i18nMiddleware.handle(i18next));
 app.use(applyLang);
 
-// Rend l'utilisateur et le token CSRF disponibles dans tous les templates
+// Rend l'utilisateur, le token CSRF et l'URL de base disponibles dans tous les templates
 app.use((req, res, next) => {
   res.locals.user = req.session.userId
     ? { id: req.session.userId, username: req.session.username, isAdmin: req.session.isAdmin }
     : null;
+  res.locals.baseUrl = process.env.BASE_URL || 'https://stumble.danux.be';
   next();
 });
 app.use(generateToken);

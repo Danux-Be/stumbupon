@@ -8,6 +8,27 @@
   <link rel="apple-touch-icon" href="/icons/icon-512.svg" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#5c6bc0" />
+  <%
+    var _ogDesc = locals.ogDescription || t('home_hero_desc');
+    var _ogTitle = locals.ogTitle || (title === 'StumbleClone' ? 'StumbleClone' : title + ' — StumbleClone');
+    var _ogImg = locals.ogImage || (baseUrl + '/icons/icon-512.svg');
+  %>
+  <meta name="description" content="<%= _ogDesc.slice(0, 160) %>" />
+  <!-- OpenGraph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="StumbleClone" />
+  <meta property="og:title" content="<%= _ogTitle %>" />
+  <meta property="og:description" content="<%= _ogDesc.slice(0, 200) %>" />
+  <meta property="og:image" content="<%= _ogImg %>" />
+  <% if (locals.ogUrl) { %>
+  <meta property="og:url" content="<%= ogUrl %>" />
+  <link rel="canonical" href="<%= ogUrl %>" />
+  <% } %>
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="<%= _ogTitle %>" />
+  <meta name="twitter:description" content="<%= _ogDesc.slice(0, 200) %>" />
+  <meta name="twitter:image" content="<%= _ogImg %>" />
   <link rel="stylesheet" href="/style.css" />
   <script>(function(){var t=localStorage.getItem('sc-theme');if(t==='dark')document.documentElement.classList.add('dark');else if(t==='light')document.documentElement.classList.add('light');}());</script>
   <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
