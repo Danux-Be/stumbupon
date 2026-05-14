@@ -329,6 +329,10 @@
   "settings_digest_title": "Digest hebdomadaire",
   "settings_digest_desc": "Reçois chaque lundi un email avec 5 sites sélectionnés selon tes centres d'intérêt.",
   "settings_digest_label": "Recevoir le digest hebdomadaire",
+
+  "settings_anim_title": "Animations",
+  "settings_anim_desc": "Active les transitions animées lors du passage d'un site à l'autre.",
+  "settings_anim_label": "Activer l'animation flip",
   "settings_save": "Enregistrer",
   "success_digest": "Préférence email mise à jour.",
 

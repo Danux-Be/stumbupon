@@ -216,5 +216,9 @@
   "lang_fr": "Frans", "lang_en": "Engels", "lang_nl": "Nederlands", "lang_de": "Duits",
   "lang_es": "Spaans", "lang_it": "Italiaans", "lang_pt": "Portugees", "lang_da": "Deens",
   "lang_pl": "Pools", "lang_ru": "Russisch", "lang_el": "Grieks", "lang_zh": "Chinees",
-  "lang_ja": "Japans", "lang_ar": "Arabisch"
+  "lang_ja": "Japans", "lang_ar": "Arabisch",
+
+  "settings_anim_title": "Animaties",
+  "settings_anim_desc": "Schakel geanimeerde overgangen in bij het navigeren tussen sites.",
+  "settings_anim_label": "Flip-animatie inschakelen"
 }

@@ -131,6 +131,25 @@
     </form>
   </section>
 
+  <!-- Animations -->
+  <section class="settings-section">
+    <h2><%= t('settings_anim_title') %></h2>
+    <p><%= t('settings_anim_desc') %></p>
+    <label class="lang-check-label" style="margin-top:0.8rem">
+      <input type="checkbox" id="anim-toggle" />
+      <%= t('settings_anim_label') %>
+    </label>
+    <script>
+      (function() {
+        var toggle = document.getElementById('anim-toggle');
+        toggle.checked = localStorage.getItem('sc-animations') === '1';
+        toggle.addEventListener('change', function() {
+          localStorage.setItem('sc-animations', this.checked ? '1' : '0');
+        });
+      })();
+    </script>
+  </section>
+
   <!-- Données personnelles (RGPD) -->
   <section class="settings-section">
     <h2><%= t('settings_data_title') %></h2>
