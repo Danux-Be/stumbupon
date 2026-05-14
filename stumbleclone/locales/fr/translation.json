@@ -306,6 +306,16 @@
   "reset_success": "Mot de passe modifié avec succès. Tu peux maintenant te connecter.",
 
   "stumble_share": "Partager",
+  "guest_banner": "{{count}} / {{limit}} sites découverts en invité —",
+  "guest_banner_cta": "S'inscrire gratuitement",
+  "guest_join_title": "Tu as découvert {{limit}} sites !",
+  "guest_join_desc": "Inscris-toi gratuitement pour continuer à explorer, voter et retrouver tes coups de cœur.",
+  "guest_join_perk1": "Découvertes personnalisées selon tes intérêts",
+  "guest_join_perk2": "Vote pour affiner tes recommandations",
+  "guest_join_perk3": "Sauvegarde tes sites favoris",
+  "guest_join_perk4": "Ajuste tes goûts à tout moment",
+  "guest_join_signup": "Créer un compte",
+  "guest_join_login": "J'ai déjà un compte",
 
   "settings_digest_title": "Digest hebdomadaire",
   "settings_digest_desc": "Reçois chaque lundi un email avec 5 sites sélectionnés selon tes centres d'intérêt.",
