@@ -621,4 +621,40 @@ Dev sans SMTP : alertes loguées en console ✅
 
 ---
 
+## Filtrage collaboratif ✅
+
+### Fichiers modifiés
+| Fichier | Modification |
+|---|---|
+| `routes/stumble.js` | Algo v2 — filtrage collaboratif fusionné avec pondération par intérêts |
+
+### Algorithme v2
+L'algorithme de recommandation passe de "poids par catégories" seul à un modèle hybride :
+
+**Phase 1 — Intérêts** (toujours active)  
+50 candidats tirés des sites dont les catégories correspondent aux `user_interests` de l'utilisateur, pondérés par poids de chaque catégorie, mélangés aléatoirement.
+
+**Phase 2 — Collaboratif** (activée dès ≥ 5 upvotes de l'utilisateur)  
+1. Trouver les 30 utilisateurs les plus similaires : ceux qui ont liké (+1) des sites que l'utilisateur courant a aussi likés (classés par nombre de votes communs)
+2. Récupérer les 30 sites que ces utilisateurs similaires ont likés, que l'utilisateur courant n'a pas encore vus ni rejetés
+3. Fusionner avec `mergeWithCollab()` :
+   - Sites dans les deux listes → boost du poids (+30% max_interest × score_collab normalisé)
+   - Sites uniquement en collaboratif (découverte hors centres d'intérêt) → poids = 70% du boost
+
+**Seuil cold-start** : en dessous de 5 likes, le signal collaboratif est trop faible et on reste sur l'algo v1 seul.
+
+### Test validé
+```bash
+node -e "
+  require('dotenv').config();
+  const db = require('./db/database');
+  const collab = db.prepare('SELECT COUNT(*) as n FROM votes WHERE direction=1').get();
+  console.log('Upvotes total:', collab.n);
+"
+# → 13 upvotes, 2 votants → signal actif pour user Danux (10 upvotes ≥ 5)
+# → 3 candidats collaboratifs trouvés au premier test
+```
+
+---
+
 <!-- Les étapes suivantes seront ajoutées au fil du développement -->
