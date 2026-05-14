@@ -7,6 +7,13 @@
       <a href="/privacy"><%= t('privacy_title') %></a> ·
       <a href="/optout"><%= t('optout_title') %></a>
     </p>
+    <div class="footer-lang">
+      <select class="lang-select" onchange="location.href='/lang/'+this.value" aria-label="Language">
+        <% for (const [code, label] of Object.entries(langLabels)) { %>
+          <option value="<%= code %>" <%= currentLang === code ? 'selected' : '' %>><%= label %></option>
+        <% } %>
+      </select>
+    </div>
   </footer>
   <script src="/app.js"></script>
 </body>

@@ -1,3 +1,21 @@
+// ─── Nav dropdown — toggle mobile (click/tap) ─────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+  var btn  = document.getElementById('nav-user-btn');
+  var menu = btn && btn.closest('.nav-user-menu');
+  if (!btn || !menu) return;
+
+  btn.addEventListener('click', function (e) {
+    var open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+    e.stopPropagation();
+  });
+
+  document.addEventListener('click', function () {
+    menu.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  });
+});
+
 // ─── Service Worker ───────────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
