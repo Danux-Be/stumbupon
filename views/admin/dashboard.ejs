@@ -36,6 +36,10 @@
       <span class="stat-value"><%= stats.optout %></span>
       <span class="stat-label"><%= t('admin_stat_optout') %></span>
     </div>
+    <div class="stat-card <%= stats.flagged > 0 ? 'stat-card--alert' : '' %>">
+      <span class="stat-value"><%= stats.flagged %></span>
+      <span class="stat-label"><%= t('admin_stat_flagged') %></span>
+    </div>
   </div>
 
   <div class="admin-nav">
@@ -47,6 +51,9 @@
     </a>
     <a href="/admin/optout" class="btn <%= stats.optout > 0 ? 'btn-primary' : 'btn-secondary' %>">
       <%= t('admin_optout_title') %><% if (stats.optout > 0) { %> (<%= stats.optout %>)<% } %>
+    </a>
+    <a href="/admin/flagged" class="btn <%= stats.flagged > 0 ? 'btn-primary' : 'btn-secondary' %>">
+      ⚠️ <%= t('admin_flagged_title') %><% if (stats.flagged > 0) { %> (<%= stats.flagged %>)<% } %>
     </a>
     <a href="/admin/users" class="btn btn-secondary">👥 <%= t('admin_users_title') %></a>
     <a href="/admin/bot" class="btn btn-secondary">🤖 <%= t('admin_bot_title') %></a>

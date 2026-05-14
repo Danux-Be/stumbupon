@@ -25,7 +25,8 @@ router.get('/admin', requireAdmin, (req, res) => {
       "SELECT COUNT(DISTINCT site_id) AS n FROM reports WHERE resolved=0"
     ).get().n,
     quarantine: db.prepare("SELECT COUNT(*) AS n FROM sites WHERE status='quarantine'").get().n,
-    optout: db.prepare("SELECT COUNT(*) AS n FROM optout_requests WHERE status='pending'").get().n,
+    optout:   db.prepare("SELECT COUNT(*) AS n FROM optout_requests WHERE status='pending'").get().n,
+    flagged:  db.prepare("SELECT COUNT(*) AS n FROM sites WHERE status='flagged'").get().n,
   };
   res.render('admin/dashboard', {
     title: req.t('admin_title'),
@@ -157,6 +158,29 @@ router.get('/admin/bot', requireAdmin, (req, res) => {
     sourceStats,
     recent,
   });
+});
+
+// ── Sites flaggés (re-check morts/redirects) ──────────────────────────────────
+
+router.get('/admin/flagged', requireAdmin, (req, res) => {
+  const sites = db.prepare(`
+    SELECT * FROM sites WHERE status = 'flagged'
+    ORDER BY last_checked_at DESC
+  `).all();
+  res.render('admin/flagged', {
+    title: req.t('admin_flagged_title'),
+    sites,
+  });
+});
+
+router.post('/admin/flagged/:id/restore', requireAdmin, verifyToken, (req, res) => {
+  db.prepare("UPDATE sites SET status='approved', flag_reason=NULL WHERE id=?").run(req.params.id);
+  res.redirect('/admin/flagged');
+});
+
+router.post('/admin/flagged/:id/reject', requireAdmin, verifyToken, (req, res) => {
+  db.prepare("UPDATE sites SET status='rejected' WHERE id=?").run(req.params.id);
+  res.redirect('/admin/flagged');
 });
 
 // ── Gestion utilisateurs ─────────────────────────────────────────────────────
