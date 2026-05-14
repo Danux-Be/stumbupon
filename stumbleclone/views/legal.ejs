@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+
+<div class="legal-page">
+  <h1><%= t('legal_title') %></h1>
+  <p class="legal-date"><%= t('legal_updated') %></p>
+
+  <section>
+    <h2><%= t('legal_s1_title') %></h2>
+    <p><%= t('legal_s1_body') %></p>
+  </section>
+
+  <section>
+    <h2><%= t('legal_s2_title') %></h2>
+    <p><%= t('legal_s2_body') %></p>
+  </section>
+
+  <section>
+    <h2><%= t('legal_s3_title') %></h2>
+    <p><%= t('legal_s3_body') %></p>
+  </section>
+
+  <section>
+    <h2><%= t('legal_s4_title') %></h2>
+    <p><%= t('legal_s4_body') %></p>
+  </section>
+
+  <p class="legal-links">
+    <a href="/privacy"><%= t('privacy_title') %></a> ·
+    <a href="/optout"><%= t('optout_title') %></a>
+  </p>
+</div>
+
+<%- include('partials/footer') %>

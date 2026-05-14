@@ -1,0 +1,19 @@
+<%- include('partials/header') %>
+
+<div class="form-page">
+  <div class="form-card" style="text-align:center">
+    <% if (success) { %>
+      <div style="font-size:3rem;margin-bottom:1rem">✅</div>
+      <h1 style="font-size:1.5rem;margin-bottom:1rem"><%= t('verify_success_title') %></h1>
+      <p style="color:var(--color-text-muted);margin-bottom:2rem"><%= t('verify_success_desc') %></p>
+      <a href="/stumble" class="btn btn-primary"><%= t('nav_stumble') %></a>
+    <% } else { %>
+      <div style="font-size:3rem;margin-bottom:1rem">❌</div>
+      <h1 style="font-size:1.5rem;margin-bottom:1rem"><%= t('verify_title') %></h1>
+      <p class="form-error"><%= error %></p>
+      <a href="/" class="btn btn-secondary"><%= t('verify_back_home') %></a>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="<%= currentLang %>">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= site.title %> — StumbleClone</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>" />
+  <link rel="stylesheet" href="/style.css" />
+  <meta name="csrf" content="<%= csrfToken %>" />
+</head>
+<body class="stumble-iframe-page">
+
+  <%
+    var hostname = site.url;
+    try { hostname = new URL(site.url).hostname; } catch(e) {}
+  %>
+
+  <!-- ── Barre d'outils ────────────────────────────────────────────────── -->
+  <div class="stumble-bar">
+    <a href="/" class="stumble-bar__logo" title="StumbleClone">🌀</a>
+
+    <div class="stumble-bar__site">
+      <span class="stumble-bar__title"><%= site.title %></span>
+      <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer"
+         class="stumble-bar__url">↗ <%= hostname %></a>
+    </div>
+
+    <div class="stumble-bar__actions">
+      <div class="vote-bar">
+        <button class="vote-btn <%= userVote === 1  ? 'vote-btn--active' : '' %>"
+                id="vote-up">👍</button>
+        <span class="vote-score <%= score > 0 ? 'vote-score--pos' : score < 0 ? 'vote-score--neg' : '' %>"
+              id="vote-score"><%= score > 0 ? '+' : '' %><%= score %></span>
+        <button class="vote-btn <%= userVote === -1 ? 'vote-btn--active' : '' %>"
+                id="vote-down">👎</button>
+      </div>
+
+      <button class="btn btn-ghost btn-sm" id="less-btn">
+        🔽 <span class="stumble-bar__label"><%= t('stumble_less_of_this') %></span>
+      </button>
+
+      <details class="stumble-bar__report-wrap">
+        <summary class="btn btn-ghost btn-sm" title="<%= t('report_link') %>">⚑</summary>
+        <div class="stumble-bar__report-popup">
+          <form method="POST" action="/report/<%= site.id %>">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <textarea name="reason" rows="2" maxlength="500"
+              placeholder="<%= t('report_reason_placeholder') %>"></textarea>
+            <button type="submit" class="btn btn-secondary btn-sm"><%= t('report_submit') %></button>
+          </form>
+        </div>
+      </details>
+
+      <a href="/stumble" class="btn btn-primary btn-sm"><%= t('stumble_next') %> →</a>
+    </div>
+  </div>
+
+  <% if (flashLessOfThis) { %>
+    <div class="stumble-flash" id="stumble-flash"><%= t('stumble_less_done') %></div>
+  <% } %>
+
+  <!-- ── Iframe (uniquement si can_embed != false) ────────────────────── -->
+  <% if (canEmbed) { %>
+  <iframe
+    src="<%= site.url %>"
+    class="stumble-iframe"
+    id="stumble-iframe"
+    title="<%= site.title %>"
+    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+  ></iframe>
+  <% } %>
+
+  <!-- ── Carte fallback ───────────────────────────────────────────────── -->
+  <div class="stumble-card-wrap" id="stumble-card-wrap"
+       style="<%= canEmbed ? 'display:none' : '' %>">
+    <div class="stumble-card">
+      <div class="stumble-meta">
+        <% categories.forEach(cat => { %>
+          <span class="stumble-tag"><%= cat.emoji %> <%= cat.localName %></span>
+        <% }) %>
+      </div>
+      <h1 class="stumble-title"><%= site.title %></h1>
+      <p class="stumble-desc"><%= site.description %></p>
+      <p class="stumble-url"><%= hostname %></p>
+      <div class="stumble-actions">
+        <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer"
+           class="btn btn-primary btn-large">
+          <%= t('stumble_open_tab') %> ↗
+        </a>
+        <a href="/stumble" class="btn btn-secondary btn-large">
+          <%= t('stumble_next') %> →
+        </a>
+      </div>
+
+      <details class="why-details" style="margin-top:1.5rem">
+        <summary class="why-toggle"><%= t('stumble_why_title') %></summary>
+        <div class="why-body">
+          <div class="why-row">
+            <span class="why-label"><%= t('stumble_why_categories') %></span>
+            <span class="why-cats">
+              <% const matchingCats = categories.filter(c => c.in_interests); %>
+              <% (matchingCats.length ? matchingCats : categories).forEach(cat => { %>
+                <span class="stumble-tag stumble-tag--why">
+                  <%= cat.emoji %> <%= cat.localName %>
+                  <% if (matchingCats.length) { %>
+                    <span class="why-weight">×<%= parseFloat(cat.weight).toFixed(1) %></span>
+                  <% } %>
+                </span>
+              <% }) %>
+            </span>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <script>
+    var CSRF    = document.querySelector('meta[name="csrf"]').getAttribute('content');
+    var SITE_ID = '<%= site.id %>';
+    var userVote = <%= userVote === null || userVote === undefined ? 'null' : userVote %>;
+    var score    = <%= score %>;
+
+    // ── Votes (fetch, pas de rechargement d'iframe) ────────────────────────
+    function postVote(dir) {
+      fetch('/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: '_csrf=' + encodeURIComponent(CSRF) +
+              '&site_id=' + SITE_ID + '&direction=' + dir,
+      });
+      if (userVote === dir) { score -= dir;  userVote = null; }
+      else                  { if (userVote !== null) score -= userVote; score += dir; userVote = dir; }
+      var up = document.getElementById('vote-up');
+      var dn = document.getElementById('vote-down');
+      var sc = document.getElementById('vote-score');
+      up.classList.toggle('vote-btn--active', userVote === 1);
+      dn.classList.toggle('vote-btn--active', userVote === -1);
+      sc.textContent = (score > 0 ? '+' : '') + score;
+      sc.className = 'vote-score' + (score > 0 ? ' vote-score--pos' : score < 0 ? ' vote-score--neg' : '');
+    }
+    document.getElementById('vote-up').addEventListener('click',  function() { postVote(1);  });
+    document.getElementById('vote-down').addEventListener('click', function() { postVote(-1); });
+
+    // ── Moins de ça ────────────────────────────────────────────────────────
+    document.getElementById('less-btn').addEventListener('click', function() {
+      fetch('/less-of-this', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: '_csrf=' + encodeURIComponent(CSRF) + '&site_id=' + SITE_ID,
+      }).then(function() { window.location.href = '/stumble'; });
+    });
+
+    // ── Détection du blocage iframe (X-Frame-Options → about:blank) ───────
+    var iframe   = document.getElementById('stumble-iframe');
+    var cardWrap = document.getElementById('stumble-card-wrap');
+
+    if (iframe) {
+      function showCard() {
+        iframe.style.display   = 'none';
+        cardWrap.style.display = 'flex';
+      }
+
+      iframe.addEventListener('load', function() {
+        try {
+          var loc = iframe.contentWindow.location.href;
+          if (loc === 'about:blank') showCard();
+        } catch (e) {
+          // SecurityError → cross-origin → chargement réussi
+        }
+      });
+    }
+
+    // ── Flash auto-dismiss ─────────────────────────────────────────────────
+    var flash = document.getElementById('stumble-flash');
+    if (flash) setTimeout(function() {
+      flash.style.transition = 'opacity 0.5s';
+      flash.style.opacity    = '0';
+      setTimeout(function() { flash.remove(); }, 500);
+    }, 3000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<%- include('partials/header') %>
+
+<div class="legal-page">
+  <h1><%= t('privacy_title') %></h1>
+  <p class="legal-date"><%= t('legal_updated') %></p>
+
+  <section>
+    <h2><%= t('privacy_s1_title') %></h2>
+    <p><%= t('privacy_s1_body') %></p>
+  </section>
+
+  <section>
+    <h2><%= t('privacy_s2_title') %></h2>
+    <ul>
+      <% t('privacy_s2_items').split('|').forEach(item => { %>
+        <li><%= item.trim() %></li>
+      <% }) %>
+    </ul>
+  </section>
+
+  <section>
+    <h2><%= t('privacy_s3_title') %></h2>
+    <p><%= t('privacy_s3_body') %></p>
+  </section>
+
+  <section>
+    <h2><%= t('privacy_s4_title') %></h2>
+    <p><%= t('privacy_s4_body') %></p>
+  </section>
+
+  <section>
+    <h2><%= t('privacy_s5_title') %></h2>
+    <ul>
+      <% t('privacy_s5_items').split('|').forEach(item => { %>
+        <li><%= item.trim() %></li>
+      <% }) %>
+    </ul>
+    <p style="margin-top:0.8rem"><%= t('privacy_s5_contact') %> <a href="mailto:dany@danux.be">dany@danux.be</a></p>
+  </section>
+
+  <section>
+    <h2><%= t('privacy_s6_title') %></h2>
+    <p><%- t('privacy_s6_body') %></p>
+  </section>
+
+  <p class="legal-links">
+    <a href="/legal"><%= t('legal_title') %></a> ·
+    <a href="/optout"><%= t('optout_title') %></a>
+  </p>
+</div>
+
+<%- include('partials/footer') %>

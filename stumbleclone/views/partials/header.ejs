@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="<%= currentLang %>">
+<html lang="<%= currentLang %>" dir="<%= currentLang === 'ar' ? 'rtl' : 'ltr' %>">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= title %> — StumbleClone</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>" />
   <link rel="stylesheet" href="/style.css" />
   <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
-  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <script src="/js/alpine.min.js" defer></script>
   <script defer src="https://analytics.danux.be/script.js" data-website-id="2bd358ed-ed44-4bb6-9ad8-ae9519f5067f"></script>
 </head>
 <body>
@@ -15,7 +16,13 @@
     <nav>
       <% if (locals.user) { %>
         <span class="nav-username"><%- t('nav_greeting', { name: `<strong>${user.username}</strong>` }) %></span>
+        <a href="/stumble" class="btn btn-primary btn-sm"><%= t('nav_stumble') %></a>
         <a href="/favorites"><%= t('nav_favorites') %></a>
+        <a href="/tastes"><%= t('nav_tastes') %></a>
+        <a href="/submit"><%= t('nav_submit') %></a>
+        <% if (locals.user && user.isAdmin) { %>
+          <a href="/admin" class="nav-admin">⚙️ Admin</a>
+        <% } %>
         <form method="POST" action="/logout" style="display:inline">
           <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>" />
           <button type="submit" class="btn btn-secondary btn-sm"><%= t('nav_logout') %></button>
@@ -26,11 +33,11 @@
       <% } %>
 
       <div class="lang-selector">
-        <% for (const [code, label] of Object.entries(langLabels)) { %>
-          <a href="/lang/<%= code %>"
-             class="lang-link<%= currentLang === code ? ' lang-link--active' : '' %>"
-             title="<%= label %>"><%= code.toUpperCase() %></a>
-        <% } %>
+        <select class="lang-select" onchange="location.href='/lang/'+this.value" aria-label="Language">
+          <% for (const [code, label] of Object.entries(langLabels)) { %>
+            <option value="<%= code %>" <%= currentLang === code ? 'selected' : '' %>><%= label %></option>
+          <% } %>
+        </select>
       </div>
     </nav>
   </header>

@@ -1,0 +1,60 @@
+<%- include('../partials/header') %>
+
+<div class="admin-page">
+  <div class="admin-page-header">
+    <a href="/admin" class="admin-back">← <%= t('admin_title') %></a>
+    <h1><%= t('admin_reports_title') %> (<%= sites.length %>)</h1>
+  </div>
+
+  <% if (sites.length === 0) { %>
+    <div class="favorites-empty">
+      <p><%= t('admin_reports_empty') %></p>
+    </div>
+  <% } else { %>
+    <div class="admin-list">
+      <% sites.forEach(site => { %>
+        <div class="admin-card">
+          <div class="fav-meta">
+            <% (site.cats || []).forEach(cat => { %>
+              <span class="stumble-tag"><%= cat.emoji %> <%= cat.localName %></span>
+            <% }) %>
+            <span class="stumble-tag <%= site.status === 'quarantine' ? 'stumble-tag--quarantine' : '' %>">
+              <%= site.status === 'quarantine' ? '🚫 ' + t('admin_quarantined') : '✅ ' + t('admin_stat_sites') %>
+            </span>
+            <span class="risk-badge risk-badge--<%= (site.risk_score||0) >= 60 ? 'high' : (site.risk_score||0) >= 35 ? 'medium' : 'low' %>">
+              <%= site.report_count %> <%= t('admin_reports_count') %>
+            </span>
+          </div>
+
+          <h2 class="fav-title"><%= site.title %></h2>
+          <p class="admin-url">
+            <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer"><%= site.url %></a>
+          </p>
+
+          <div class="report-list">
+            <% (reportsBySite[site.id] || []).forEach(r => { %>
+              <div class="report-item">
+                <strong><%= r.reporter || t('admin_bot') %></strong>
+                <% if (r.reason) { %> — <em><%= r.reason %></em><% } %>
+                <span class="report-date"><%= new Date(r.created_at).toLocaleDateString() %></span>
+              </div>
+            <% }) %>
+          </div>
+
+          <div class="admin-actions" style="margin-top:1rem">
+            <form method="POST" action="/admin/resolve/<%= site.id %>" style="display:inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit" class="btn btn-approve"><%= t('admin_resolve') %></button>
+            </form>
+            <form method="POST" action="/admin/dismiss/<%= site.id %>" style="display:inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit" class="btn btn-reject"><%= t('admin_dismiss') %></button>
+            </form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

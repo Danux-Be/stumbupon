@@ -1,0 +1,47 @@
+<%- include('partials/header') %>
+
+<div class="form-page">
+  <div class="form-card" style="max-width:520px">
+    <h1><%= t('optout_title') %></h1>
+    <p style="color:var(--color-text-muted);font-size:0.9rem;margin-bottom:1.5rem;text-align:left"><%= t('optout_desc') %></p>
+
+    <% if (success) { %>
+      <div class="alert alert-success"><%= t('optout_success') %></div>
+    <% } else if (error === 'already') { %>
+      <div class="alert alert-error"><%= t('optout_already') %></div>
+    <% } else if (error === 'url') { %>
+      <div class="alert alert-error"><%= t('error_url_invalid') %></div>
+    <% } else if (error === 'fields') { %>
+      <div class="alert alert-error"><%= t('error_fields_required') %></div>
+    <% } %>
+
+    <% if (!success) { %>
+      <form method="POST" action="/optout">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+        <div class="form-group">
+          <label for="url"><%= t('optout_url') %></label>
+          <input type="url" id="url" name="url" required placeholder="https://example.com" />
+        </div>
+        <div class="form-group">
+          <label for="name"><%= t('optout_name') %></label>
+          <input type="text" id="name" name="name" placeholder="<%= t('optout_name_optional') %>" />
+        </div>
+        <div class="form-group">
+          <label for="email"><%= t('optout_email') %></label>
+          <input type="email" id="email" name="email" required />
+          <span class="form-hint"><%= t('optout_email_hint') %></span>
+        </div>
+        <div class="form-group">
+          <label for="reason"><%= t('optout_reason') %></label>
+          <textarea id="reason" name="reason" rows="3" maxlength="1000"
+            placeholder="<%= t('optout_reason_placeholder') %>"
+            style="padding:0.65rem 0.9rem;border:1.5px solid var(--color-border);border-radius:var(--radius-sm);font-family:var(--font);font-size:1rem;resize:vertical;width:100%"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block"><%= t('optout_submit') %></button>
+      </form>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

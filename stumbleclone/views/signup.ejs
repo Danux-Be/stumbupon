@@ -43,6 +43,12 @@
         <input type="password" id="confirm" name="confirm" required minlength="8" autocomplete="new-password" />
       </div>
 
+      <% if (turnstileSiteKey) { %>
+        <div class="form-group">
+          <div class="cf-turnstile" data-sitekey="<%= turnstileSiteKey %>"></div>
+        </div>
+      <% } %>
+
       <button type="submit" class="btn btn-primary btn-block"><%= t('signup_submit') %></button>
     </form>
 
@@ -51,5 +57,9 @@
     </p>
   </div>
 </div>
+
+<% if (turnstileSiteKey) { %>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<% } %>
 
 <%- include('partials/footer') %>

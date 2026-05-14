@@ -14,9 +14,21 @@ const { applyLang } = require('./middleware/lang');
 const authRoutes      = require('./routes/auth');
 const interestsRoutes = require('./routes/interests');
 const settingsRoutes  = require('./routes/settings');
+const stumbleRoutes   = require('./routes/stumble');
+const voteRoutes      = require('./routes/votes');
+const favoritesRoutes = require('./routes/favorites');
+const submitRoutes    = require('./routes/submit');
+const adminRoutes     = require('./routes/admin');
+const reportRoutes    = require('./routes/report');
+const tastesRoutes    = require('./routes/tastes');
+const legalRoutes     = require('./routes/legal');
+const accountRoutes   = require('./routes/account');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
+
+// Caddy termine TLS et proxifie en HTTP → Express doit faire confiance au proxy
+app.set('trust proxy', 1);
 
 // Moteur de templates EJS
 app.set('view engine', 'ejs');
@@ -63,9 +75,65 @@ app.use(generateToken);
 app.use(authRoutes);
 app.use(interestsRoutes);
 app.use(settingsRoutes);
+app.use(stumbleRoutes);
+app.use(voteRoutes);
+app.use(favoritesRoutes);
+app.use(submitRoutes);
+app.use(adminRoutes);
+app.use(reportRoutes);
+app.use(tastesRoutes);
+app.use(legalRoutes);
+app.use(accountRoutes);
+
+const db = require('./db/database');
+const stmtRecentSites = db.prepare(`
+  SELECT s.id, s.url, s.title, s.description, s.language
+  FROM sites s
+  WHERE s.status = 'approved'
+  ORDER BY s.approved_at DESC
+  LIMIT 6
+`);
+const stmtSiteCategories = db.prepare(`
+  SELECT sc.site_id, c.emoji,
+         COALESCE(ct.name, c.name) AS localName
+  FROM site_categories sc
+  JOIN categories c ON c.id = sc.category_id
+  LEFT JOIN category_translations ct ON ct.category_id = c.id AND ct.language = ?
+  WHERE sc.site_id IN (SELECT value FROM json_each(?))
+  ORDER BY localName
+`);
+const stmtStats = db.prepare(`
+  SELECT
+    (SELECT COUNT(*) FROM sites WHERE status = 'approved') AS site_count,
+    (SELECT COUNT(*) FROM users) AS user_count
+`);
+const stmtUserStats = db.prepare(`
+  SELECT
+    (SELECT COUNT(*) FROM votes WHERE user_id = ? AND direction = 1) AS favorites,
+    (SELECT COUNT(*) FROM views WHERE user_id = ?) AS discovered
+`);
 
 app.get('/', (req, res) => {
-  res.render('home', { title: 'StumbleClone' });
+  const stats = stmtStats.get();
+  const userId = req.session?.userId;
+
+  if (userId) {
+    const userStats = stmtUserStats.get(userId, userId);
+    return res.render('home', { title: 'StumbleClone', stats, userStats, recentSites: null });
+  }
+
+  const lang = res.locals.currentLang || 'fr';
+  const recent = stmtRecentSites.all();
+  const ids = JSON.stringify(recent.map(s => s.id));
+  const cats = stmtSiteCategories.all(lang, ids);
+  const catsBySite = {};
+  for (const c of cats) {
+    if (!catsBySite[c.site_id]) catsBySite[c.site_id] = [];
+    catsBySite[c.site_id].push(c);
+  }
+  const recentSites = recent.map(s => ({ ...s, categories: catsBySite[s.id] || [] }));
+
+  res.render('home', { title: 'StumbleClone', stats, userStats: null, recentSites });
 });
 
 app.listen(PORT, () => {

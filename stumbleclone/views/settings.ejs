@@ -9,8 +9,12 @@
     <p class="alert alert-success"><%= t('success_password') %></p>
   <% } else if (success === 'lang') { %>
     <p class="alert alert-success"><%= t('success_lang') %></p>
+  <% } else if (success === 'content_langs') { %>
+    <p class="alert alert-success"><%= t('success_content_langs') %></p>
   <% } else if (error === 'interests-min') { %>
     <p class="alert alert-error"><%= t('error_interests_min') %></p>
+  <% } else if (error === 'delete_password_wrong') { %>
+    <p class="alert alert-error"><%= t('error_delete_password_wrong') %></p>
   <% } else if (error) { %>
     <p class="alert alert-error"><%= error %></p>
   <% } %>
@@ -20,16 +24,15 @@
     <h2><%= t('settings_interests_title') %></h2>
     <p><%= t('settings_interests_desc') %></p>
 
-    <form method="POST" action="/settings/interests" x-data="{ count: <%= selected.length %> }">
+    <form method="POST" action="/settings/interests" id="settings-interests-form">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-      <p class="interests-count"
-         x-init="$el.textContent = '<%= t('interests_count', { count: selected.length }) %>'"
-         x-text="'<%= t('interests_count', {count: 0}) %>'.replace('0', count)">
+      <p class="interests-count">
+        <span id="settings-interests-count"><%= selected.length %></span>&nbsp;<%- t('interests_count', { count: '' }).trim() %>
       </p>
 
       <div class="categories-grid categories-grid--compact">
         <% for (const cat of categories) { %>
-          <label class="category-card" x-on:click="count = $el.querySelector('input').checked ? count - 1 : count + 1">
+          <label class="category-card">
             <input
               type="checkbox"
               name="categories"
@@ -42,8 +45,55 @@
         <% } %>
       </div>
 
-      <button type="submit" class="btn btn-primary" x-bind:disabled="count < 3">
+      <button type="submit" class="btn btn-primary" id="settings-interests-submit"
+              <%= selected.length < 3 ? 'disabled' : '' %>>
         <%= t('settings_interests_submit') %>
+      </button>
+    </form>
+
+    <script>
+      (function () {
+        var form    = document.getElementById('settings-interests-form');
+        var counter = document.getElementById('settings-interests-count');
+        var submit  = document.getElementById('settings-interests-submit');
+        if (!form || !counter || !submit) return;
+
+        function recount() {
+          var n = form.querySelectorAll('input[type="checkbox"]:checked').length;
+          counter.textContent = n;
+          submit.disabled = n < 3;
+        }
+
+        form.addEventListener('change', function (e) {
+          if (e.target.type === 'checkbox') recount();
+        });
+
+        form.querySelectorAll('.category-card').forEach(function (label) {
+          label.addEventListener('click', function () {
+            setTimeout(recount, 0);
+          });
+        });
+      })();
+    </script>
+  </section>
+
+  <!-- Langues du contenu -->
+  <section class="settings-section">
+    <h2><%= t('settings_content_langs_title') %></h2>
+    <p><%= t('settings_content_langs_desc') %></p>
+    <form method="POST" action="/settings/content-languages">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <div class="lang-checkboxes">
+        <% for (const code of allLangs) { %>
+          <label class="lang-check-label">
+            <input type="checkbox" name="langs" value="<%= code %>"
+                   <%= contentLangs.includes(code) ? 'checked' : '' %> />
+            <%= t('lang_' + code) %>
+          </label>
+        <% } %>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top:0.8rem">
+        <%= t('settings_content_langs_submit') %>
       </button>
     </form>
   </section>
@@ -59,6 +109,32 @@
           <%= label %>
         </a>
       <% } %>
+    </div>
+  </section>
+
+  <!-- Données personnelles (RGPD) -->
+  <section class="settings-section">
+    <h2><%= t('settings_data_title') %></h2>
+    <p><%= t('settings_data_desc') %></p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:0.8rem">
+      <a href="/account/export" class="btn btn-secondary">⬇️ <%= t('settings_export') %></a>
+
+      <details style="width:100%;margin-top:0.5rem">
+        <summary class="report-toggle" style="color:#dc2626">⚠️ <%= t('settings_delete_title') %></summary>
+        <div style="margin-top:1rem;padding:1.2rem;background:#fef2f2;border-radius:var(--radius-sm);border:1px solid #fecaca">
+          <p style="font-size:0.9rem;color:#7f1d1d;margin-bottom:1rem"><%= t('settings_delete_warning') %></p>
+          <form method="POST" action="/account/delete" class="form-card form-card--inline">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <div class="form-group">
+              <label for="delete-password"><%= t('settings_password_current') %></label>
+              <input type="password" id="delete-password" name="password" required autocomplete="current-password"
+                placeholder="<%= t('settings_delete_confirm_placeholder') %>" />
+            </div>
+            <button type="submit" class="btn btn-reject"><%= t('settings_delete_submit') %></button>
+          </form>
+        </div>
+      </details>
     </div>
   </section>
 

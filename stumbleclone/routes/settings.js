@@ -16,6 +16,8 @@ function getCategories(lang) {
   `).all(lang);
 }
 
+const ALL_LANGS = ['fr', 'en', 'nl', 'de', 'es', 'it', 'pt', 'da', 'pl', 'ru', 'el', 'zh', 'ja', 'ar'];
+
 router.get('/settings', requireLogin, (req, res) => {
   const lang = res.locals.currentLang;
   const categories = getCategories(lang);
@@ -23,10 +25,18 @@ router.get('/settings', requireLogin, (req, res) => {
     'SELECT category_id FROM user_interests WHERE user_id = ?'
   ).all(req.session.userId).map(r => r.category_id);
 
+  const user = db.prepare('SELECT content_languages FROM users WHERE id = ?').get(req.session.userId);
+  const rawLangs = user?.content_languages;
+  const contentLangs = (!rawLangs || rawLangs === 'all')
+    ? [...ALL_LANGS]
+    : rawLangs.split(',').filter(Boolean);
+
   res.render('settings', {
     title: req.t('settings_title'),
     categories,
     selected,
+    contentLangs,
+    allLangs: ALL_LANGS,
     success: req.query.success || null,
     error: req.query.error || null,
   });
@@ -49,6 +59,16 @@ router.post('/settings/interests', requireLogin, verifyToken, (req, res) => {
 
   replace(req.session.userId, chosen);
   res.redirect('/settings?success=interests');
+});
+
+router.post('/settings/content-languages', requireLogin, verifyToken, (req, res) => {
+  let chosen = req.body.langs || [];
+  if (!Array.isArray(chosen)) chosen = [chosen];
+  chosen = chosen.filter(l => ALL_LANGS.includes(l));
+
+  const value = chosen.length === 0 || chosen.length === ALL_LANGS.length ? 'all' : chosen.join(',');
+  db.prepare('UPDATE users SET content_languages = ? WHERE id = ?').run(value, req.session.userId);
+  res.redirect('/settings?success=content_langs');
 });
 
 router.post('/settings/password', requireLogin, verifyToken, async (req, res) => {

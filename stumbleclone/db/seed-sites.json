@@ -1,0 +1,807 @@
+[
+  {
+    "url": "https://neal.fun",
+    "title": "neal.fun",
+    "description": "Collection d'expériences web interactives et jouables.",
+    "language": "en",
+    "categories": ["curiosites", "design", "programmation"]
+  },
+  {
+    "url": "https://theuselessweb.com",
+    "title": "The Useless Web",
+    "description": "Un bouton qui t'envoie vers un site web complètement inutile et aléatoire.",
+    "language": "en",
+    "categories": ["humour", "curiosites"]
+  },
+  {
+    "url": "https://windows93.net",
+    "title": "Windows 93",
+    "description": "Une simulation satirique de Windows 93, un OS qui n'a jamais existé.",
+    "language": "en",
+    "categories": ["humour", "curiosites", "technologie"]
+  },
+  {
+    "url": "https://radio.garden",
+    "title": "Radio Garden",
+    "description": "Explore toutes les radios du monde sur un globe interactif en 3D.",
+    "language": "en",
+    "categories": ["musique", "voyage", "curiosites"]
+  },
+  {
+    "url": "https://www.histography.io",
+    "title": "Histography",
+    "description": "Visualisation interactive de 14 milliards d'années d'histoire en une seule frise.",
+    "language": "en",
+    "categories": ["histoire", "design", "curiosites"]
+  },
+  {
+    "url": "https://stellarium-web.org",
+    "title": "Stellarium Web",
+    "description": "Planétarium en ligne : observe le ciel étoilé en temps réel depuis n'importe quel endroit.",
+    "language": "en",
+    "categories": ["astronomie", "science"]
+  },
+  {
+    "url": "https://www.openculture.com",
+    "title": "Open Culture",
+    "description": "Le meilleur du web culturel et éducatif : cours gratuits, films, livres audio.",
+    "language": "en",
+    "categories": ["litterature", "cinema", "histoire", "philosophie"]
+  },
+  {
+    "url": "https://www.themarginalian.org",
+    "title": "The Marginalian",
+    "description": "Essais hebdomadaires sur la créativité, la philosophie, la science et l'art de vivre.",
+    "language": "en",
+    "categories": ["philosophie", "litterature", "science"]
+  },
+  {
+    "url": "https://pudding.cool",
+    "title": "The Pudding",
+    "description": "Journalisme visuel data-driven : essais interactifs sur la culture pop, la musique et les mots.",
+    "language": "en",
+    "categories": ["design", "musique", "litterature"]
+  },
+  {
+    "url": "https://explorabl.es",
+    "title": "Explorable Explanations",
+    "description": "Répertoire d'essais interactifs pour apprendre en jouant avec des concepts complexes.",
+    "language": "en",
+    "categories": ["mathematiques", "science", "programmation"]
+  },
+  {
+    "url": "https://www.informationisbeautiful.net",
+    "title": "Information Is Beautiful",
+    "description": "Visualisations de données élégantes sur des sujets variés : santé, politique, culture.",
+    "language": "en",
+    "categories": ["design", "science", "politique"]
+  },
+  {
+    "url": "https://waitbutwhy.com",
+    "title": "Wait But Why",
+    "description": "Articles longs et illustrés sur des sujets profonds : IA, procrastination, Fermi, étoiles.",
+    "language": "en",
+    "categories": ["philosophie", "science", "psychologie"]
+  },
+  {
+    "url": "https://www.ncase.me",
+    "title": "Nicky Case",
+    "description": "Jeux interactifs explorant la psychologie sociale, la confiance et les systèmes complexes.",
+    "language": "en",
+    "categories": ["psychologie", "jeux-video", "curiosites"]
+  },
+  {
+    "url": "https://www.musicmap.info",
+    "title": "Musicmap",
+    "description": "Carte généalogique complète de tous les genres musicaux et leurs influences mutuelles.",
+    "language": "en",
+    "categories": ["musique", "histoire", "design"]
+  },
+  {
+    "url": "https://archive.org",
+    "title": "Internet Archive",
+    "description": "Bibliothèque numérique mondiale : sites archivés, livres, musiques et films libres de droits.",
+    "language": "en",
+    "categories": ["histoire", "litterature", "cinema", "musique"]
+  },
+  {
+    "url": "https://earth.nullschool.net",
+    "title": "Null School Earth",
+    "description": "Visualisation en temps réel des vents, courants océaniques et températures mondiales.",
+    "language": "en",
+    "categories": ["science", "nature", "curiosites"]
+  },
+  {
+    "url": "https://www.noisli.com",
+    "title": "Noisli",
+    "description": "Sons d'ambiance pour la concentration : pluie, café, forêt, feu de cheminée.",
+    "language": "en",
+    "categories": ["nature", "psychologie"]
+  },
+  {
+    "url": "https://www.incredibox.com",
+    "title": "Incredibox",
+    "description": "Crée ta propre musique en glissant des sons sur des personnages animés.",
+    "language": "en",
+    "categories": ["musique", "curiosites"]
+  },
+  {
+    "url": "https://thetruesize.com",
+    "title": "The True Size",
+    "description": "Compare la vraie taille des pays en les déplaçant sur une carte de Mercator.",
+    "language": "en",
+    "categories": ["voyage", "curiosites", "science"]
+  },
+  {
+    "url": "https://www.gwern.net",
+    "title": "Gwern.net",
+    "description": "Essais approfondis sur l'IA, la psychologie, la statistique et la mémoire.",
+    "language": "en",
+    "categories": ["science", "psychologie", "technologie", "philosophie"]
+  },
+  {
+    "url": "https://ciechanow.ski",
+    "title": "Bartosz Ciechanowski",
+    "description": "Explications visuelles interactives sur la physique, les GPS, les moteurs et l'optique.",
+    "language": "en",
+    "categories": ["science", "mathematiques", "curiosites"]
+  },
+  {
+    "url": "https://noclip.website",
+    "title": "noclip.website",
+    "description": "Balade librement dans les décors 3D de jeux vidéo classiques dans le navigateur.",
+    "language": "en",
+    "categories": ["jeux-video", "art", "curiosites"]
+  },
+  {
+    "url": "https://www.cameronsworld.net",
+    "title": "Cameron's World",
+    "description": "Collage nostalgique d'images, textes et GIF animés de l'ère GeoCities.",
+    "language": "en",
+    "categories": ["histoire", "art", "curiosites"]
+  },
+  {
+    "url": "https://www.atlasobscura.com",
+    "title": "Atlas Obscura",
+    "description": "Guide des lieux les plus étranges, cachés et merveilleux de la planète.",
+    "language": "en",
+    "categories": ["voyage", "histoire", "curiosites"]
+  },
+  {
+    "url": "https://www.lowtechmagazine.com",
+    "title": "Low-Tech Magazine",
+    "description": "Plaidoyer pour les technologies durables et sobres, hébergé sur un serveur solaire.",
+    "language": "en",
+    "categories": ["technologie", "nature", "histoire"]
+  },
+  {
+    "url": "https://solar.lowtechmagazine.com",
+    "title": "Low←Tech Magazine (solaire)",
+    "description": "Version du magazine hébergée sur un serveur alimenté uniquement à l'énergie solaire.",
+    "language": "en",
+    "categories": ["technologie", "nature"]
+  },
+  {
+    "url": "https://www.joshworth.com/dev/pixelspace/pixelspace_solarsystem.html",
+    "title": "If the Moon were only 1 pixel",
+    "description": "Le système solaire à l'échelle réelle : une longue promenade pour réaliser les distances.",
+    "language": "en",
+    "categories": ["astronomie", "science", "curiosites"]
+  },
+  {
+    "url": "https://www.zoomquilt.org",
+    "title": "Zoomquilt",
+    "description": "Peinture collaborative qui zoome indéfiniment à travers des scènes fantastiques imbriquées.",
+    "language": "en",
+    "categories": ["art", "curiosites"]
+  },
+  {
+    "url": "https://www.colossal.com",
+    "title": "Colossal",
+    "description": "Blog d'art contemporain, design, photographie et curiosités visuelles du monde entier.",
+    "language": "en",
+    "categories": ["art", "design", "photographie"]
+  },
+  {
+    "url": "https://pointerpointer.com",
+    "title": "Pointer Pointer",
+    "description": "Trouve une photo de quelqu'un pointant exactement vers ton curseur, partout sur l'écran.",
+    "language": "en",
+    "categories": ["humour", "curiosites"]
+  },
+  {
+    "url": "https://www.hackertyper.net",
+    "title": "Hacker Typer",
+    "description": "Tape n'importe quoi au clavier et affiche du code de manière spectaculaire.",
+    "language": "en",
+    "categories": ["humour", "programmation"]
+  },
+  {
+    "url": "https://monoskop.org",
+    "title": "Monoskop",
+    "description": "Wiki collaboratif sur l'art des médias, la musique expérimentale et la culture numérique.",
+    "language": "en",
+    "categories": ["art", "musique", "histoire"]
+  },
+  {
+    "url": "https://www.humanbenchmark.com",
+    "title": "Human Benchmark",
+    "description": "Teste ta mémoire, ta réactivité et ta perception avec des mini-jeux cognitifs.",
+    "language": "en",
+    "categories": ["psychologie", "jeux-video", "curiosites"]
+  },
+  {
+    "url": "https://www.metmuseum.org/art/collection",
+    "title": "The Met — Collection",
+    "description": "Plus de 400 000 oeuvres d'art librement accessibles du Metropolitan Museum of Art.",
+    "language": "en",
+    "categories": ["art", "histoire"]
+  },
+  {
+    "url": "https://scimaps.org",
+    "title": "Places & Spaces",
+    "description": "Exposition internationale de cartes de la science pour rendre visible la connaissance.",
+    "language": "en",
+    "categories": ["science", "design", "histoire"]
+  },
+  {
+    "url": "https://suckless.org",
+    "title": "Suckless.org",
+    "description": "Logiciels minimalistes Unix avec un code source lisible par un humain.",
+    "language": "en",
+    "categories": ["programmation", "technologie"]
+  },
+  {
+    "url": "https://motherfuckingwebsite.com",
+    "title": "Motherfucking Website",
+    "description": "Plaidoyer radical pour le web minimaliste : HTML seul, sans framework ni CSS superflu.",
+    "language": "en",
+    "categories": ["design", "humour", "programmation"]
+  },
+  {
+    "url": "https://justinjackson.ca/words.html",
+    "title": "This is a web page",
+    "description": "Un manifeste minimaliste sur la puissance du texte brut sur le web.",
+    "language": "en",
+    "categories": ["design", "philosophie"]
+  },
+  {
+    "url": "https://www.are.na",
+    "title": "Are.na",
+    "description": "Plateforme de curation collaborative sans algorithme : des gens partagent ce qui les inspire.",
+    "language": "en",
+    "categories": ["art", "design", "curiosites"]
+  },
+  {
+    "url": "https://text.npr.org",
+    "title": "NPR Text",
+    "description": "Version texte brut de NPR News : actualites sans JavaScript ni trackers.",
+    "language": "en",
+    "categories": ["politique", "curiosites"]
+  },
+  {
+    "url": "https://www.unkno.com",
+    "title": "Unkno",
+    "description": "Un fait aléatoire et surprenant s'affiche à chaque actualisation.",
+    "language": "en",
+    "categories": ["curiosites", "science"]
+  },
+  {
+    "url": "https://experiments.withgoogle.com/collection/arts-culture",
+    "title": "Google Arts Experiments",
+    "description": "Expériences créatives à l'intersection de l'art, de la musique et de la technologie.",
+    "language": "en",
+    "categories": ["art", "musique", "technologie"]
+  },
+  {
+    "url": "https://www.sporcle.com",
+    "title": "Sporcle",
+    "description": "Des milliers de quiz sur tous les sujets : géographie, sport, culture générale.",
+    "language": "en",
+    "categories": ["jeux-video", "curiosites", "histoire"]
+  },
+  {
+    "url": "https://www.loremipsum.io",
+    "title": "Lorem Ipsum",
+    "description": "Générateurs de Lorem Ipsum classiques et thématiques pour les maquettes.",
+    "language": "en",
+    "categories": ["design", "humour"]
+  },
+  {
+    "url": "https://map.onewayflight.com",
+    "title": "One Way Flight",
+    "description": "Trouve toutes les destinations accessibles depuis ton aéroport pour un budget donné.",
+    "language": "en",
+    "categories": ["voyage"]
+  },
+  {
+    "url": "https://www.drawingbots.net",
+    "title": "Drawing Bots",
+    "description": "Répertoire de robots traceurs et machines à dessiner fabriqués maison.",
+    "language": "en",
+    "categories": ["art", "diy", "technologie"]
+  },
+  {
+    "url": "https://fraidyc.at",
+    "title": "Fraidycat",
+    "description": "Lecteur de flux RSS minimaliste qui ne te noie pas dans les notifications.",
+    "language": "en",
+    "categories": ["technologie", "programmation"]
+  },
+  {
+    "url": "https://www.metafilter.com",
+    "title": "MetaFilter",
+    "description": "Communauté de curation humaine en ligne depuis 1999 : les meilleures découvertes du web.",
+    "language": "en",
+    "categories": ["curiosites"]
+  },
+  {
+    "url": "https://interconnected.org/home",
+    "title": "Matt Webb — Interconnected",
+    "description": "Blog indépendant sur la technologie, la créativité et les idées qui relient les choses.",
+    "language": "en",
+    "categories": ["technologie", "philosophie", "design"]
+  },
+  {
+    "url": "https://kottke.org",
+    "title": "kottke.org",
+    "description": "L'un des plus anciens blogs du web : curation de curiosités, art, science et culture.",
+    "language": "en",
+    "categories": ["curiosites", "art", "science"]
+  },
+  {
+    "url": "https://www.mcsweeneys.net",
+    "title": "McSweeney's Internet Tendency",
+    "description": "Humour littéraire et satire de qualité depuis 1998.",
+    "language": "en",
+    "categories": ["humour", "litterature"]
+  },
+  {
+    "url": "https://maggieappleton.com",
+    "title": "Maggie Appleton",
+    "description": "Digital garden sur le design, la technologie, l'anthropologie et les outils de pensée.",
+    "language": "en",
+    "categories": ["design", "technologie", "philosophie"]
+  },
+  {
+    "url": "https://www.robinsloan.com",
+    "title": "Robin Sloan",
+    "description": "Auteur et bricoleur numérique : roman, olive oil, et réflexions sur l'internet.",
+    "language": "en",
+    "categories": ["litterature", "technologie"]
+  },
+  {
+    "url": "https://www.frankchimero.com/blog",
+    "title": "Frank Chimero",
+    "description": "Designer et écrivain : essais sur la forme, la simplicité et le web comme matériau.",
+    "language": "en",
+    "categories": ["design", "philosophie"]
+  },
+  {
+    "url": "https://100r.co",
+    "title": "Hundred Rabbits",
+    "description": "Un duo d'artistes vivant sur un voilier, créant des outils et des jeux minimalistes.",
+    "language": "en",
+    "categories": ["art", "programmation", "voyage", "diy"]
+  },
+  {
+    "url": "https://drewdevault.com",
+    "title": "Drew DeVault's Blog",
+    "description": "Blog de programmation : logiciel libre, Unix, ethique du code et outils simples.",
+    "language": "en",
+    "categories": ["programmation", "technologie", "philosophie"]
+  },
+  {
+    "url": "https://www.nature.com/nature",
+    "title": "Nature",
+    "description": "L'une des revues scientifiques les plus influentes au monde, avec des résumés accessibles.",
+    "language": "en",
+    "categories": ["science", "nature", "astronomie"]
+  },
+  {
+    "url": "https://nautil.us",
+    "title": "Nautilus",
+    "description": "Revue en ligne qui explore la science à travers des essais narratifs et des idées.",
+    "language": "en",
+    "categories": ["science", "philosophie", "psychologie"]
+  },
+  {
+    "url": "https://aeon.co",
+    "title": "Aeon",
+    "description": "Essais et vidéos sur la philosophie, la psychologie, les sciences et les arts.",
+    "language": "en",
+    "categories": ["philosophie", "science", "psychologie"]
+  },
+  {
+    "url": "https://www.quantamagazine.org",
+    "title": "Quanta Magazine",
+    "description": "Journalisme scientifique de haut niveau : mathématiques, physique, biologie, informatique.",
+    "language": "en",
+    "categories": ["mathematiques", "science", "programmation"]
+  },
+  {
+    "url": "https://longreads.com",
+    "title": "Longreads",
+    "description": "Curation des meilleurs long-form articles du web : reportages, essais, profils.",
+    "language": "en",
+    "categories": ["litterature", "philosophie"]
+  },
+  {
+    "url": "https://theconversation.com/global",
+    "title": "The Conversation",
+    "description": "Articles d'universitaires et chercheurs pour le grand public, sur tous les sujets.",
+    "language": "en",
+    "categories": ["science", "politique", "philosophie"]
+  },
+  {
+    "url": "https://www.lesswrong.com",
+    "title": "LessWrong",
+    "description": "Communauté dédiée au raisonnement clair et à l'art de penser correctement.",
+    "language": "en",
+    "categories": ["philosophie", "psychologie", "mathematiques"]
+  },
+  {
+    "url": "https://slatestarcodex.com",
+    "title": "Slate Star Codex",
+    "description": "Blog d'essais sur la psychiatrie, la philosophie, la politique et les biais cognitifs.",
+    "language": "en",
+    "categories": ["psychologie", "philosophie", "science"]
+  },
+  {
+    "url": "https://www.effectgames.com/demos/canvascycle",
+    "title": "Canvas Cycle",
+    "description": "Scènes pixel art animées par cycle de palette — technique des années 80 dans un navigateur.",
+    "language": "en",
+    "categories": ["art", "histoire", "curiosites"]
+  },
+  {
+    "url": "https://www.vexillologymatters.org",
+    "title": "Vexillology Matters",
+    "description": "Analyses et critiques des drapeaux du monde entier avec humour et rigueur.",
+    "language": "en",
+    "categories": ["curiosites", "histoire"]
+  },
+  {
+    "url": "https://www.openstreetmap.org",
+    "title": "OpenStreetMap",
+    "description": "La carte collaborative libre du monde, construite par des millions de contributeurs.",
+    "language": "en",
+    "categories": ["voyage", "technologie"]
+  },
+  {
+    "url": "https://coolors.co",
+    "title": "Coolors",
+    "description": "Générateur de palettes de couleurs harmonieuses pour designers.",
+    "language": "en",
+    "categories": ["design", "art"]
+  },
+  {
+    "url": "https://carbon.now.sh",
+    "title": "Carbon",
+    "description": "Crée de belles images de ton code source pour les partager sur les réseaux.",
+    "language": "en",
+    "categories": ["programmation", "design"]
+  },
+  {
+    "url": "https://regexr.com",
+    "title": "RegExr",
+    "description": "Outil interactif pour apprendre, tester et déboguer les expressions régulières.",
+    "language": "en",
+    "categories": ["programmation"]
+  },
+  {
+    "url": "https://explainshell.com",
+    "title": "Explain Shell",
+    "description": "Colle une commande shell et obtiens une explication de chaque argument.",
+    "language": "en",
+    "categories": ["programmation", "technologie"]
+  },
+  {
+    "url": "https://www.typingclub.com",
+    "title": "Typing Club",
+    "description": "Apprends à taper au clavier rapidement et sans regarder, étape par étape.",
+    "language": "en",
+    "categories": ["jeux-video", "technologie"]
+  },
+  {
+    "url": "https://pixlr.com",
+    "title": "Pixlr",
+    "description": "Editeur de photos en ligne complet et gratuit, directement dans le navigateur.",
+    "language": "en",
+    "categories": ["design", "photographie"]
+  },
+  {
+    "url": "https://gallica.bnf.fr",
+    "title": "Gallica — BNF",
+    "description": "Bibliotheque numerique de la BNF : millions de documents patrimoniaux numerises.",
+    "language": "fr",
+    "categories": ["litterature", "histoire", "art"]
+  },
+  {
+    "url": "https://www.ina.fr",
+    "title": "INA",
+    "description": "Archives audiovisuelles francaises : television, radio, publicites depuis des decennies.",
+    "language": "fr",
+    "categories": ["histoire", "cinema", "musique"]
+  },
+  {
+    "url": "https://www.herodote.net",
+    "title": "Hérodote.net",
+    "description": "Histoire du monde racontee de maniere accessible, de l'Antiquite a nos jours.",
+    "language": "fr",
+    "categories": ["histoire"]
+  },
+  {
+    "url": "https://www.histoire-image.org",
+    "title": "Histoire par l'image",
+    "description": "Analyse d'oeuvres picturales pour comprendre l'histoire de France et de l'Europe.",
+    "language": "fr",
+    "categories": ["histoire", "art"]
+  },
+  {
+    "url": "https://www.babelio.com",
+    "title": "Babelio",
+    "description": "Reseau social de lecteurs francophones : critiques, listes et citations litteraires.",
+    "language": "fr",
+    "categories": ["litterature"]
+  },
+  {
+    "url": "https://www.philosophie-magazine.com",
+    "title": "Philosophie Magazine",
+    "description": "La philosophie pour tous : dossiers, entretiens, chroniques et histoire des idees.",
+    "language": "fr",
+    "categories": ["philosophie"]
+  },
+  {
+    "url": "https://www.les-crises.fr",
+    "title": "Les Crises",
+    "description": "Blog d'analyse economique et geopolitique independant, avec des graphiques detailles.",
+    "language": "fr",
+    "categories": ["economie", "politique"]
+  },
+  {
+    "url": "https://interstices.info",
+    "title": "Interstices",
+    "description": "Vulgarisation scientifique en informatique par des chercheurs francophones.",
+    "language": "fr",
+    "categories": ["programmation", "science", "mathematiques"]
+  },
+  {
+    "url": "https://images.math.cnrs.fr",
+    "title": "Images des Maths",
+    "description": "Site du CNRS pour partager la recherche mathematique avec le grand public.",
+    "language": "fr",
+    "categories": ["mathematiques", "science"]
+  },
+  {
+    "url": "https://www.scienceetavenir.fr",
+    "title": "Science et Avenir",
+    "description": "Actualite scientifique francaise : espace, sante, environnement, technologie.",
+    "language": "fr",
+    "categories": ["science", "astronomie", "nature"]
+  },
+  {
+    "url": "https://www.750g.com",
+    "title": "750g",
+    "description": "Communaute culinaire francophone avec des dizaines de milliers de recettes.",
+    "language": "fr",
+    "categories": ["cuisine"]
+  },
+  {
+    "url": "https://www.jardinierparesseux.com",
+    "title": "Le Jardinier Paresseux",
+    "description": "Jardinage ecologique et facile : plantes, legumes, permaculture sans effort.",
+    "language": "fr",
+    "categories": ["nature", "diy"]
+  },
+  {
+    "url": "https://www.creapills.com",
+    "title": "Creapills",
+    "description": "Veille creative quotidienne : design, publicite, art numerique, installations.",
+    "language": "fr",
+    "categories": ["design", "art"]
+  },
+  {
+    "url": "https://koreus.com",
+    "title": "Koreus",
+    "description": "Les meilleures videos, images et curiosites du web selectionees par la communaute.",
+    "language": "fr",
+    "categories": ["humour", "curiosites"]
+  },
+  {
+    "url": "https://www.radiofrance.fr",
+    "title": "Radio France",
+    "description": "Toutes les radios publiques francaises en streaming : documentaires, culture, info.",
+    "language": "fr",
+    "categories": ["musique", "histoire", "science"]
+  },
+  {
+    "url": "https://www.france-pittoresque.com",
+    "title": "France Pittoresque",
+    "description": "Histoire locale de France : legendes, anecdotes, patrimoine et curiosites regionales.",
+    "language": "fr",
+    "categories": ["histoire", "curiosites", "voyage"]
+  },
+  {
+    "url": "https://www.lumni.fr",
+    "title": "Lumni",
+    "description": "Plateforme educative francaise avec des milliers de videos et podcasts pedagogiques.",
+    "language": "fr",
+    "categories": ["science", "histoire", "litterature"]
+  },
+  {
+    "url": "https://www.acrimed.org",
+    "title": "Acrimed",
+    "description": "Observatoire critique des medias francais : analyse et decryptage de l'information.",
+    "language": "fr",
+    "categories": ["politique"]
+  },
+  {
+    "url": "https://www.eco-sapiens.com",
+    "title": "Eco Sapiens",
+    "description": "Transition ecologique accessible : habitats, alimentation, mobilite durable.",
+    "language": "fr",
+    "categories": ["nature", "philosophie"]
+  },
+  {
+    "url": "https://www.rtbf.be/auvio",
+    "title": "RTBF Auvio",
+    "description": "Radio-television belge francophone : info, podcasts, series et documentaires.",
+    "language": "fr",
+    "categories": ["politique", "cinema", "musique"]
+  },
+  {
+    "url": "https://www.lalibre.be",
+    "title": "La Libre Belgique",
+    "description": "Journal belge francophone de reference : actualite, opinions, culture.",
+    "language": "fr",
+    "categories": ["politique"]
+  },
+  {
+    "url": "https://theconversation.com/fr",
+    "title": "The Conversation France",
+    "description": "Articles d'universitaires pour le grand public, sur la science, la societe et la culture.",
+    "language": "fr",
+    "categories": ["science", "politique", "philosophie"]
+  },
+  {
+    "url": "https://www.lemonde.fr/sciences",
+    "title": "Le Monde Sciences",
+    "description": "Actualite scientifique et technologique du quotidien de reference francais.",
+    "language": "fr",
+    "categories": ["science", "technologie"]
+  },
+  {
+    "url": "https://linuxfr.org",
+    "title": "LinuxFr.org",
+    "description": "Site communautaire francophone sur le logiciel libre : actualites, debats, DLFP.",
+    "language": "fr",
+    "categories": ["programmation", "technologie"]
+  },
+  {
+    "url": "https://www.developpez.com",
+    "title": "Developpez.com",
+    "description": "Portail francophone de tutoriels, forums et articles sur le developpement logiciel.",
+    "language": "fr",
+    "categories": ["programmation", "technologie"]
+  },
+  {
+    "url": "https://www.bonpatron.com",
+    "title": "BonPatron",
+    "description": "Correcteur grammatical et orthographique pour le francais, gratuit et fiable.",
+    "language": "fr",
+    "categories": ["litterature", "technologie"]
+  },
+  {
+    "url": "https://decorrespondent.nl",
+    "title": "De Correspondent",
+    "description": "Onafhankelijke journalistiek zonder de waan van de dag — diepgravende analyses.",
+    "language": "nl",
+    "categories": ["politique", "economie", "philosophie"]
+  },
+  {
+    "url": "https://www.nationalgeographic.nl",
+    "title": "National Geographic NL",
+    "description": "Natuur, wetenschap, cultuur en verbluffende fotografie in het Nederlands.",
+    "language": "nl",
+    "categories": ["nature", "science", "photographie", "voyage"]
+  },
+  {
+    "url": "https://www.vrt.be",
+    "title": "VRT",
+    "description": "Vlaamse openbare omroep: nieuws, podcasts, series en documentaires.",
+    "language": "nl",
+    "categories": ["politique", "cinema", "musique"]
+  },
+  {
+    "url": "https://www.standaard.be",
+    "title": "De Standaard",
+    "description": "Vlaamse kwaliteitskrant met diepgaande reportages over cultuur, economie en politiek.",
+    "language": "nl",
+    "categories": ["politique"]
+  },
+  {
+    "url": "https://www.geheugenvannederland.nl",
+    "title": "Geheugen van Nederland",
+    "description": "Digitaal archief van Nederland: historische fotos, kaarten, films en documenten.",
+    "language": "nl",
+    "categories": ["histoire", "photographie"]
+  },
+  {
+    "url": "https://bijzonderplekje.nl",
+    "title": "Bijzonder Plekje",
+    "description": "Ontdek bijzondere en verborgen plekken in Nederland en Belgie.",
+    "language": "nl",
+    "categories": ["voyage", "histoire"]
+  },
+  {
+    "url": "https://www.kookmutsjes.nl",
+    "title": "Kookmutsjes",
+    "description": "Nederlandstalige recepten blog met eenvoudige en smakelijke gerechten.",
+    "language": "nl",
+    "categories": ["cuisine"]
+  },
+  {
+    "url": "https://nos.nl",
+    "title": "NOS",
+    "description": "Nederlandse openbare omroep: actueel nieuws, sport en achtergronden.",
+    "language": "nl",
+    "categories": ["politique", "sport"]
+  },
+  {
+    "url": "https://www.spektrum.de",
+    "title": "Spektrum der Wissenschaft",
+    "description": "Wissenschaftsnachrichten und Artikel fur eine breite Offentlichkeit.",
+    "language": "de",
+    "categories": ["science", "astronomie", "nature"]
+  },
+  {
+    "url": "https://www.heise.de",
+    "title": "Heise Online",
+    "description": "Technik, IT und Netzpolitik auf Deutsch, einer der altesten deutschen Tech-Blogs.",
+    "language": "de",
+    "categories": ["technologie", "programmation", "politique"]
+  },
+  {
+    "url": "https://www.deutschlandfunk.de",
+    "title": "Deutschlandfunk",
+    "description": "Offentlich-rechtliches Radio mit Kultur, Wissenschaft und Gesellschaft.",
+    "language": "de",
+    "categories": ["musique", "science", "politique"]
+  },
+  {
+    "url": "https://www.tagesschau.de",
+    "title": "Tagesschau",
+    "description": "Die wichtigsten Nachrichten aus Deutschland und aller Welt in Textform.",
+    "language": "de",
+    "categories": ["politique"]
+  },
+  {
+    "url": "https://www.zeit.de",
+    "title": "Die Zeit",
+    "description": "Deutsches Wochenmagazin fur Politik, Wirtschaft, Wissen und Feuilleton.",
+    "language": "de",
+    "categories": ["politique", "economie", "litterature"]
+  },
+  {
+    "url": "https://www.chefkoch.de",
+    "title": "Chefkoch",
+    "description": "Die grosste deutschsprachige Rezeptdatenbank mit Millionen von Kochrezepten.",
+    "language": "de",
+    "categories": ["cuisine"]
+  },
+  {
+    "url": "https://www.mathe-online.at",
+    "title": "Mathe Online",
+    "description": "Interaktive Mathematik fur Schule und Studium auf Deutsch.",
+    "language": "de",
+    "categories": ["mathematiques", "science"]
+  },
+  {
+    "url": "https://www.spiegel.de/wissenschaft",
+    "title": "Spiegel Wissenschaft",
+    "description": "Wissenschaftsnachrichten des deutschen Nachrichtenmagazins Der Spiegel.",
+    "language": "de",
+    "categories": ["science", "nature", "technologie"]
+  }
+]

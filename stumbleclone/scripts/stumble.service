@@ -1,0 +1,20 @@
+[Unit]
+Description=StumbleClone — découverte de sites web
+Documentation=https://stumble.danux.be
+After=network.target
+
+[Service]
+Type=simple
+User=dany
+Group=dany
+WorkingDirectory=/srv/web/stumbleclone
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5s
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=stumble
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
