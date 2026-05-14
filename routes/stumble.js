@@ -161,7 +161,10 @@ function mergeWithCollab(interestCandidates, collabCandidates) {
 // ── Route invité : mur d'inscription après GUEST_LIMIT stumbles ──────────
 router.get('/stumble/join', (req, res) => {
   if (req.session.userId) return res.redirect('/stumble');
-  res.render('stumble-join', { title: req.t('guest_join_title') });
+  res.render('stumble-join', {
+    title: req.t('guest_join_title', { limit: GUEST_LIMIT }),
+    guestLimit: GUEST_LIMIT,
+  });
 });
 
 // ── Route principale ─────────────────────────────────────────────────────
