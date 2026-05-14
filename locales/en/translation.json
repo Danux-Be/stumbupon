@@ -279,6 +279,8 @@
   "reset_invalid": "This link is invalid or has expired. Please submit a new request.",
   "reset_success": "Password changed successfully. You can now log in.",
 
+  "stumble_share": "Share",
+
   "settings_digest_title": "Weekly digest",
   "settings_digest_desc": "Receive an email every Monday with 5 sites picked for your interests.",
   "settings_digest_label": "Receive the weekly digest",

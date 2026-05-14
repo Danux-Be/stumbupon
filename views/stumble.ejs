@@ -51,6 +51,10 @@
         </div>
       </details>
 
+      <button class="btn btn-ghost btn-sm" id="share-btn" title="<%= t('stumble_share') %>">
+        🔗 <span class="stumble-bar__label share-btn__label"><%= t('stumble_share') %></span>
+      </button>
+
       <% if (user && user.isAdmin) { %>
       <button class="btn btn-reject btn-sm" id="admin-reject-btn"
               title="<%= t('stumble_admin_reject') %>">🗑</button>
@@ -185,6 +189,26 @@
         } catch (e) {
           // SecurityError → cross-origin → chargement réussi
         }
+      });
+    }
+
+    // ── Partager ───────────────────────────────────────────────────────────
+    var shareBtn   = document.getElementById('share-btn');
+    var SHARE_URL  = window.location.origin + '/stumble/<%= site.id %>';
+    var SHARE_TITLE = '<%= site.title.replace(/\\/g, "\\\\").replace(/'/g, "\\'") %>';
+
+    if (shareBtn) {
+      shareBtn.addEventListener('click', function () {
+        if (navigator.share) {
+          navigator.share({ title: SHARE_TITLE, url: SHARE_URL }).catch(function () {});
+          return;
+        }
+        navigator.clipboard.writeText(SHARE_URL).then(function () {
+          shareBtn.textContent = '✅';
+          setTimeout(function () { shareBtn.innerHTML = '🔗 <span class="stumble-bar__label"><%= t('stumble_share') %></span>'; }, 2000);
+        }).catch(function () {
+          window.prompt('Copie ce lien :', SHARE_URL);
+        });
       });
     }
 
