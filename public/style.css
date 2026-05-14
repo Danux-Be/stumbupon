@@ -8,6 +8,8 @@
   --color-text:         #18181b;
   --color-text-muted:   #6b7280;
   --color-border:       #e4e4e7;
+  --color-header-bg:    rgba(255, 255, 255, 0.85);
+  --color-input-bg:     #ffffff;
   --radius:             12px;
   --radius-sm:          8px;
   --radius-lg:          16px;
@@ -52,7 +54,7 @@ img { max-width: 100%; }
   align-items: center;
   justify-content: space-between;
   padding: 0.875rem 2rem;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--color-header-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border);
@@ -1129,3 +1131,90 @@ body.stumble-iframe-page {
   .bot-log-row { grid-template-columns: 1.5rem 1fr 3rem; }
   .bot-log-source, .bot-log-date, .bot-log-score { display: none; }
 }
+
+/* ─── Dark mode — toggle bouton ──────────────────────────────────────────── */
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.45rem;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--color-text-muted);
+  transition: border-color var(--transition), background var(--transition);
+  display: flex;
+  align-items: center;
+}
+.theme-toggle:hover { border-color: var(--color-primary); color: var(--color-text); }
+
+/* ─── Dark mode — variables ──────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --color-bg:           #111113;
+    --color-surface:      #1c1c1f;
+    --color-text:         #f0f0f2;
+    --color-text-muted:   #9ca3af;
+    --color-border:       #2e2e33;
+    --color-header-bg:    rgba(17, 17, 19, 0.88);
+    --color-input-bg:     #1c1c1f;
+    --shadow-sm:          0 1px 3px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.25);
+    --shadow:             0 4px 16px rgba(0,0,0,0.45), 0 1px 4px rgba(0,0,0,0.25);
+    --shadow-lg:          0 12px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.35);
+  }
+  :root:not(.light) .alert-success { background: #0c1f13; color: #4ade80; border-color: #14532d; }
+  :root:not(.light) .alert-error   { background: #1c0b0b; color: #f87171; border-color: #7f1d1d; }
+  :root:not(.light) .alert-info    { background: #0c1628; color: #60a5fa; border-color: #1e3a5f; }
+  :root:not(.light) .btn-secondary:hover { background: #2a2a35; }
+  :root:not(.light) .btn-ghost:hover { background: #25252c; }
+  :root:not(.light) .category-card:has(input:checked) { background: #23243a; }
+  :root:not(.light) .interest-card--selected { background: #23243a; }
+  :root:not(.light) .vote-btn--up.vote-btn--active   { border-color: #16a34a; background: #0c1f13; }
+  :root:not(.light) .vote-btn--down.vote-btn--active { border-color: #dc2626; background: #1c0b0b; }
+  :root:not(.light) .stat-card--alert { border-color: #d97706; background: #1c1505; }
+  :root:not(.light) .admin-table__row--banned td { background: #1c0b0b; }
+  :root:not(.light) .user-badge--admin      { background: #1e1640; color: #a78bfa; }
+  :root:not(.light) .user-badge--banned     { background: #1c0b0b; color: #f87171; }
+  :root:not(.light) .user-badge--unverified { background: #1c1505; color: #fbbf24; }
+  :root:not(.light) .risk-badge--low    { background: #0c1f13; color: #4ade80; border-color: #14532d; }
+  :root:not(.light) .risk-badge--medium { background: #1c1505; color: #fbbf24; border-color: #78350f; }
+  :root:not(.light) .risk-badge--high   { background: #1c0b0b; color: #f87171; border-color: #7f1d1d; }
+  :root:not(.light) .stumble-tag--quarantine { background: #1c0b0b; color: #f87171; }
+  :root:not(.light) .bot-log-row--approved { background: #0c1f13; }
+  :root:not(.light) .bot-log-row--pending  { background: #1c1505; }
+  :root:not(.light) .bot-log-row--rejected { background: #1c0b0b; }
+}
+
+html.dark {
+  --color-bg:           #111113;
+  --color-surface:      #1c1c1f;
+  --color-text:         #f0f0f2;
+  --color-text-muted:   #9ca3af;
+  --color-border:       #2e2e33;
+  --color-header-bg:    rgba(17, 17, 19, 0.88);
+  --color-input-bg:     #1c1c1f;
+  --shadow-sm:          0 1px 3px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.25);
+  --shadow:             0 4px 16px rgba(0,0,0,0.45), 0 1px 4px rgba(0,0,0,0.25);
+  --shadow-lg:          0 12px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.35);
+}
+html.dark .alert-success { background: #0c1f13; color: #4ade80; border-color: #14532d; }
+html.dark .alert-error   { background: #1c0b0b; color: #f87171; border-color: #7f1d1d; }
+html.dark .alert-info    { background: #0c1628; color: #60a5fa; border-color: #1e3a5f; }
+html.dark .btn-secondary:hover { background: #2a2a35; }
+html.dark .btn-ghost:hover { background: #25252c; }
+html.dark .category-card:has(input:checked) { background: #23243a; }
+html.dark .interest-card--selected { background: #23243a; }
+html.dark .vote-btn--up.vote-btn--active   { border-color: #16a34a; background: #0c1f13; }
+html.dark .vote-btn--down.vote-btn--active { border-color: #dc2626; background: #1c0b0b; }
+html.dark .stat-card--alert { border-color: #d97706; background: #1c1505; }
+html.dark .admin-table__row--banned td { background: #1c0b0b; }
+html.dark .user-badge--admin      { background: #1e1640; color: #a78bfa; }
+html.dark .user-badge--banned     { background: #1c0b0b; color: #f87171; }
+html.dark .user-badge--unverified { background: #1c1505; color: #fbbf24; }
+html.dark .risk-badge--low    { background: #0c1f13; color: #4ade80; border-color: #14532d; }
+html.dark .risk-badge--medium { background: #1c1505; color: #fbbf24; border-color: #78350f; }
+html.dark .risk-badge--high   { background: #1c0b0b; color: #f87171; border-color: #7f1d1d; }
+html.dark .stumble-tag--quarantine { background: #1c0b0b; color: #f87171; }
+html.dark .bot-log-row--approved { background: #0c1f13; }
+html.dark .bot-log-row--pending  { background: #1c1505; }
+html.dark .bot-log-row--rejected { background: #1c0b0b; }
