@@ -96,4 +96,81 @@ async function sendAdminAlert(subject, body) {
   });
 }
 
-module.exports = { sendVerificationEmail, sendPasswordResetEmail, sendAdminAlert };
+async function sendDigestEmail(to, username, sites, lang = 'fr', unsubUrl) {
+  const baseUrl = process.env.BASE_URL || 'http://localhost:4000';
+
+  const subjects = {
+    fr: '🌀 Tes découvertes de la semaine — StumbleClone',
+    en: '🌀 Your weekly discoveries — StumbleClone',
+    nl: '🌀 Jouw ontdekkingen van deze week — StumbleClone',
+    de: '🌀 Deine Entdeckungen der Woche — StumbleClone',
+  };
+  const intros = {
+    fr: `Bonjour ${username},\n\nVoici ${sites.length} site${sites.length > 1 ? 's' : ''} sélectionné${sites.length > 1 ? 's' : ''} selon tes centres d'intérêt cette semaine :`,
+    en: `Hello ${username},\n\nHere are ${sites.length} site${sites.length > 1 ? 's' : ''} picked for you this week:`,
+    nl: `Hallo ${username},\n\nHier zijn ${sites.length} site${sites.length > 1 ? 's' : ''} die deze week voor jou zijn geselecteerd:`,
+    de: `Hallo ${username},\n\n${sites.length > 1 ? 'Hier sind' : 'Hier ist'} ${sites.length} Website${sites.length > 1 ? 's' : ''}, die diese Woche für dich ausgewählt wurde${sites.length > 1 ? 'n' : ''}:`,
+  };
+  const footers = {
+    fr: `Bonne exploration !\n\nL'équipe StumbleClone\n${baseUrl}\n\n—\nPour ne plus recevoir ces emails : ${unsubUrl || baseUrl + '/settings'}`,
+    en: `Happy exploring!\n\nThe StumbleClone team\n${baseUrl}\n\n—\nTo unsubscribe: ${unsubUrl || baseUrl + '/settings'}`,
+    nl: `Veel ontdekplezier!\n\nHet StumbleClone-team\n${baseUrl}\n\n—\nUitschrijven: ${unsubUrl || baseUrl + '/settings'}`,
+    de: `Viel Spaß beim Entdecken!\n\nDas StumbleClone-Team\n${baseUrl}\n\n—\nAbmelden: ${unsubUrl || baseUrl + '/settings'}`,
+  };
+
+  const l = subjects[lang] ? lang : 'fr';
+
+  const siteLines = sites.map((s, i) =>
+    `${i + 1}. ${s.title}\n   ${s.cats || ''}\n   ${s.description || ''}\n   ${s.url}`
+  ).join('\n\n');
+
+  const text = `${intros[l]}\n\n${siteLines}\n\n${footers[l]}`;
+
+  const siteHtml = sites.map(s => `
+    <div style="margin-bottom:1.5rem;padding:1rem 1.25rem;background:#f9f9f9;border-radius:8px;border-left:3px solid #5c6bc0">
+      <div style="font-size:0.78rem;color:#6b7280;margin-bottom:0.3rem">${escapeHtml(s.cats || '')}</div>
+      <div style="font-size:1.05rem;font-weight:700;margin-bottom:0.3rem">
+        <a href="${escapeHtml(s.url)}" style="color:#3949ab;text-decoration:none">${escapeHtml(s.title)}</a>
+      </div>
+      <div style="font-size:0.9rem;color:#374151;margin-bottom:0.5rem">${escapeHtml(s.description || '')}</div>
+      <a href="${escapeHtml(s.url)}" style="font-size:0.8rem;color:#5c6bc0;font-family:monospace">${escapeHtml(s.url)}</a>
+    </div>`).join('');
+
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"/></head>
+<body style="font-family:'Segoe UI',Arial,sans-serif;background:#f5f5f3;margin:0;padding:2rem 1rem">
+  <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;padding:2rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+    <div style="text-align:center;margin-bottom:1.75rem">
+      <span style="font-size:2rem">🌀</span>
+      <h1 style="font-size:1.3rem;font-weight:800;color:#18181b;margin:0.5rem 0 0">StumbleClone</h1>
+    </div>
+    <p style="color:#374151;margin-bottom:1.5rem">${escapeHtml(intros[l]).replace(/\n/g, '<br>')}</p>
+    ${siteHtml}
+    <hr style="border:none;border-top:1px solid #e4e4e7;margin:1.5rem 0"/>
+    <p style="font-size:0.8rem;color:#9ca3af;text-align:center">
+      ${l === 'fr' ? 'Bonne exploration' : l === 'en' ? 'Happy exploring' : l === 'nl' ? 'Veel plezier' : 'Viel Spaß'} !<br><br>
+      <a href="${unsubUrl || baseUrl + '/settings'}" style="color:#6b7280">
+        ${l === 'fr' ? 'Se désabonner' : l === 'en' ? 'Unsubscribe' : l === 'nl' ? 'Uitschrijven' : 'Abmelden'}
+      </a>
+    </p>
+  </div>
+</body></html>`;
+
+  await getTransporter().sendMail({
+    from: process.env.SMTP_FROM || 'noreply@stumble.danux.be',
+    to,
+    subject: subjects[l],
+    text,
+    html,
+  });
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+module.exports = { sendVerificationEmail, sendPasswordResetEmail, sendAdminAlert, sendDigestEmail };

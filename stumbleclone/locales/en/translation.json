@@ -279,6 +279,12 @@
   "reset_invalid": "This link is invalid or has expired. Please submit a new request.",
   "reset_success": "Password changed successfully. You can now log in.",
 
+  "settings_digest_title": "Weekly digest",
+  "settings_digest_desc": "Receive an email every Monday with 5 sites picked for your interests.",
+  "settings_digest_label": "Receive the weekly digest",
+  "settings_save": "Save",
+  "success_digest": "Email preference updated.",
+
   "lang_fr": "French", "lang_en": "English", "lang_nl": "Dutch", "lang_de": "German",
   "lang_es": "Spanish", "lang_it": "Italian", "lang_pt": "Portuguese", "lang_da": "Danish",
   "lang_pl": "Polish", "lang_ru": "Russian", "lang_el": "Greek", "lang_zh": "Chinese",

@@ -25,7 +25,7 @@ router.get('/settings', requireLogin, (req, res) => {
     'SELECT category_id FROM user_interests WHERE user_id = ?'
   ).all(req.session.userId).map(r => r.category_id);
 
-  const user = db.prepare('SELECT content_languages FROM users WHERE id = ?').get(req.session.userId);
+  const user = db.prepare('SELECT content_languages, email_digest FROM users WHERE id = ?').get(req.session.userId);
   const rawLangs = user?.content_languages;
   const contentLangs = (!rawLangs || rawLangs === 'all')
     ? [...ALL_LANGS]
@@ -37,6 +37,7 @@ router.get('/settings', requireLogin, (req, res) => {
     selected,
     contentLangs,
     allLangs: ALL_LANGS,
+    emailDigest: user?.email_digest !== 0,
     success: req.query.success || null,
     error: req.query.error || null,
   });
@@ -69,6 +70,12 @@ router.post('/settings/content-languages', requireLogin, verifyToken, (req, res)
   const value = chosen.length === 0 || chosen.length === ALL_LANGS.length ? 'all' : chosen.join(',');
   db.prepare('UPDATE users SET content_languages = ? WHERE id = ?').run(value, req.session.userId);
   res.redirect('/settings?success=content_langs');
+});
+
+router.post('/settings/digest', requireLogin, verifyToken, (req, res) => {
+  const value = req.body.digest === '1' ? 1 : 0;
+  db.prepare('UPDATE users SET email_digest = ? WHERE id = ?').run(value, req.session.userId);
+  res.redirect('/settings?success=digest');
 });
 
 router.post('/settings/password', requireLogin, verifyToken, async (req, res) => {
