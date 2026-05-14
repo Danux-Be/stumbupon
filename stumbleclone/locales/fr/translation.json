@@ -305,6 +305,13 @@
   "reset_invalid": "Ce lien est invalide ou a expiré. Fais une nouvelle demande.",
   "reset_success": "Mot de passe modifié avec succès. Tu peux maintenant te connecter.",
 
+  "search_title": "Rechercher",
+  "search_placeholder": "Rechercher un site…",
+  "search_submit": "Chercher",
+  "search_no_results": "Aucun résultat pour {{q}}.",
+  "search_results_count": "{{count}} résultat(s) pour {{q}}",
+  "search_error": "Requête invalide. Essaie des mots-clés plus simples.",
+
   "stumble_share": "Partager",
   "guest_banner": "{{count}} / {{limit}} sites découverts en invité —",
   "guest_banner_cta": "S'inscrire gratuitement",
