@@ -221,6 +221,9 @@
   "tastes_interests_link": "Edit my interests",
   "stumble_blocked": "This site blocks embedding in a frame.",
   "stumble_open_tab": "Open in new tab",
+  "stumble_admin_reject": "Reject this site (admin)",
+  "stumble_admin_reject_confirm": "Permanently reject this site from the catalogue?",
+
   "admin_flagged_title": "Sites to review",
   "admin_flagged_empty": "No flagged sites. ✅",
   "admin_flagged_restore": "✅ Restore",

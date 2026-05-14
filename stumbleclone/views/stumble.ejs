@@ -51,6 +51,11 @@
         </div>
       </details>
 
+      <% if (user && user.isAdmin) { %>
+      <button class="btn btn-reject btn-sm" id="admin-reject-btn"
+              title="<%= t('stumble_admin_reject') %>">🗑</button>
+      <% } %>
+
       <a href="/stumble" class="btn btn-primary btn-sm"><%= t('stumble_next') %> →</a>
     </div>
   </div>
@@ -72,7 +77,7 @@
 
   <!-- ── Carte fallback ───────────────────────────────────────────────── -->
   <div class="stumble-card-wrap" id="stumble-card-wrap"
-       style="<%= canEmbed ? 'display:none' : '' %>">
+       style="<%= canEmbed ? 'display:none' : 'display:flex' %>">
     <div class="stumble-card">
       <div class="stumble-meta">
         <% categories.forEach(cat => { %>
@@ -149,6 +154,19 @@
         body: '_csrf=' + encodeURIComponent(CSRF) + '&site_id=' + SITE_ID,
       }).then(function() { window.location.href = '/stumble'; });
     });
+
+    // ── Rejet admin rapide ─────────────────────────────────────────────────
+    var adminRejectBtn = document.getElementById('admin-reject-btn');
+    if (adminRejectBtn) {
+      adminRejectBtn.addEventListener('click', function() {
+        if (!confirm('<%= t('stumble_admin_reject_confirm') %>')) return;
+        fetch('/admin/site/' + SITE_ID + '/reject', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: '_csrf=' + encodeURIComponent(CSRF),
+        }).then(function() { window.location.href = '/stumble'; });
+      });
+    }
 
     // ── Détection du blocage iframe (X-Frame-Options → about:blank) ───────
     var iframe   = document.getElementById('stumble-iframe');
