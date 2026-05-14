@@ -136,6 +136,8 @@ app.get('/', (req, res) => {
   res.render('home', { title: 'StumbleClone', stats, userStats: null, recentSites });
 });
 
+app.get('/offline', (req, res) => res.render('offline'));
+
 app.listen(PORT, () => {
   console.log(`StumbleClone lancé sur http://localhost:${PORT}`);
 });
