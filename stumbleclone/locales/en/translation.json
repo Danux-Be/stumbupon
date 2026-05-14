@@ -290,7 +290,8 @@
   "guest_join_perk3": "Save your favourite sites",
   "guest_join_perk4": "Adjust your taste profile anytime",
   "guest_join_signup": "Create an account",
-  "guest_join_login": "I already have an account",
+  "guest_join_login": "Log in",
+  "guest_join_have_account": "Already have an account?",
 
   "settings_digest_title": "Weekly digest",
   "settings_digest_desc": "Receive an email every Monday with 5 sites picked for your interests.",

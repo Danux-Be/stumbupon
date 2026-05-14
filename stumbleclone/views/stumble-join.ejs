@@ -1,20 +1,15 @@
-<%- include('partials/header', { title: t('guest_join_title') }) %>
+<%- include('partials/header', { title: t('guest_join_title', { limit: guestLimit }) }) %>
 
-<div class="stumble-join">
-  <div class="stumble-join__inner">
-
-    <div class="stumble-join__stat">
-      <span class="stumble-join__stat-number">5</span>
-      <span class="stumble-join__stat-label"><%- t('guest_join_stat') %></span>
+<div class="form-page">
+  <div class="form-card">
+    <div style="text-align:center;margin-bottom:1.25rem">
+      <span style="font-size:2.2rem">🌀</span>
+      <h1 style="margin-top:0.5rem"><%- t('guest_join_title', { limit: guestLimit }) %></h1>
     </div>
 
-    <h1 class="stumble-join__title"><%- t('guest_join_title', { limit: guestLimit }) %></h1>
-    <p class="stumble-join__desc"><%- t('guest_join_desc') %></p>
-
-    <div class="stumble-join__actions">
-      <a href="/signup" class="btn btn-primary btn-xl"><%= t('guest_join_signup') %> →</a>
-      <a href="/login"  class="btn btn-secondary">  <%= t('guest_join_login') %></a>
-    </div>
+    <p style="color:var(--color-text-muted);text-align:center;margin-bottom:1.5rem;line-height:1.6">
+      <%- t('guest_join_desc') %>
+    </p>
 
     <ul class="stumble-join__perks">
       <li><span class="stumble-join__perk-icon">🎯</span><%- t('guest_join_perk1') %></li>
@@ -23,6 +18,13 @@
       <li><span class="stumble-join__perk-icon">🎛️</span><%- t('guest_join_perk4') %></li>
     </ul>
 
+    <a href="/signup" class="btn btn-primary btn-block" style="margin-top:1.25rem">
+      <%= t('guest_join_signup') %> →
+    </a>
+
+    <p class="form-footer">
+      <%= t('guest_join_have_account') %> <a href="/login"><%= t('guest_join_login') %></a>
+    </p>
   </div>
 </div>
 
