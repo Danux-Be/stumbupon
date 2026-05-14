@@ -243,6 +243,11 @@
   "about_s4_body": "Know a remarkable site worth discovering? Submit it — it will be reviewed and, if it fits our criteria, added to the catalogue.",
   "about_s5_title": "The project",
   "about_s5_body": "StumbleClone is a personal open-source project, built by <a href='mailto:dany@danux.be'>Dany</a> and self-hosted in Belgium. No investors, no growth targets — just a love of the open web.",
+  "about_s6_title": "Keyboard shortcuts",
+  "about_kbd_space": "Next site",
+  "about_kbd_l": "Like",
+  "about_kbd_d": "Dislike",
+  "about_kbd_o": "Open in new tab",
 
   "stumble_admin_reject": "Reject this site (admin)",
   "stumble_admin_reject_confirm": "Permanently reject this site from the catalogue?",
