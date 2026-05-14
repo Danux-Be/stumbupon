@@ -11,8 +11,8 @@ i18next
       loadPath: path.join(__dirname, '../locales/{{lng}}/translation.json'),
     },
     fallbackLng: 'fr',
-    supportedLngs: ['fr', 'en', 'nl', 'de'],
-    preload: ['fr', 'en', 'nl', 'de'],
+    supportedLngs: ['fr', 'en', 'nl', 'de', 'es', 'it', 'pt', 'da', 'pl', 'ru', 'el', 'zh', 'ja', 'ar'],
+    preload:       ['fr', 'en', 'nl', 'de', 'es', 'it', 'pt', 'da', 'pl', 'ru', 'el', 'zh', 'ja', 'ar'],
     interpolation: { escapeValue: false },
   });
 
