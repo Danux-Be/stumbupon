@@ -12,6 +12,10 @@ const checkOptout = db.prepare(
   "SELECT id FROM optout_requests WHERE url = ? AND status = 'pending'"
 );
 
+router.get('/about', (req, res) => {
+  res.render('about', { title: req.t('about_title') });
+});
+
 router.get('/legal', (req, res) => {
   res.render('legal', { title: req.t('legal_title') });
 });

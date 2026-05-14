@@ -5,6 +5,7 @@ const { verifyToken } = require('../middleware/csrf');
 const { validateUrl } = require('../lib/validators');
 const { enrichUrl } = require('../lib/enricher');
 const { verifyTurnstile } = require('../lib/turnstile');
+const { sendAdminAlert } = require('../lib/mailer');
 
 const router = express.Router();
 
@@ -123,6 +124,12 @@ router.post('/submit', requireLogin, verifyToken, async (req, res) => {
   for (const catId of chosen) {
     insertSiteCat.run(info.lastInsertRowid, catId);
   }
+
+  const submitter = db.prepare('SELECT username FROM users WHERE id = ?').get(userId)?.username || '?';
+  sendAdminAlert(
+    `Nouvelle soumission — ${finalTitle.slice(0, 60)}`,
+    `Soumis par : ${submitter}\nURL : ${url.trim()}\nScore de risque : ${riskScore}/100\n\nModérer : ${process.env.BASE_URL || 'http://localhost:4000'}/admin/pending`
+  ).catch(() => {});
 
   res.redirect('/submit?success=1');
 });
