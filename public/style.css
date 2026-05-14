@@ -1302,33 +1302,21 @@ body.stumble-iframe-page {
 }
 .stumble-join__perks {
   list-style: none;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 .stumble-join__perks li {
   display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 0.9rem 1rem;
-  font-size: 0.88rem;
-  color: var(--color-text);
-  text-align: left;
-  box-shadow: var(--shadow-sm);
-  line-height: 1.45;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
 }
-.stumble-join__perk-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.05rem; }
-@media (max-width: 480px) {
-  .stumble-join__perks { grid-template-columns: 1fr; }
-  .stumble-join__actions { flex-direction: column; width: 100%; }
-  .stumble-join__actions .btn { width: 100%; text-align: center; }
-}
+.stumble-join__perk-icon { font-size: 1rem; flex-shrink: 0; }
 
 /* ─── Raccourcis clavier — hint bar ─────────────────────────────────────── */
 kbd {

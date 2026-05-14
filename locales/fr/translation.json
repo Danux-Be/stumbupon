@@ -316,7 +316,8 @@
   "guest_join_perk3": "Sauvegarde tes sites favoris",
   "guest_join_perk4": "Ajuste tes goûts à tout moment",
   "guest_join_signup": "Créer un compte",
-  "guest_join_login": "J'ai déjà un compte",
+  "guest_join_login": "Se connecter",
+  "guest_join_have_account": "Déjà un compte ?",
 
   "settings_digest_title": "Digest hebdomadaire",
   "settings_digest_desc": "Reçois chaque lundi un email avec 5 sites sélectionnés selon tes centres d'intérêt.",
