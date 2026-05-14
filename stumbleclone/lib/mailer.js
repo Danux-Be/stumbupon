@@ -120,8 +120,10 @@ async function sendDigestEmail(to, username, sites, lang = 'fr', unsubUrl) {
 
   const l = subjects[lang] ? lang : 'fr';
 
+  const stumbleLink = (s) => `${baseUrl}/stumble/${s.id}`;
+
   const siteLines = sites.map((s, i) =>
-    `${i + 1}. ${s.title}\n   ${s.cats || ''}\n   ${s.description || ''}\n   ${s.url}`
+    `${i + 1}. ${s.title}\n   ${s.cats || ''}\n   ${s.description || ''}\n   ${stumbleLink(s)}`
   ).join('\n\n');
 
   const text = `${intros[l]}\n\n${siteLines}\n\n${footers[l]}`;
@@ -130,10 +132,10 @@ async function sendDigestEmail(to, username, sites, lang = 'fr', unsubUrl) {
     <div style="margin-bottom:1.5rem;padding:1rem 1.25rem;background:#f9f9f9;border-radius:8px;border-left:3px solid #5c6bc0">
       <div style="font-size:0.78rem;color:#6b7280;margin-bottom:0.3rem">${escapeHtml(s.cats || '')}</div>
       <div style="font-size:1.05rem;font-weight:700;margin-bottom:0.3rem">
-        <a href="${escapeHtml(s.url)}" style="color:#3949ab;text-decoration:none">${escapeHtml(s.title)}</a>
+        <a href="${escapeHtml(stumbleLink(s))}" style="color:#3949ab;text-decoration:none">${escapeHtml(s.title)}</a>
       </div>
       <div style="font-size:0.9rem;color:#374151;margin-bottom:0.5rem">${escapeHtml(s.description || '')}</div>
-      <a href="${escapeHtml(s.url)}" style="font-size:0.8rem;color:#5c6bc0;font-family:monospace">${escapeHtml(s.url)}</a>
+      <a href="${escapeHtml(stumbleLink(s))}" style="font-size:0.8rem;color:#5c6bc0;font-family:monospace">${escapeHtml(baseUrl)}/stumble/${s.id}</a>
     </div>`).join('');
 
   const html = `<!DOCTYPE html>
