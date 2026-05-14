@@ -144,6 +144,7 @@ router.post('/login', authLimiter, verifyToken, async (req, res) => {
   const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
   const match = user ? await bcrypt.compare(password, user.password_hash) : false;
   if (!user || !match) return fail('error_login_invalid');
+  if (user.is_banned)  return fail('error_account_banned');
 
   req.session.regenerate((err) => {
     if (err) return fail('error_internal');
