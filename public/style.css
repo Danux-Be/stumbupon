@@ -1210,6 +1210,80 @@ body.stumble-iframe-page {
   .bot-log-source, .bot-log-date, .bot-log-score { display: none; }
 }
 
+/* ─── Bannière invité (stumble) ──────────────────────────────────────────── */
+.stumble-guest-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.65rem 1.25rem;
+  background: rgba(92, 107, 192, 0.96);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 0.88rem;
+}
+.stumble-guest-banner .btn-primary { background: #fff; color: var(--color-primary); }
+.stumble-guest-banner .btn-primary:hover { background: #f0f0f0; color: var(--color-primary-dark); }
+.stumble-guest-banner .btn-ghost { color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.4); }
+.stumble-guest-banner .btn-ghost:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+/* ─── Page mur inscription invité ───────────────────────────────────────── */
+.stumble-join {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--color-bg);
+}
+.stumble-join__card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 2.5rem 2rem;
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+}
+.stumble-join__emoji { font-size: 3rem; display: block; margin-bottom: 1rem; }
+.stumble-join__title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+  color: var(--color-text);
+}
+.stumble-join__desc {
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+.stumble-join__perks {
+  list-style: none;
+  text-align: left;
+  margin: 0 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-bg);
+  border-radius: var(--radius);
+  font-size: 0.92rem;
+  color: var(--color-text);
+}
+.stumble-join__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 /* ─── Raccourcis clavier — hint bar ─────────────────────────────────────── */
 kbd {
   font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;

@@ -4,6 +4,8 @@ const { requireLogin } = require('../middleware/auth');
 
 const router = express.Router();
 
+const GUEST_LIMIT = 5;
+
 const getUserLangPref = db.prepare('SELECT content_languages FROM users WHERE id = ?');
 
 // Candidats pondérés par centres d'intérêt, non encore vus, non rejetés
@@ -38,7 +40,6 @@ const queryCandidatesAny = db.prepare(`
 `);
 
 // Filtrage collaboratif : sites aimés par des utilisateurs au goût similaire
-// "Similaire" = a liké au moins un site que l'utilisateur courant a aussi liké
 const queryCollabCandidates = db.prepare(`
   SELECT s.id, s.url, s.title, s.description, s.language,
          COUNT(DISTINCT v2.user_id) AS collab_score
@@ -70,6 +71,16 @@ const countUserUpvotes = db.prepare(
   'SELECT COUNT(*) AS n FROM votes WHERE user_id = ? AND direction = 1'
 );
 
+// Sélection aléatoire pour les invités (pas de jointure user_interests)
+const queryGuestCandidates = db.prepare(`
+  SELECT id, url, title, description, language, can_embed
+  FROM sites
+  WHERE status = 'approved'
+    AND id NOT IN (SELECT value FROM json_each(?))
+  ORDER BY RANDOM()
+  LIMIT 20
+`);
+
 const querySiteById = db.prepare(`
   SELECT s.id, s.url, s.title, s.description, s.language, s.quality_score, s.can_embed
   FROM sites s WHERE s.id = ? AND s.status = 'approved'
@@ -85,6 +96,16 @@ const queryCats = db.prepare(`
   JOIN categories c ON c.id = sc.category_id
   LEFT JOIN category_translations ct ON ct.category_id = c.id AND ct.language = ?
   LEFT JOIN user_interests ui ON ui.category_id = sc.category_id AND ui.user_id = ?
+  WHERE sc.site_id = ?
+  ORDER BY localName
+`);
+
+const queryCatsGuest = db.prepare(`
+  SELECT c.id AS category_id, c.emoji,
+         COALESCE(ct.name, c.name) AS localName
+  FROM site_categories sc
+  JOIN categories c ON c.id = sc.category_id
+  LEFT JOIN category_translations ct ON ct.category_id = c.id AND ct.language = ?
   WHERE sc.site_id = ?
   ORDER BY localName
 `);
@@ -114,9 +135,6 @@ function weightedPick(candidates) {
   return candidates[candidates.length - 1];
 }
 
-// Fusionne les candidats par intérêt et par filtrage collaboratif.
-// Le signal collab booste le poids des sites déjà présents et ajoute
-// les sites de découverte (ceux trouvés uniquement via collab).
 function mergeWithCollab(interestCandidates, collabCandidates) {
   if (!collabCandidates.length) return interestCandidates;
 
@@ -124,14 +142,12 @@ function mergeWithCollab(interestCandidates, collabCandidates) {
   const collabMap = new Map(collabCandidates.map(c => [c.id, c.collab_score]));
   const maxInterest = Math.max(...interestCandidates.map(c => c.total_weight), 1);
 
-  // Boost intérêts existants avec signal collab (30% du poids max d'intérêt)
   const boostFactor = maxInterest * 0.3;
   const result = interestCandidates.map(c => ({
     ...c,
     total_weight: c.total_weight + (collabMap.get(c.id) || 0) / maxCollab * boostFactor,
   }));
 
-  // Ajoute les candidats purement collaboratifs (découverte hors centres d'intérêt)
   const interestIds = new Set(interestCandidates.map(c => c.id));
   for (const c of collabCandidates) {
     if (!interestIds.has(c.id)) {
@@ -142,10 +158,38 @@ function mergeWithCollab(interestCandidates, collabCandidates) {
   return result;
 }
 
-router.get('/stumble', requireLogin, (req, res) => {
-  const userId = req.session.userId;
-  const langPref = getUserLangPref.get(userId)?.content_languages || 'all';
+// ── Route invité : mur d'inscription après GUEST_LIMIT stumbles ──────────
+router.get('/stumble/join', (req, res) => {
+  if (req.session.userId) return res.redirect('/stumble');
+  res.render('stumble-join', { title: req.t('guest_join_title') });
+});
 
+// ── Route principale ─────────────────────────────────────────────────────
+router.get('/stumble', (req, res) => {
+  const userId = req.session.userId;
+
+  // Invité
+  if (!userId) {
+    const count = req.session.guestCount || 0;
+    if (count >= GUEST_LIMIT) return res.redirect('/stumble/join');
+
+    const seen = req.session.guestSeen || [];
+    let candidates = queryGuestCandidates.all(JSON.stringify(seen));
+
+    if (!candidates.length) {
+      req.session.guestSeen = [];
+      candidates = queryGuestCandidates.all('[]');
+    }
+    if (!candidates.length) return res.redirect('/');
+
+    const site = candidates[Math.floor(Math.random() * candidates.length)];
+    req.session.guestSeen  = [...seen, site.id];
+    req.session.guestCount = count + 1;
+    return res.redirect(`/stumble/${site.id}`);
+  }
+
+  // Utilisateur connecté
+  const langPref = getUserLangPref.get(userId)?.content_languages || 'all';
   let candidates = queryCandidates.all(userId, userId, userId, langPref, langPref);
 
   if (!candidates.length) {
@@ -153,11 +197,8 @@ router.get('/stumble', requireLogin, (req, res) => {
     candidates = queryCandidatesAny.all(userId, userId, langPref, langPref);
   }
 
-  if (!candidates.length) {
-    return res.redirect('/settings?error=no-sites');
-  }
+  if (!candidates.length) return res.redirect('/settings?error=no-sites');
 
-  // Filtrage collaboratif activé dès que l'utilisateur a posé ≥ 5 likes
   const upvoteCount = countUserUpvotes.get(userId).n;
   if (upvoteCount >= 5) {
     const collabCandidates = queryCollabCandidates.all(
@@ -171,19 +212,23 @@ router.get('/stumble', requireLogin, (req, res) => {
   res.redirect(`/stumble/${site.id}`);
 });
 
-router.get('/stumble/:id', requireLogin, (req, res) => {
+router.get('/stumble/:id', (req, res) => {
   const site = querySiteById.get(req.params.id);
   if (!site) return res.redirect('/stumble');
 
   const lang = res.locals.currentLang;
   const userId = req.session.userId;
-  const categories = queryCats.all(lang, userId, site.id);
-  const voteRow = queryVote.get(userId, site.id);
-  const userVote = voteRow ? voteRow.direction : null;
-  const score = queryScore.get(site.id).score;
+  const isGuest = !userId;
 
-  // can_embed : NULL = inconnu (JS fallback), 1 = OK, 0 = bloqué/inaccessible
+  const categories = isGuest
+    ? queryCatsGuest.all(lang, site.id).map(c => ({ ...c, weight: 1, in_interests: 0 }))
+    : queryCats.all(lang, userId, site.id);
+
+  const userVote = isGuest ? null : (queryVote.get(userId, site.id)?.direction ?? null);
+  const score    = queryScore.get(site.id).score;
   const canEmbed = site.can_embed !== 0;
+
+  const guestCount = isGuest ? (req.session.guestCount || 0) : null;
 
   res.render('stumble', {
     title: site.title,
@@ -192,6 +237,9 @@ router.get('/stumble/:id', requireLogin, (req, res) => {
     userVote,
     score,
     canEmbed,
+    isGuest,
+    guestCount,
+    guestLimit: GUEST_LIMIT,
     flashLessOfThis: req.query.lessofthis === '1',
     flashReported: req.query.reported || null,
   });

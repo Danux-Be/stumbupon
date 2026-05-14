@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="<%= currentLang %>">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title %> — StumbleClone</title>
+  <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#5c6bc0"/>
+  <link rel="stylesheet" href="/style.css"/>
+  <script>(function(){var t=localStorage.getItem('sc-theme');if(t==='dark')document.documentElement.classList.add('dark');else if(t==='light')document.documentElement.classList.add('light');}());</script>
+</head>
+<body>
+  <div class="stumble-join">
+    <div class="stumble-join__card">
+      <span class="stumble-join__emoji">🌀</span>
+      <h1 class="stumble-join__title"><%- t('guest_join_title') %></h1>
+      <p class="stumble-join__desc"><%- t('guest_join_desc') %></p>
+
+      <ul class="stumble-join__perks">
+        <li>🎯 <%- t('guest_join_perk1') %></li>
+        <li>👍 <%- t('guest_join_perk2') %></li>
+        <li>🔖 <%- t('guest_join_perk3') %></li>
+        <li>🎛️ <%- t('guest_join_perk4') %></li>
+      </ul>
+
+      <div class="stumble-join__actions">
+        <a href="/signup" class="btn btn-primary btn-large"><%= t('guest_join_signup') %></a>
+        <a href="/login" class="btn btn-secondary"><%= t('guest_join_login') %></a>
+      </div>
+    </div>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

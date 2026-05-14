@@ -280,6 +280,16 @@
   "reset_success": "Password changed successfully. You can now log in.",
 
   "stumble_share": "Share",
+  "guest_banner": "{{count}} / {{limit}} sites discovered as guest —",
+  "guest_banner_cta": "Sign up for free",
+  "guest_join_title": "You've discovered {{limit}} sites!",
+  "guest_join_desc": "Create a free account to keep exploring, vote on sites and save your favourites.",
+  "guest_join_perk1": "Personalised picks based on your interests",
+  "guest_join_perk2": "Vote to fine-tune your recommendations",
+  "guest_join_perk3": "Save your favourite sites",
+  "guest_join_perk4": "Adjust your taste profile anytime",
+  "guest_join_signup": "Create an account",
+  "guest_join_login": "I already have an account",
 
   "settings_digest_title": "Weekly digest",
   "settings_digest_desc": "Receive an email every Monday with 5 sites picked for your interests.",
