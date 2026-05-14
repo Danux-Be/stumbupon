@@ -247,6 +247,9 @@
   "tastes_interests_link": "Modifier mes centres d'intérêt",
   "stumble_blocked": "Ce site bloque l'intégration dans un cadre.",
   "stumble_open_tab": "Ouvrir dans un onglet",
+  "stumble_admin_reject": "Rejeter ce site (admin)",
+  "stumble_admin_reject_confirm": "Rejeter ce site définitivement du catalogue ?",
+
   "admin_flagged_title": "Sites à re-vérifier",
   "admin_flagged_empty": "Aucun site flaggé. ✅",
   "admin_flagged_restore": "✅ Rétablir",

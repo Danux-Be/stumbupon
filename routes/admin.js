@@ -160,6 +160,13 @@ router.get('/admin/bot', requireAdmin, (req, res) => {
   });
 });
 
+// ── Rejet rapide depuis la barre Stumble ──────────────────────────────────────
+
+router.post('/admin/site/:id/reject', requireAdmin, verifyToken, (req, res) => {
+  db.prepare("UPDATE sites SET status='rejected' WHERE id=?").run(req.params.id);
+  res.json({ ok: true });
+});
+
 // ── Sites flaggés (re-check morts/redirects) ──────────────────────────────────
 
 router.get('/admin/flagged', requireAdmin, (req, res) => {
