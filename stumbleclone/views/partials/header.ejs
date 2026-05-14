@@ -6,6 +6,7 @@
   <title><%= title %> — StumbleClone</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>" />
   <link rel="stylesheet" href="/style.css" />
+  <script>(function(){var t=localStorage.getItem('sc-theme');if(t==='dark')document.documentElement.classList.add('dark');else if(t==='light')document.documentElement.classList.add('light');}());</script>
   <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
   <script src="/js/alpine.min.js" defer></script>
   <script defer src="https://analytics.danux.be/script.js" data-website-id="2bd358ed-ed44-4bb6-9ad8-ae9519f5067f"></script>
@@ -31,6 +32,8 @@
         <a href="/login"><%= t('nav_login') %></a>
         <a href="/signup" class="btn btn-primary"><%= t('nav_signup') %></a>
       <% } %>
+
+      <button id="theme-toggle" class="theme-toggle" title="Changer de thème" aria-label="Changer de thème">🌗</button>
 
       <div class="lang-selector">
         <select class="lang-select" onchange="location.href='/lang/'+this.value" aria-label="Language">
