@@ -247,6 +247,11 @@
   "tastes_interests_link": "Modifier mes centres d'intérêt",
   "stumble_blocked": "Ce site bloque l'intégration dans un cadre.",
   "stumble_open_tab": "Ouvrir dans un onglet",
+  "admin_flagged_title": "Sites à re-vérifier",
+  "admin_flagged_empty": "Aucun site flaggé. ✅",
+  "admin_flagged_restore": "✅ Rétablir",
+  "admin_stat_flagged": "sites flaggés",
+
   "admin_users_title": "Utilisateurs",
   "admin_users_empty": "Aucun utilisateur.",
   "admin_users_col_user": "Utilisateur",

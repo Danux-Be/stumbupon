@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+
+<div class="admin-page">
+  <h1><%= t('admin_flagged_title') %></h1>
+  <a href="/admin" class="btn btn-secondary" style="margin-bottom:1.5rem">← <%= t('admin_back') %></a>
+
+  <% if (!sites.length) { %>
+    <p class="alert alert-success"><%= t('admin_flagged_empty') %></p>
+  <% } else { %>
+  <div class="admin-list">
+    <% for (const site of sites) { %>
+    <div class="admin-card">
+      <div class="admin-card__header">
+        <div>
+          <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer" class="admin-card__url">
+            <%= site.url.replace(/^https?:\/\//, '').slice(0, 70) %>
+          </a>
+          <div class="admin-card__title"><%= site.title %></div>
+        </div>
+        <span class="risk-badge risk-badge--high"><%= site.flag_reason %></span>
+      </div>
+
+      <div class="admin-card__meta">
+        <span>Approuvé : <%= new Date(site.approved_at).toLocaleDateString() %></span>
+        <span>Vérifié : <%= site.last_checked_at ? new Date(site.last_checked_at).toLocaleDateString() : '—' %></span>
+      </div>
+
+      <div class="admin-card__actions">
+        <form method="POST" action="/admin/flagged/<%= site.id %>/restore" style="display:inline">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <button class="btn btn-approve"><%= t('admin_flagged_restore') %></button>
+        </form>
+        <form method="POST" action="/admin/flagged/<%= site.id %>/reject" style="display:inline">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <button class="btn btn-reject"><%= t('admin_dismiss') %></button>
+        </form>
+      </div>
+    </div>
+    <% } %>
+  </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

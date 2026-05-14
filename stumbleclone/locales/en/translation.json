@@ -221,6 +221,11 @@
   "tastes_interests_link": "Edit my interests",
   "stumble_blocked": "This site blocks embedding in a frame.",
   "stumble_open_tab": "Open in new tab",
+  "admin_flagged_title": "Sites to review",
+  "admin_flagged_empty": "No flagged sites. ✅",
+  "admin_flagged_restore": "✅ Restore",
+  "admin_stat_flagged": "flagged sites",
+
   "admin_users_title": "Users",
   "admin_users_empty": "No users found.",
   "admin_users_col_user": "User",

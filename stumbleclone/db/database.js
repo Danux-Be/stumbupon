@@ -104,4 +104,11 @@ if (!userCols5.includes('is_banned')) {
   db.exec('ALTER TABLE users ADD COLUMN is_banned INTEGER DEFAULT 0');
 }
 
+// Re-check sites morts
+const siteCols4 = db.prepare('PRAGMA table_info(sites)').all().map(c => c.name);
+if (!siteCols4.includes('last_checked_at')) {
+  db.exec('ALTER TABLE sites ADD COLUMN last_checked_at DATETIME DEFAULT NULL');
+  db.exec('ALTER TABLE sites ADD COLUMN flag_reason TEXT DEFAULT NULL');
+}
+
 module.exports = db;
