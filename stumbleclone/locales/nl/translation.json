@@ -218,6 +218,16 @@
   "lang_pl": "Pools", "lang_ru": "Russisch", "lang_el": "Grieks", "lang_zh": "Chinees",
   "lang_ja": "Japans", "lang_ar": "Arabisch",
 
+  "settings_group_discovery":     "Ontdekking",
+  "settings_group_interface":     "Interface",
+  "settings_group_notifications": "Meldingen",
+  "settings_group_account":       "Account & beveiliging",
+
+  "settings_bar_title":  "Positie van de balk",
+  "settings_bar_desc":   "Toon de werkbalk bovenaan of onderaan de ontdekkingspagina.",
+  "settings_bar_top":    "Bovenaan",
+  "settings_bar_bottom": "Onderaan",
+
   "settings_anim_title": "Animaties",
   "settings_anim_desc": "Schakel geanimeerde overgangen in bij het navigeren tussen sites.",
   "settings_anim_label": "Flip-animatie inschakelen",

@@ -309,6 +309,16 @@
   "settings_digest_desc": "Receive an email every Monday with 5 sites picked for your interests.",
   "settings_digest_label": "Receive the weekly digest",
 
+  "settings_group_discovery":     "Discovery",
+  "settings_group_interface":     "Interface",
+  "settings_group_notifications": "Notifications",
+  "settings_group_account":       "Account & security",
+
+  "settings_bar_title":  "Toolbar position",
+  "settings_bar_desc":   "Display the toolbar at the top or bottom of the discovery page.",
+  "settings_bar_top":    "Top",
+  "settings_bar_bottom": "Bottom",
+
   "settings_anim_title": "Animations",
   "settings_anim_desc": "Enable animated transitions when navigating between sites.",
   "settings_anim_label": "Enable flip animation",

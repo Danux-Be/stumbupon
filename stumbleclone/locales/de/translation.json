@@ -218,6 +218,16 @@
   "lang_pl": "Polnisch", "lang_ru": "Russisch", "lang_el": "Griechisch", "lang_zh": "Chinesisch",
   "lang_ja": "Japanisch", "lang_ar": "Arabisch",
 
+  "settings_group_discovery":     "Entdeckung",
+  "settings_group_interface":     "Benutzeroberfläche",
+  "settings_group_notifications": "Benachrichtigungen",
+  "settings_group_account":       "Konto & Sicherheit",
+
+  "settings_bar_title":  "Position der Leiste",
+  "settings_bar_desc":   "Werkzeugleiste oben oder unten auf der Entdeckungsseite anzeigen.",
+  "settings_bar_top":    "Oben",
+  "settings_bar_bottom": "Unten",
+
   "settings_anim_title": "Animationen",
   "settings_anim_desc": "Aktiviere animierte Übergänge beim Navigieren zwischen Websites.",
   "settings_anim_label": "Flip-Animation aktivieren",

@@ -21,191 +21,265 @@
     <p class="alert alert-error"><%= error %></p>
   <% } %>
 
-  <!-- Centres d'intérêt -->
-  <section class="settings-section">
-    <h2><%= t('settings_interests_title') %></h2>
-    <p><%= t('settings_interests_desc') %></p>
+  <!-- Navigation d'ancres -->
+  <nav class="settings-nav" aria-label="<%= t('settings_title') %>">
+    <a href="#decouverte" class="settings-nav__link">🎯 <%= t('settings_group_discovery') %></a>
+    <a href="#interface"  class="settings-nav__link">🎨 <%= t('settings_group_interface') %></a>
+    <a href="#notifications" class="settings-nav__link">📬 <%= t('settings_group_notifications') %></a>
+    <a href="#compte"     class="settings-nav__link">🔐 <%= t('settings_group_account') %></a>
+  </nav>
 
-    <form method="POST" action="/settings/interests" id="settings-interests-form">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-      <p class="interests-count">
-        <span id="settings-interests-count"><%= selected.length %></span>&nbsp;<%- t('interests_count', { count: '' }).trim() %>
-      </p>
+  <!-- ── Découverte ──────────────────────────────────────────────────────── -->
+  <div id="decouverte" class="settings-group">
+    <p class="settings-group__title">🎯 <%= t('settings_group_discovery') %></p>
 
-      <div class="categories-grid categories-grid--compact">
-        <% for (const cat of categories) { %>
-          <label class="category-card">
-            <input
-              type="checkbox"
-              name="categories"
-              value="<%= cat.id %>"
-              <%= selected.includes(cat.id) ? 'checked' : '' %>
-            />
-            <span class="category-emoji"><%= cat.emoji %></span>
-            <span class="category-name"><%= cat.localName %></span>
-          </label>
-        <% } %>
-      </div>
+    <!-- Centres d'intérêt -->
+    <section class="settings-section">
+      <h2><%= t('settings_interests_title') %></h2>
+      <p><%= t('settings_interests_desc') %></p>
 
-      <button type="submit" class="btn btn-primary" id="settings-interests-submit"
-              <%= selected.length < 3 ? 'disabled' : '' %>>
-        <%= t('settings_interests_submit') %>
-      </button>
-    </form>
+      <form method="POST" action="/settings/interests" id="settings-interests-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <p class="interests-count">
+          <span id="settings-interests-count"><%= selected.length %></span>&nbsp;<%- t('interests_count', { count: '' }).trim() %>
+        </p>
 
-    <script>
-      (function () {
-        var form    = document.getElementById('settings-interests-form');
-        var counter = document.getElementById('settings-interests-count');
-        var submit  = document.getElementById('settings-interests-submit');
-        if (!form || !counter || !submit) return;
+        <div class="categories-grid categories-grid--compact">
+          <% for (const cat of categories) { %>
+            <label class="category-card">
+              <input
+                type="checkbox"
+                name="categories"
+                value="<%= cat.id %>"
+                <%= selected.includes(cat.id) ? 'checked' : '' %>
+              />
+              <span class="category-emoji"><%= cat.emoji %></span>
+              <span class="category-name"><%= cat.localName %></span>
+            </label>
+          <% } %>
+        </div>
 
-        function recount() {
-          var n = form.querySelectorAll('input[type="checkbox"]:checked').length;
-          counter.textContent = n;
-          submit.disabled = n < 3;
-        }
+        <button type="submit" class="btn btn-primary" id="settings-interests-submit"
+                <%= selected.length < 3 ? 'disabled' : '' %>>
+          <%= t('settings_interests_submit') %>
+        </button>
+      </form>
 
-        form.addEventListener('change', function (e) {
-          if (e.target.type === 'checkbox') recount();
-        });
-
-        form.querySelectorAll('.category-card').forEach(function (label) {
-          label.addEventListener('click', function () {
-            setTimeout(recount, 0);
+      <script>
+        (function () {
+          var form    = document.getElementById('settings-interests-form');
+          var counter = document.getElementById('settings-interests-count');
+          var submit  = document.getElementById('settings-interests-submit');
+          if (!form || !counter || !submit) return;
+          function recount() {
+            var n = form.querySelectorAll('input[type="checkbox"]:checked').length;
+            counter.textContent = n;
+            submit.disabled = n < 3;
+          }
+          form.addEventListener('change', function (e) {
+            if (e.target.type === 'checkbox') recount();
           });
-        });
-      })();
-    </script>
-  </section>
+        })();
+      </script>
+    </section>
 
-  <!-- Langues du contenu -->
-  <section class="settings-section">
-    <h2><%= t('settings_content_langs_title') %></h2>
-    <p><%= t('settings_content_langs_desc') %></p>
-    <form method="POST" action="/settings/content-languages">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-      <div class="lang-checkboxes">
-        <% for (const code of allLangs) { %>
-          <label class="lang-check-label">
-            <input type="checkbox" name="langs" value="<%= code %>"
-                   <%= contentLangs.includes(code) ? 'checked' : '' %> />
-            <%= t('lang_' + code) %>
-          </label>
+    <!-- Langues du contenu -->
+    <section class="settings-section">
+      <h2><%= t('settings_content_langs_title') %></h2>
+      <p><%= t('settings_content_langs_desc') %></p>
+      <form method="POST" action="/settings/content-languages">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="lang-checkboxes">
+          <% for (const code of allLangs) { %>
+            <label class="lang-check-label">
+              <input type="checkbox" name="langs" value="<%= code %>"
+                     <%= contentLangs.includes(code) ? 'checked' : '' %> />
+              <%= t('lang_' + code) %>
+            </label>
+          <% } %>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top:0.8rem">
+          <%= t('settings_content_langs_submit') %>
+        </button>
+      </form>
+    </section>
+  </div>
+
+  <!-- ── Interface ───────────────────────────────────────────────────────── -->
+  <div id="interface" class="settings-group">
+    <p class="settings-group__title">🎨 <%= t('settings_group_interface') %></p>
+
+    <!-- Langue de l'interface -->
+    <section class="settings-section">
+      <h2><%= t('settings_lang_title') %></h2>
+      <p><%= t('settings_lang_desc') %></p>
+      <div class="lang-buttons">
+        <% for (const [code, label] of Object.entries(langLabels)) { %>
+          <a href="/lang/<%= code %>"
+             class="btn <%= currentLang === code ? 'btn-primary' : 'btn-secondary' %>">
+            <%= label %>
+          </a>
         <% } %>
       </div>
-      <button type="submit" class="btn btn-primary" style="margin-top:0.8rem">
-        <%= t('settings_content_langs_submit') %>
-      </button>
-    </form>
-  </section>
+    </section>
 
-  <!-- Langue -->
-  <section class="settings-section">
-    <h2><%= t('settings_lang_title') %></h2>
-    <p><%= t('settings_lang_desc') %></p>
-    <div class="lang-buttons">
-      <% for (const [code, label] of Object.entries(langLabels)) { %>
-        <a href="/lang/<%= code %>"
-           class="btn <%= currentLang === code ? 'btn-primary' : 'btn-secondary' %>">
-          <%= label %>
-        </a>
-      <% } %>
-    </div>
-  </section>
+    <!-- Position de la barre -->
+    <section class="settings-section">
+      <h2><%= t('settings_bar_title') %></h2>
+      <p><%= t('settings_bar_desc') %></p>
+      <div class="settings-btn-group">
+        <button type="button" id="bar-pos-top"    class="btn btn-secondary">⬆️ <%= t('settings_bar_top') %></button>
+        <button type="button" id="bar-pos-bottom" class="btn btn-secondary">⬇️ <%= t('settings_bar_bottom') %></button>
+      </div>
+      <script>
+        (function() {
+          var btnTop    = document.getElementById('bar-pos-top');
+          var btnBottom = document.getElementById('bar-pos-bottom');
+          function update() {
+            var pos = localStorage.getItem('sc-bar-pos') || 'top';
+            btnTop.className    = 'btn ' + (pos === 'top'    ? 'btn-primary' : 'btn-secondary');
+            btnBottom.className = 'btn ' + (pos === 'bottom' ? 'btn-primary' : 'btn-secondary');
+          }
+          update();
+          btnTop.addEventListener('click', function() {
+            localStorage.setItem('sc-bar-pos', 'top');
+            update();
+          });
+          btnBottom.addEventListener('click', function() {
+            localStorage.setItem('sc-bar-pos', 'bottom');
+            update();
+          });
+        })();
+      </script>
+    </section>
 
-  <!-- Digest hebdomadaire -->
-  <section class="settings-section">
-    <h2><%= t('settings_digest_title') %></h2>
-    <p><%= t('settings_digest_desc') %></p>
-    <form method="POST" action="/settings/digest">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+    <!-- Animations -->
+    <section class="settings-section">
+      <h2><%= t('settings_anim_title') %></h2>
+      <p><%= t('settings_anim_desc') %></p>
       <label class="lang-check-label" style="margin-top:0.8rem">
-        <input type="checkbox" name="digest" value="1" <%= emailDigest ? 'checked' : '' %> />
-        <%= t('settings_digest_label') %>
+        <input type="checkbox" id="anim-toggle" />
+        <%= t('settings_anim_label') %>
       </label>
       <br/>
-      <button type="submit" class="btn btn-primary" style="margin-top:0.8rem">
+      <button type="button" id="anim-save" class="btn btn-primary" style="margin-top:0.8rem">
         <%= t('settings_save') %>
       </button>
-    </form>
-  </section>
+      <script>
+        (function() {
+          var toggle = document.getElementById('anim-toggle');
+          var btn    = document.getElementById('anim-save');
+          toggle.checked = localStorage.getItem('sc-animations') === '1';
+          btn.addEventListener('click', function() {
+            localStorage.setItem('sc-animations', toggle.checked ? '1' : '0');
+            btn.textContent = '✓';
+            setTimeout(function() { btn.textContent = '<%= t('settings_save') %>'; }, 1500);
+          });
+        })();
+      </script>
+    </section>
+  </div>
 
-  <!-- Animations -->
-  <section class="settings-section">
-    <h2><%= t('settings_anim_title') %></h2>
-    <p><%= t('settings_anim_desc') %></p>
-    <label class="lang-check-label" style="margin-top:0.8rem">
-      <input type="checkbox" id="anim-toggle" />
-      <%= t('settings_anim_label') %>
-    </label>
-    <br/>
-    <button type="button" id="anim-save" class="btn btn-primary" style="margin-top:0.8rem">
-      <%= t('settings_save') %>
-    </button>
-    <script>
-      (function() {
-        var toggle = document.getElementById('anim-toggle');
-        var btn    = document.getElementById('anim-save');
-        toggle.checked = localStorage.getItem('sc-animations') === '1';
-        btn.addEventListener('click', function() {
-          localStorage.setItem('sc-animations', toggle.checked ? '1' : '0');
-          btn.textContent = '✓';
-          setTimeout(function() { btn.textContent = '<%= t('settings_save') %>'; }, 1500);
-        });
-      })();
-    </script>
-  </section>
+  <!-- ── Notifications ───────────────────────────────────────────────────── -->
+  <div id="notifications" class="settings-group">
+    <p class="settings-group__title">📬 <%= t('settings_group_notifications') %></p>
 
-  <!-- Données personnelles (RGPD) -->
-  <section class="settings-section">
-    <h2><%= t('settings_data_title') %></h2>
-    <p><%= t('settings_data_desc') %></p>
+    <!-- Digest hebdomadaire -->
+    <section class="settings-section">
+      <h2><%= t('settings_digest_title') %></h2>
+      <p><%= t('settings_digest_desc') %></p>
+      <form method="POST" action="/settings/digest">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <label class="lang-check-label" style="margin-top:0.8rem">
+          <input type="checkbox" name="digest" value="1" <%= emailDigest ? 'checked' : '' %> />
+          <%= t('settings_digest_label') %>
+        </label>
+        <br/>
+        <button type="submit" class="btn btn-primary" style="margin-top:0.8rem">
+          <%= t('settings_save') %>
+        </button>
+      </form>
+    </section>
+  </div>
 
-    <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:0.8rem">
-      <a href="/account/export" class="btn btn-secondary">⬇️ <%= t('settings_export') %></a>
+  <!-- ── Compte & sécurité ───────────────────────────────────────────────── -->
+  <div id="compte" class="settings-group">
+    <p class="settings-group__title">🔐 <%= t('settings_group_account') %></p>
 
-      <details style="width:100%;margin-top:0.5rem">
-        <summary class="report-toggle" style="color:#dc2626">⚠️ <%= t('settings_delete_title') %></summary>
-        <div style="margin-top:1rem;padding:1.2rem;background:#fef2f2;border-radius:var(--radius-sm);border:1px solid #fecaca">
-          <p style="font-size:0.9rem;color:#7f1d1d;margin-bottom:1rem"><%= t('settings_delete_warning') %></p>
-          <form method="POST" action="/account/delete" class="form-card form-card--inline">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-            <div class="form-group">
-              <label for="delete-password"><%= t('settings_password_current') %></label>
-              <input type="password" id="delete-password" name="password" required autocomplete="current-password"
-                placeholder="<%= t('settings_delete_confirm_placeholder') %>" />
-            </div>
-            <button type="submit" class="btn btn-reject"><%= t('settings_delete_submit') %></button>
-          </form>
+    <!-- Données personnelles (RGPD) -->
+    <section class="settings-section">
+      <h2><%= t('settings_data_title') %></h2>
+      <p><%= t('settings_data_desc') %></p>
+
+      <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:0.8rem">
+        <a href="/account/export" class="btn btn-secondary">⬇️ <%= t('settings_export') %></a>
+
+        <details style="width:100%;margin-top:0.5rem">
+          <summary class="report-toggle" style="color:#dc2626">⚠️ <%= t('settings_delete_title') %></summary>
+          <div style="margin-top:1rem;padding:1.2rem;background:#fef2f2;border-radius:var(--radius-sm);border:1px solid #fecaca">
+            <p style="font-size:0.9rem;color:#7f1d1d;margin-bottom:1rem"><%= t('settings_delete_warning') %></p>
+            <form method="POST" action="/account/delete" class="form-card form-card--inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <div class="form-group">
+                <label for="delete-password"><%= t('settings_password_current') %></label>
+                <input type="password" id="delete-password" name="password" required autocomplete="current-password"
+                  placeholder="<%= t('settings_delete_confirm_placeholder') %>" />
+              </div>
+              <button type="submit" class="btn btn-reject"><%= t('settings_delete_submit') %></button>
+            </form>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Mot de passe -->
+    <section class="settings-section">
+      <h2><%= t('settings_password_title') %></h2>
+
+      <form method="POST" action="/settings/password" class="form-card form-card--inline">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+        <div class="form-group">
+          <label for="current"><%= t('settings_password_current') %></label>
+          <input type="password" id="current" name="current" required autocomplete="current-password" />
         </div>
-      </details>
-    </div>
-  </section>
-
-  <!-- Mot de passe -->
-  <section class="settings-section">
-    <h2><%= t('settings_password_title') %></h2>
-
-    <form method="POST" action="/settings/password" class="form-card form-card--inline">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-
-      <div class="form-group">
-        <label for="current"><%= t('settings_password_current') %></label>
-        <input type="password" id="current" name="current" required autocomplete="current-password" />
-      </div>
-      <div class="form-group">
-        <label for="newpass"><%= t('settings_password_new') %></label>
-        <input type="password" id="newpass" name="newpass" required minlength="8" autocomplete="new-password" />
-        <span class="form-hint"><%= t('settings_password_hint') %></span>
-      </div>
-      <div class="form-group">
-        <label for="confirm"><%= t('settings_password_confirm') %></label>
-        <input type="password" id="confirm" name="confirm" required minlength="8" autocomplete="new-password" />
-      </div>
-      <button type="submit" class="btn btn-primary"><%= t('settings_password_submit') %></button>
-    </form>
-  </section>
+        <div class="form-group">
+          <label for="newpass"><%= t('settings_password_new') %></label>
+          <input type="password" id="newpass" name="newpass" required minlength="8" autocomplete="new-password" />
+          <span class="form-hint"><%= t('settings_password_hint') %></span>
+        </div>
+        <div class="form-group">
+          <label for="confirm"><%= t('settings_password_confirm') %></label>
+          <input type="password" id="confirm" name="confirm" required minlength="8" autocomplete="new-password" />
+        </div>
+        <button type="submit" class="btn btn-primary"><%= t('settings_password_submit') %></button>
+      </form>
+    </section>
+  </div>
 </div>
+
+<script>
+  // Highlight du lien actif dans la nav selon la section visible
+  (function() {
+    var links = document.querySelectorAll('.settings-nav__link');
+    var groups = Array.from(document.querySelectorAll('.settings-group'));
+    if (!links.length || !groups.length) return;
+
+    function setActive(id) {
+      links.forEach(function(a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) setActive(e.target.id);
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    groups.forEach(function(g) { obs.observe(g); });
+    setActive(groups[0].id);
+  })();
+</script>
 
 <%- include('partials/footer') %>
