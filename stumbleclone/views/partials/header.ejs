@@ -19,32 +19,39 @@
     <a href="/" class="logo">🌀 StumbleClone</a>
     <nav>
       <% if (locals.user) { %>
-        <span class="nav-username"><%- t('nav_greeting', { name: `<strong>${user.username}</strong>` }) %></span>
         <a href="/stumble" class="btn btn-primary btn-sm"><%= t('nav_stumble') %></a>
-        <a href="/favorites"><%= t('nav_favorites') %></a>
-        <a href="/tastes"><%= t('nav_tastes') %></a>
-        <a href="/submit"><%= t('nav_submit') %></a>
-        <% if (locals.user && user.isAdmin) { %>
-          <a href="/admin" class="nav-admin">⚙️ Admin</a>
-        <% } %>
-        <form method="POST" action="/logout" style="display:inline">
-          <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>" />
-          <button type="submit" class="btn btn-secondary btn-sm"><%= t('nav_logout') %></button>
-        </form>
+
+        <div class="nav-user-menu">
+          <button class="nav-username-btn" id="nav-user-btn"
+                  aria-haspopup="menu" aria-expanded="false">
+            <%- t('nav_greeting', { name: `<strong>${user.username}</strong>` }) %>
+            <span class="nav-chevron">▾</span>
+          </button>
+          <div class="nav-dropdown" role="menu">
+            <a href="/favorites" class="nav-dropdown__item">🔖 <%= t('nav_favorites') %></a>
+            <a href="/tastes" class="nav-dropdown__item">🎛️ <%= t('nav_tastes') %></a>
+            <a href="/submit" class="nav-dropdown__item">➕ <%= t('nav_submit') %></a>
+            <a href="/settings" class="nav-dropdown__item">⚙️ <%= t('settings_title') %></a>
+            <% if (user.isAdmin) { %>
+              <div class="nav-dropdown__divider"></div>
+              <a href="/admin" class="nav-dropdown__item nav-dropdown__item--admin">🛠️ Admin</a>
+            <% } %>
+            <div class="nav-dropdown__divider"></div>
+            <form method="POST" action="/logout">
+              <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>" />
+              <button type="submit" class="nav-dropdown__item nav-dropdown__item--logout">
+                🚪 <%= t('nav_logout') %>
+              </button>
+            </form>
+          </div>
+        </div>
+
       <% } else { %>
         <a href="/login"><%= t('nav_login') %></a>
         <a href="/signup" class="btn btn-primary"><%= t('nav_signup') %></a>
       <% } %>
 
       <button id="theme-toggle" class="theme-toggle" title="Changer de thème" aria-label="Changer de thème">🌗</button>
-
-      <div class="lang-selector">
-        <select class="lang-select" onchange="location.href='/lang/'+this.value" aria-label="Language">
-          <% for (const [code, label] of Object.entries(langLabels)) { %>
-            <option value="<%= code %>" <%= currentLang === code ? 'selected' : '' %>><%= label %></option>
-          <% } %>
-        </select>
-      </div>
     </nav>
   </header>
   <main>
