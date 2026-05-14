@@ -1,5 +1,5 @@
 // Service Worker — StumbleClone
-const CACHE = 'stumble-v1';
+const CACHE = 'stumble-v2';
 const STATIC = [
   '/style.css',
   '/app.js',
