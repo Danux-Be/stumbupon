@@ -40,6 +40,14 @@
       <span class="stat-value"><%= stats.flagged %></span>
       <span class="stat-label"><%= t('admin_stat_flagged') %></span>
     </div>
+    <div class="stat-card <%= stats.referers > 0 ? 'stat-card--alert' : '' %>">
+      <span class="stat-value"><%= stats.referers %></span>
+      <span class="stat-label"><%= t('admin_stat_referers') %></span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value"><%= stats.comments %></span>
+      <span class="stat-label">Commentaires</span>
+    </div>
   </div>
 
   <div class="admin-nav">
@@ -55,8 +63,13 @@
     <a href="/admin/flagged" class="btn <%= stats.flagged > 0 ? 'btn-primary' : 'btn-secondary' %>">
       ⚠️ <%= t('admin_flagged_title') %><% if (stats.flagged > 0) { %> (<%= stats.flagged %>)<% } %>
     </a>
+    <a href="/admin/referers" class="btn <%= stats.referers > 0 ? 'btn-primary' : 'btn-secondary' %>">
+      🔗 <%= t('admin_referers_title') %><% if (stats.referers > 0) { %> (<%= stats.referers %>)<% } %>
+    </a>
+    <a href="/admin/comments" class="btn btn-secondary">💬 Commentaires<% if (stats.comments > 0) { %> (<%= stats.comments %>)<% } %></a>
     <a href="/admin/users" class="btn btn-secondary">👥 <%= t('admin_users_title') %></a>
     <a href="/admin/bot" class="btn btn-secondary">🤖 <%= t('admin_bot_title') %></a>
+    <a href="/admin/config" class="btn btn-secondary">⚙️ Configuration</a>
   </div>
 </div>
 

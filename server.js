@@ -11,6 +11,8 @@ const { generateToken } = require('./middleware/csrf');
 const { i18next, middleware: i18nMiddleware } = require('./lib/i18n');
 const { applyLang } = require('./middleware/lang');
 
+const { captureReferer } = require('./middleware/referer');
+const siteConfig = require('./lib/config');
 const authRoutes      = require('./routes/auth');
 const interestsRoutes = require('./routes/interests');
 const settingsRoutes  = require('./routes/settings');
@@ -25,8 +27,16 @@ const legalRoutes     = require('./routes/legal');
 const accountRoutes   = require('./routes/account');
 const searchRoutes    = require('./routes/search');
 
+const fs   = require('fs');
 const app  = express();
 const PORT = process.env.PORT || 3000;
+
+// Version du CSS basée sur sa date de modification (cache-busting automatique)
+const CSS_VERSION = (() => {
+  try {
+    return fs.statSync(path.join(__dirname, 'public/style.css')).mtimeMs.toString(36);
+  } catch { return '1'; }
+})();
 
 // Caddy termine TLS et proxifie en HTTP → Express doit faire confiance au proxy
 app.set('trust proxy', 1);
@@ -68,10 +78,15 @@ app.use((req, res, next) => {
   res.locals.user = req.session.userId
     ? { id: req.session.userId, username: req.session.username, isAdmin: req.session.isAdmin }
     : null;
-  res.locals.baseUrl = process.env.BASE_URL || 'https://stumble.danux.be';
+  res.locals.baseUrl    = process.env.BASE_URL || 'https://stumble.danux.be';
+  res.locals.cssVersion = CSS_VERSION;
+  res.locals.siteConfig = siteConfig.getAll();
   next();
 });
 app.use(generateToken);
+
+// Capture des Referers entrants (avant les routes)
+app.use(captureReferer);
 
 // Routes
 app.use(authRoutes);

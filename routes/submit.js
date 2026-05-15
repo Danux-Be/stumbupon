@@ -6,6 +6,7 @@ const { validateUrl } = require('../lib/validators');
 const { enrichUrl } = require('../lib/enricher');
 const { verifyTurnstile } = require('../lib/turnstile');
 const { sendAdminAlert } = require('../lib/mailer');
+const { isYouTubeUrl, extractVideoId, toWatchUrl, fetchYouTubeMeta } = require('../lib/youtube');
 
 const router = express.Router();
 
@@ -19,8 +20,8 @@ function getCategories(lang) {
 }
 
 const insertSite = db.prepare(`
-  INSERT INTO sites (url, title, description, status, language, risk_score, submitted_by)
-  VALUES (@url, @title, @description, 'pending', @language, @risk_score, @submitted_by)
+  INSERT INTO sites (url, title, description, status, language, risk_score, submitted_by, type, can_embed)
+  VALUES (@url, @title, @description, 'pending', @language, @risk_score, @submitted_by, @type, @can_embed)
 `);
 
 const insertSiteCat = db.prepare(
@@ -107,18 +108,39 @@ router.post('/submit', requireLogin, verifyToken, async (req, res) => {
   const limitError = checkSubmitLimits(userId);
   if (limitError) return fail(limitError);
 
-  const { title: fetchedTitle, language: fetchedLang, riskScore } = await enrichUrl(url.trim());
+  const cleanUrl = url.trim();
+  const isVideo = isYouTubeUrl(cleanUrl);
+  let finalTitle, finalLang, riskScore, siteType, canEmbed;
 
-  const finalTitle = (title && title.trim()) || fetchedTitle || url;
-  const finalLang = fetchedLang || 'en';
+  if (isVideo) {
+    const videoId = extractVideoId(cleanUrl);
+    const watchUrl = videoId ? toWatchUrl(videoId) : cleanUrl;
+    const meta = await fetchYouTubeMeta(watchUrl);
+    finalTitle = (title && title.trim()) || meta?.title || req.t('submit_youtube_title');
+    finalLang = null;
+    riskScore = 10;
+    siteType = 'video';
+    canEmbed = 1;
+    // Normalise vers la watch URL canonique
+    url = watchUrl;
+  } else {
+    const enriched = await enrichUrl(cleanUrl);
+    finalTitle = (title && title.trim()) || enriched.title || cleanUrl;
+    finalLang = enriched.language || 'en';
+    riskScore = enriched.riskScore;
+    siteType = 'website';
+    canEmbed = enriched.canEmbed ? 1 : 0;
+  }
 
   const info = insertSite.run({
-    url: url.trim(),
+    url: isVideo ? url : cleanUrl,
     title: finalTitle.slice(0, 200),
     description: description ? description.trim().slice(0, 500) : null,
     language: finalLang,
     risk_score: riskScore,
     submitted_by: userId,
+    type: siteType,
+    can_embed: canEmbed,
   });
 
   for (const catId of chosen) {

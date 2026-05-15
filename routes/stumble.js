@@ -1,16 +1,19 @@
 const express = require('express');
 const db = require('../db/database');
 const { requireLogin } = require('../middleware/auth');
+const { verifyToken }  = require('../middleware/csrf');
+const { extractVideoId, toEmbedUrl } = require('../lib/youtube');
+const siteConfig       = require('../lib/config');
 
 const router = express.Router();
 
 const GUEST_LIMIT = 5;
 
-const getUserLangPref = db.prepare('SELECT content_languages FROM users WHERE id = ?');
+const getUserPrefs = db.prepare('SELECT content_languages, include_videos FROM users WHERE id = ?');
 
 // Candidats pondérés par centres d'intérêt, non encore vus, non rejetés
 const queryCandidates = db.prepare(`
-  SELECT s.id, s.url, s.title, s.description, s.language,
+  SELECT s.id, s.url, s.title, s.description, s.language, s.type,
          SUM(ui.weight) AS total_weight
   FROM sites s
   JOIN site_categories sc ON sc.site_id = s.id
@@ -19,6 +22,7 @@ const queryCandidates = db.prepare(`
     AND s.id NOT IN (SELECT site_id FROM views WHERE user_id = ?)
     AND s.id NOT IN (SELECT site_id FROM votes WHERE user_id = ? AND direction = -1)
     AND (? = 'all' OR INSTR(',' || ? || ',', ',' || s.language || ',') > 0)
+    AND (? = 1 OR s.type != 'video')
   GROUP BY s.id
   ORDER BY RANDOM()
   LIMIT 50
@@ -26,7 +30,7 @@ const queryCandidates = db.prepare(`
 
 // Fallback : plus de non-vus → reprend tout sauf les rejetés
 const queryCandidatesAny = db.prepare(`
-  SELECT s.id, s.url, s.title, s.description, s.language,
+  SELECT s.id, s.url, s.title, s.description, s.language, s.type,
          SUM(ui.weight) AS total_weight
   FROM sites s
   JOIN site_categories sc ON sc.site_id = s.id
@@ -34,6 +38,7 @@ const queryCandidatesAny = db.prepare(`
   WHERE s.status = 'approved'
     AND s.id NOT IN (SELECT site_id FROM votes WHERE user_id = ? AND direction = -1)
     AND (? = 'all' OR INSTR(',' || ? || ',', ',' || s.language || ',') > 0)
+    AND (? = 1 OR s.type != 'video')
   GROUP BY s.id
   ORDER BY RANDOM()
   LIMIT 50
@@ -41,7 +46,7 @@ const queryCandidatesAny = db.prepare(`
 
 // Filtrage collaboratif : sites aimés par des utilisateurs au goût similaire
 const queryCollabCandidates = db.prepare(`
-  SELECT s.id, s.url, s.title, s.description, s.language,
+  SELECT s.id, s.url, s.title, s.description, s.language, s.type,
          COUNT(DISTINCT v2.user_id) AS collab_score
   FROM votes v2
   JOIN sites s ON s.id = v2.site_id
@@ -62,6 +67,7 @@ const queryCollabCandidates = db.prepare(`
     AND s.id NOT IN (SELECT site_id FROM views WHERE user_id = ?)
     AND s.id NOT IN (SELECT site_id FROM votes WHERE user_id = ? AND direction = -1)
     AND (? = 'all' OR INSTR(',' || ? || ',', ',' || s.language || ',') > 0)
+    AND (? = 1 OR s.type != 'video')
   GROUP BY s.id
   ORDER BY collab_score DESC
   LIMIT 30
@@ -82,8 +88,11 @@ const queryGuestCandidates = db.prepare(`
 `);
 
 const querySiteById = db.prepare(`
-  SELECT s.id, s.url, s.title, s.description, s.language, s.quality_score, s.can_embed
-  FROM sites s WHERE s.id = ? AND s.status = 'approved'
+  SELECT s.id, s.url, s.title, s.description, s.language, s.quality_score, s.can_embed, s.type,
+         u.username AS submitted_by_name, s.imported_by
+  FROM sites s
+  LEFT JOIN users u ON u.id = s.submitted_by
+  WHERE s.id = ? AND s.status = 'approved'
 `);
 
 // Catégories + poids utilisateur (pour affichage "Pourquoi ce site?")
@@ -116,6 +125,21 @@ const recordView = db.prepare(`
 `);
 
 const clearViews = db.prepare('DELETE FROM views WHERE user_id = ?');
+
+const queryComments = db.prepare(`
+  SELECT c.id, c.body, c.created_at, u.username, c.user_id
+  FROM comments c
+  JOIN users u ON u.id = c.user_id
+  WHERE c.site_id = ?
+  ORDER BY c.created_at ASC
+  LIMIT 100
+`);
+const insertComment = db.prepare(
+  'INSERT INTO comments (user_id, site_id, body) VALUES (?, ?, ?)'
+);
+const deleteOwnComment = db.prepare(
+  'DELETE FROM comments WHERE id = ? AND (user_id = ? OR ? = 1)'
+);
 
 const queryVote = db.prepare(
   'SELECT direction FROM votes WHERE user_id = ? AND site_id = ?'
@@ -161,9 +185,10 @@ function mergeWithCollab(interestCandidates, collabCandidates) {
 // ── Route invité : mur d'inscription après GUEST_LIMIT stumbles ──────────
 router.get('/stumble/join', (req, res) => {
   if (req.session.userId) return res.redirect('/stumble');
+  const limitCount = parseInt(siteConfig.get('guest_limit_count') || '5', 10);
   res.render('stumble-join', {
-    title: req.t('guest_join_title', { limit: GUEST_LIMIT }),
-    guestLimit: GUEST_LIMIT,
+    title: req.t('guest_join_title', { limit: limitCount }),
+    guestLimit: limitCount,
   });
 });
 
@@ -173,9 +198,10 @@ router.get('/stumble', (req, res) => {
 
   // Invité
   if (!userId) {
-    const count = req.session.guestCount || 0;
-    if (count >= GUEST_LIMIT) return res.redirect('/stumble/join');
-
+    const count        = req.session.guestCount || 0;
+    const limitEnabled = siteConfig.get('guest_limit_enabled') === '1';
+    const limitCount   = parseInt(siteConfig.get('guest_limit_count') || '5', 10);
+    if (limitEnabled && count >= limitCount) return res.redirect('/stumble/join');
     const seen = req.session.guestSeen || [];
     let candidates = queryGuestCandidates.all(JSON.stringify(seen));
 
@@ -192,12 +218,15 @@ router.get('/stumble', (req, res) => {
   }
 
   // Utilisateur connecté
-  const langPref = getUserLangPref.get(userId)?.content_languages || 'all';
-  let candidates = queryCandidates.all(userId, userId, userId, langPref, langPref);
+  const prefs = getUserPrefs.get(userId);
+  const langPref = prefs?.content_languages || 'all';
+  const includeVideos = prefs?.include_videos !== 0 ? 1 : 0;
+
+  let candidates = queryCandidates.all(userId, userId, userId, langPref, langPref, includeVideos);
 
   if (!candidates.length) {
     clearViews.run(userId);
-    candidates = queryCandidatesAny.all(userId, userId, langPref, langPref);
+    candidates = queryCandidatesAny.all(userId, userId, langPref, langPref, includeVideos);
   }
 
   if (!candidates.length) return res.redirect('/settings?error=no-sites');
@@ -205,7 +234,7 @@ router.get('/stumble', (req, res) => {
   const upvoteCount = countUserUpvotes.get(userId).n;
   if (upvoteCount >= 5) {
     const collabCandidates = queryCollabCandidates.all(
-      userId, userId, userId, userId, langPref, langPref
+      userId, userId, userId, userId, langPref, langPref, includeVideos
     );
     candidates = mergeWithCollab(candidates, collabCandidates);
   }
@@ -229,9 +258,19 @@ router.get('/stumble/:id', (req, res) => {
 
   const userVote = isGuest ? null : (queryVote.get(userId, site.id)?.direction ?? null);
   const score    = queryScore.get(site.id).score;
-  const canEmbed = site.can_embed !== 0;
+  const isVideo  = site.type === 'video';
+  const canEmbed = isVideo ? true : site.can_embed !== 0;
 
-  const guestCount = isGuest ? (req.session.guestCount || 0) : null;
+  let embedUrl = null;
+  if (isVideo) {
+    const videoId = extractVideoId(site.url);
+    embedUrl = videoId ? toEmbedUrl(videoId) : null;
+  }
+
+  const guestCount  = isGuest ? (req.session.guestCount || 0) : null;
+  const comments    = queryComments.all(site.id);
+  const submittedBy = site.submitted_by_name
+    || (site.imported_by === 'referer' ? null : site.imported_by ? 'Bot' : null);
 
   res.render('stumble', {
     title: site.title,
@@ -240,15 +279,49 @@ router.get('/stumble/:id', (req, res) => {
     userVote,
     score,
     canEmbed,
+    isVideo,
+    embedUrl,
     isGuest,
     guestCount,
     guestLimit: GUEST_LIMIT,
+    currentUserId: userId || null,
+    comments,
+    submittedBy,
     flashLessOfThis: req.query.lessofthis === '1',
     flashReported: req.query.reported || null,
     ogTitle: site.title,
     ogDescription: site.description || '',
     ogUrl: `${res.locals.baseUrl}/stumble/${site.id}`,
   });
+});
+
+router.post('/stumble/:id/comment', requireLogin, verifyToken, (req, res) => {
+  const site = querySiteById.get(req.params.id);
+  if (!site) return res.status(404).json({ error: 'not found' });
+
+  const body = (req.body.body || '').trim().slice(0, 500);
+  if (!body) return res.status(400).json({ error: 'empty' });
+
+  const result = insertComment.run(req.session.userId, site.id, body);
+  const user   = db.prepare('SELECT username FROM users WHERE id = ?').get(req.session.userId);
+
+  res.json({
+    comment: {
+      id: result.lastInsertRowid,
+      body,
+      username: user.username,
+      user_id: req.session.userId,
+      created_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
+    },
+  });
+});
+
+router.post('/comment/:id/delete', requireLogin, verifyToken, (req, res) => {
+  const isAdmin = req.session.isAdmin ? 1 : 0;
+  const changes = deleteOwnComment.run(
+    parseInt(req.params.id), req.session.userId, isAdmin
+  ).changes;
+  res.json({ ok: changes > 0 });
 });
 
 module.exports = router;

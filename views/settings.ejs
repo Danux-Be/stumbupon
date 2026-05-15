@@ -103,6 +103,21 @@
         </button>
       </form>
     </section>
+    <!-- Vidéos YouTube -->
+    <section class="settings-section">
+      <h2><%= t('settings_videos_title') %></h2>
+      <p><%= t('settings_videos_desc') %></p>
+      <form method="POST" action="/settings/videos">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <label class="toggle-label">
+          <input type="hidden" name="videos" value="0" />
+          <input type="checkbox" name="videos" value="1"
+                 onchange="this.form.submit()"
+                 <%= includeVideos ? 'checked' : '' %> />
+          <%= t('settings_videos_label') %>
+        </label>
+      </form>
+    </section>
   </div>
 
   <!-- ── Interface ───────────────────────────────────────────────────────── -->

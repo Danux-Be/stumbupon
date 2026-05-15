@@ -33,6 +33,7 @@ const SOURCES = {
   tildes:       require('./sources/tildes'),
   kbclub:       require('./sources/kbclub'),
   searchmysite: require('./sources/searchmysite'),
+  crawler:      require('./sources/crawler'),
 };
 
 const insertSite = db.prepare(`
@@ -57,7 +58,7 @@ const insertProcessed = db.prepare(`
 async function runSource(source) {
   console.log(`\n🤖 StumbleClone Bot — source: ${source.name}, limit: ${LIMIT}, threshold: ${APPROVE_THRESHOLD}${DRY_RUN ? ' [DRY RUN]' : ''}\n`);
 
-  const candidates = await source.fetch({ limit: LIMIT * 3 });
+  const candidates = await source.fetch({ limit: LIMIT * 3, ...args });
 
   const stats = { imported: 0, approved: 0, pending: 0, skipped: 0, rejected: 0 };
 
@@ -83,6 +84,14 @@ async function runSource(source) {
     // 3. Enrichissement
     process.stdout.write(`  ↳ ${url.slice(0, 70)}… `);
     const enriched = await enrichUrl(url);
+
+    // Rejet immédiat si 404/410
+    if (enriched.dead) {
+      insertProcessed.run(hashUrl(url), url, source.name, 'rejected', 0, 'HTTP 404/410');
+      process.stdout.write('dead\n');
+      stats.rejected++;
+      continue;
+    }
 
     // 4. Classification
     const combinedText = [source_title, enriched.title, url].filter(Boolean).join(' ');

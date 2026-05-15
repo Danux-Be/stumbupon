@@ -25,7 +25,7 @@
         <span>Vérifié : <%= site.last_checked_at ? new Date(site.last_checked_at).toLocaleDateString() : '—' %></span>
       </div>
 
-      <div class="admin-card__actions">
+      <div class="admin-card__actions" style="flex-wrap:wrap;gap:.5rem">
         <form method="POST" action="/admin/flagged/<%= site.id %>/restore" style="display:inline">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <button class="btn btn-approve"><%= t('admin_flagged_restore') %></button>
@@ -33,6 +33,18 @@
         <form method="POST" action="/admin/flagged/<%= site.id %>/reject" style="display:inline">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <button class="btn btn-reject"><%= t('admin_dismiss') %></button>
+        </form>
+        <form method="POST" action="/admin/site/<%= site.id %>/language" style="display:inline-flex;align-items:center;gap:.4rem">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <input type="hidden" name="_redirect" value="/admin/flagged" />
+          <label style="font-size:.82rem;color:var(--color-text-muted);white-space:nowrap"><%= t('admin_site_lang') %> :</label>
+          <select name="language" style="font-size:.82rem;padding:.25rem .4rem;border:1px solid var(--color-border);border-radius:var(--radius-sm);background:var(--color-surface)">
+            <option value="">—</option>
+            <% ['ar','da','de','el','en','es','fr','it','ja','nl','pl','pt','ru','zh'].forEach(function(lc) { %>
+              <option value="<%= lc %>" <%= site.language === lc ? 'selected' : '' %>><%= lc %></option>
+            <% }) %>
+          </select>
+          <button type="submit" class="btn btn-secondary" style="padding:.25rem .6rem;font-size:.82rem">✓</button>
         </form>
       </div>
     </div>
