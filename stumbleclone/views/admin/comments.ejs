@@ -1,0 +1,50 @@
+<%- include('../partials/header') %>
+
+<div class="admin-page">
+  <div class="admin-page-header">
+    <a href="/admin" class="admin-back">← Admin</a>
+    <h1>💬 Commentaires (<%= comments.length %>)</h1>
+  </div>
+
+  <% if (comments.length === 0) { %>
+    <div class="favorites-empty">
+      <p>Aucun commentaire pour l'instant.</p>
+    </div>
+  <% } else { %>
+    <div class="admin-list">
+      <% comments.forEach(function(c) { %>
+        <div class="admin-card" id="comment-<%= c.id %>">
+          <div class="fav-meta">
+            <span class="stumble-tag">👤 <%= c.username %></span>
+            <span class="report-date"><%= new Date(c.created_at).toLocaleString('fr-FR') %></span>
+          </div>
+
+          <p class="admin-comment-body"><%= c.body %></p>
+
+          <p class="admin-url" style="margin-top:0.4rem">
+            Sur :
+            <a href="/stumble/<%= c.site_id %>" target="_blank" rel="noopener noreferrer">
+              <%= c.site_title %>
+            </a>
+            <a href="<%= c.site_url %>" target="_blank" rel="noopener noreferrer"
+               style="color:var(--color-text-muted);font-size:0.82rem;margin-left:0.4rem">
+              ↗ <%= c.site_url.replace(/^https?:\/\//, '').split('/')[0] %>
+            </a>
+          </p>
+
+          <div class="admin-actions" style="margin-top:0.75rem">
+            <form method="POST" action="/admin/comment/<%= c.id %>/delete" style="display:inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit" class="btn btn-reject btn-sm"
+                      onclick="return confirm('Supprimer ce commentaire ?')">
+                🗑 Supprimer
+              </button>
+            </form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

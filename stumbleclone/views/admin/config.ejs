@@ -1,0 +1,121 @@
+<%- include('../partials/header', { title: 'Configuration' }) %>
+
+<div class="admin-page">
+  <h1>⚙️ Configuration du site</h1>
+
+  <% if (success) { %>
+    <p class="alert alert-success">Configuration enregistrée.</p>
+  <% } %>
+
+  <a href="/admin" class="btn btn-secondary btn-sm" style="margin-bottom:1.5rem">← Retour</a>
+
+  <form method="POST" action="/admin/config">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+    <!-- ── Fonctionnalités invités ───────────────────────────────────────── -->
+    <div class="settings-group" style="margin-bottom:1.5rem">
+      <p class="settings-group__title">👤 Invités</p>
+
+      <section class="settings-section">
+        <h2>Limiter les stumbles des invités</h2>
+        <p>Si activé, les invités sont invités à s'inscrire après un certain nombre de stumbles.</p>
+        <label class="toggle-label" style="margin-top:0.5rem">
+          <input type="hidden"   name="guest_limit_enabled" value="0" />
+          <input type="checkbox" name="guest_limit_enabled" value="1"
+                 id="guest-limit-toggle"
+                 <%= config.guest_limit_enabled === '1' ? 'checked' : '' %> />
+          Activer la limite
+        </label>
+      </section>
+
+      <section class="settings-section" id="guest-count-section"
+               style="<%= config.guest_limit_enabled === '1' ? '' : 'opacity:0.4;pointer-events:none' %>">
+        <h2>Nombre de stumbles avant invitation</h2>
+        <p>L'invité verra une page d'inscription après ce nombre de découvertes.</p>
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-top:0.5rem">
+          <input type="number" name="guest_limit_count" id="guest-limit-count"
+                 min="1" max="200" value="<%= config.guest_limit_count %>"
+                 class="form-input" style="width:6rem" />
+          <span style="color:var(--color-text-muted);font-size:0.9rem">stumbles</span>
+        </div>
+      </section>
+    </div>
+
+    <!-- ── Fonctionnalités de la barre ──────────────────────────────────── -->
+    <div class="settings-group" style="margin-bottom:1.5rem">
+      <p class="settings-group__title">🎛️ Barre de navigation</p>
+
+      <section class="settings-section">
+        <h2>Bouton "Moins de ça"</h2>
+        <p>Affiche un bouton dans la barre permettant de réduire le poids d'une catégorie dans les recommandations.</p>
+        <label class="toggle-label" style="margin-top:0.5rem">
+          <input type="hidden"   name="less_of_this" value="0" />
+          <input type="checkbox" name="less_of_this" value="1"
+                 <%= config.less_of_this === '1' ? 'checked' : '' %> />
+          Afficher le bouton
+        </label>
+      </section>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+  </form>
+
+  <!-- ── Maintenance ──────────────────────────────────────────────────────── -->
+  <div class="settings-group" style="margin-top:2rem;margin-bottom:1.5rem">
+    <p class="settings-group__title">🔧 Maintenance</p>
+
+    <section class="settings-section">
+      <h2>Vérifier les iframes bloquées</h2>
+      <p>Vérifie 50 sites approuvés aléatoires et met à jour leur statut <code>can_embed</code>
+         selon leurs en-têtes HTTP (<code>X-Frame-Options</code>, <code>CSP frame-ancestors</code>).
+         À relancer plusieurs fois pour couvrir l'ensemble du catalogue.</p>
+      <div style="margin-top:0.75rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+        <button type="button" class="btn btn-secondary" id="recheck-embed-btn">
+          🔍 Vérifier maintenant
+        </button>
+        <span id="recheck-result" style="color:var(--color-text-muted);font-size:0.9rem"></span>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var toggle  = document.getElementById('guest-limit-toggle');
+    var section = document.getElementById('guest-count-section');
+    function update() {
+      section.style.opacity       = toggle.checked ? '1'    : '0.4';
+      section.style.pointerEvents = toggle.checked ? 'auto' : 'none';
+    }
+    toggle.addEventListener('change', update);
+
+    var recheckBtn    = document.getElementById('recheck-embed-btn');
+    var recheckResult = document.getElementById('recheck-result');
+    if (recheckBtn) {
+      recheckBtn.addEventListener('click', function() {
+        recheckBtn.disabled    = true;
+        recheckBtn.textContent = '⏳ En cours…';
+        recheckResult.textContent = '';
+        var csrf = document.querySelector('input[name="_csrf"]').value;
+        fetch('/admin/recheck-embed', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: '_csrf=' + encodeURIComponent(csrf),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          recheckBtn.disabled    = false;
+          recheckBtn.textContent = '🔍 Vérifier maintenant';
+          recheckResult.textContent = d.checked + ' vérifiés, ' + d.updated + ' mis à jour.';
+        })
+        .catch(function() {
+          recheckBtn.disabled    = false;
+          recheckBtn.textContent = '🔍 Vérifier maintenant';
+          recheckResult.textContent = '❌ Erreur lors de la vérification.';
+        });
+      });
+    }
+  })();
+</script>
+
+<%- include('../partials/footer') %>

@@ -153,4 +153,55 @@ if (ftsSiteCount > 0 && ftsRowCount === 0) {
   db.exec("INSERT INTO sites_fts(sites_fts) VALUES('rebuild')");
 }
 
+// Type de contenu : 'website' (défaut) ou 'video'
+const siteCols5 = db.prepare('PRAGMA table_info(sites)').all().map(c => c.name);
+if (!siteCols5.includes('type')) {
+  db.exec("ALTER TABLE sites ADD COLUMN type TEXT DEFAULT 'website'");
+}
+
+// Préférence utilisateur : inclure les vidéos YouTube dans les stumbles
+const userCols7 = db.prepare('PRAGMA table_info(users)').all().map(c => c.name);
+if (!userCols7.includes('include_videos')) {
+  db.exec('ALTER TABLE users ADD COLUMN include_videos INTEGER DEFAULT 1');
+}
+
+// Commentaires sur les sites
+db.exec(`
+  CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    site_id INTEGER NOT NULL REFERENCES sites(id) ON DELETE CASCADE,
+    body TEXT NOT NULL CHECK(length(body) <= 500),
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_comments_site ON comments(site_id, created_at DESC);
+`);
+
+// Configuration du site (clé/valeur)
+db.exec(`
+  CREATE TABLE IF NOT EXISTS site_config (
+    key   TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
+`);
+{
+  const ins = db.prepare('INSERT OR IGNORE INTO site_config (key, value) VALUES (?, ?)');
+  ins.run('less_of_this',        '0');
+  ins.run('guest_limit_enabled', '0');
+  ins.run('guest_limit_count',   '5');
+}
+
+// Référencements entrants — sites détectés via l'en-tête Referer
+db.exec(`
+  CREATE TABLE IF NOT EXISTS referer_queue (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    url TEXT UNIQUE NOT NULL,
+    hits INTEGER DEFAULT 1,
+    last_seen DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status TEXT DEFAULT 'pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_referer_status ON referer_queue(status);
+`);
+
 module.exports = db;

@@ -1,0 +1,48 @@
+<%- include('../partials/header') %>
+
+<div class="admin-page">
+  <div class="admin-page-header">
+    <a href="/admin" class="admin-back">← <%= t('admin_title') %></a>
+    <h1>🔗 <%= t('admin_referers_title') %> (<%= items.length %>)</h1>
+  </div>
+
+  <% if (items.length === 0) { %>
+    <div class="favorites-empty">
+      <p><%= t('admin_referers_empty') %></p>
+    </div>
+  <% } else { %>
+    <div class="admin-list">
+      <% items.forEach(item => { %>
+        <div class="admin-card">
+          <p class="admin-url">
+            <a href="<%= item.url %>" target="_blank" rel="noopener noreferrer nofollow"><%= item.url %></a>
+          </p>
+          <div class="admin-card-meta">
+            <span>🔁 <%= item.hits %> <%= t('admin_referers_hits') %></span>
+            <span>Dernière vue : <%= new Date(item.last_seen).toLocaleDateString() %></span>
+            <span>Détecté le : <%= new Date(item.created_at).toLocaleDateString() %></span>
+          </div>
+          <div class="admin-actions">
+            <form method="POST" action="/admin/referers/<%= item.id %>/approve" style="display:inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit" class="btn btn-approve"><%= t('admin_referers_approve') %></button>
+            </form>
+            <form method="POST" action="/admin/referers/<%= item.id %>/reject" style="display:inline">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit" class="btn btn-reject"><%= t('admin_referers_reject') %></button>
+            </form>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+
+    <div style="margin-top: 2rem; text-align: right;">
+      <form method="POST" action="/admin/referers/reject-all" onsubmit="return confirm('Ignorer toutes les entrées en attente ?')">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <button type="submit" class="btn btn-reject"><%= t('admin_referers_reject_all') %></button>
+      </form>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

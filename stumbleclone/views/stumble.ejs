@@ -18,7 +18,7 @@
   <meta name="twitter:title" content="<%= site.title %>" />
   <meta name="twitter:description" content="<%= (site.description || '').slice(0, 200) %>" />
   <link rel="canonical" href="<%= baseUrl %>/stumble/<%= site.id %>" />
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/style.css?v=<%= cssVersion %>" />
   <meta name="csrf" content="<%= csrfToken %>" />
   <script>
     (function(){
@@ -36,15 +36,20 @@
 
   <!-- ── Barre d'outils ────────────────────────────────────────────────── -->
   <div class="stumble-bar">
-    <a href="/" class="stumble-bar__logo" title="StumbleClone">🌀</a>
 
-    <div class="stumble-bar__site">
-      <span class="stumble-bar__title"><%= site.title %></span>
-      <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer"
-         class="stumble-bar__url">↗ <%= hostname %></a>
+    <!-- Gauche : logo + infos site -->
+    <div class="stumble-bar__left">
+      <a href="/" class="stumble-bar__logo" title="StumbleClone">🌀</a>
+      <div class="stumble-bar__site">
+        <% if (isVideo) { %><span class="stumble-bar__badge">📹</span><% } %>
+        <span class="stumble-bar__title"><%= site.title %></span>
+        <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer"
+           class="stumble-bar__url">↗ <%= hostname %></a>
+      </div>
     </div>
 
-    <div class="stumble-bar__actions">
+    <!-- Centre : votes + suivant -->
+    <div class="stumble-bar__center">
       <% if (!isGuest) { %>
       <div class="vote-bar">
         <button class="vote-btn <%= userVote === 1  ? 'vote-btn--active' : '' %>"
@@ -54,40 +59,136 @@
         <button class="vote-btn <%= userVote === -1 ? 'vote-btn--active' : '' %>"
                 id="vote-down" title="Dislike (D)">👎</button>
       </div>
+      <% } %>
 
+      <% if (!isGuest && siteConfig && siteConfig.less_of_this === '1') { %>
       <button class="btn btn-ghost btn-sm" id="less-btn">
         🔽 <span class="stumble-bar__label"><%= t('stumble_less_of_this') %></span>
       </button>
-
-      <details class="stumble-bar__report-wrap">
-        <summary class="btn btn-ghost btn-sm" title="<%= t('report_link') %>">⚑</summary>
-        <div class="stumble-bar__report-popup">
-          <form method="POST" action="/report/<%= site.id %>">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-            <textarea name="reason" rows="2" maxlength="500"
-              placeholder="<%= t('report_reason_placeholder') %>"></textarea>
-            <button type="submit" class="btn btn-secondary btn-sm"><%= t('report_submit') %></button>
-          </form>
-        </div>
-      </details>
       <% } %>
 
-      <button class="btn btn-ghost btn-sm" id="share-btn" title="<%= t('stumble_share') %>">
-        🔗 <span class="stumble-bar__label share-btn__label"><%= t('stumble_share') %></span>
+      <a href="/stumble" class="btn btn-primary btn-sm" title="Site suivant (Espace / →)"><%= t('stumble_next') %> →</a>
+    </div>
+
+    <!-- Droite : actions secondaires -->
+    <div class="stumble-bar__right">
+      <button class="btn btn-ghost btn-sm" id="info-toggle" title="Infos">ℹ️</button>
+
+      <button class="btn btn-ghost btn-sm comments-toggle" id="comments-toggle" title="<%= t('comments_title') %>">
+        💬<% if (comments.length) { %><span class="comments-badge" id="comments-count"><%= comments.length %></span><% } else { %><span class="comments-badge" id="comments-count" style="display:none">0</span><% } %>
       </button>
 
       <% if (!isGuest && user && user.isAdmin) { %>
       <button class="btn btn-reject btn-sm" id="admin-reject-btn"
               title="<%= t('stumble_admin_reject') %>">🗑</button>
       <% } %>
+    </div>
 
-      <a href="/stumble" class="btn btn-primary btn-sm" title="Site suivant (Espace / →)"><%= t('stumble_next') %> →</a>
+  </div>
+
+  <!-- ── Volet d'informations ─────────────────────────────────────────────── -->
+  <div class="info-panel" id="info-panel" style="display:none">
+    <div class="comments-drawer__header">
+      <span class="comments-drawer__title">ℹ️ <%= site.title %></span>
+      <button class="btn btn-ghost btn-sm" id="info-close">✕</button>
+    </div>
+    <div class="info-panel__body">
+
+      <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer" class="info-panel__url">
+        ↗ <%= hostname %>
+      </a>
+
+      <% if (site.description) { %>
+        <p class="info-panel__desc"><%= site.description %></p>
+      <% } %>
+
+      <% if (categories && categories.length) { %>
+      <div class="info-panel__section">
+        <span class="info-panel__label"><%= t('stumble_why_categories') %></span>
+        <div class="info-panel__tags">
+          <% categories.forEach(function(cat) { %>
+            <span class="stumble-tag stumble-tag--sm"><%= cat.emoji %> <%= cat.localName %></span>
+          <% }) %>
+        </div>
+      </div>
+      <% } %>
+
+      <% if (submittedBy) { %>
+      <div class="info-panel__section">
+        <span class="info-panel__label">👤 <%= t('stumble_submitted_by') %></span>
+        <span class="info-panel__value"><%= submittedBy %></span>
+      </div>
+      <% } %>
+
+      <div class="info-panel__section">
+        <button class="btn btn-secondary btn-sm" id="info-share-btn" style="width:100%">
+          🔗 <%= t('stumble_share') %>
+        </button>
+      </div>
+
+      <% if (canEmbed && !isVideo) { %>
+      <div class="info-panel__section">
+        <button class="btn btn-ghost btn-sm" id="info-cant-embed-btn"
+                style="width:100%;color:var(--color-text-muted)">
+          🚫 Ce site ne s'affiche pas ?
+        </button>
+      </div>
+      <% } %>
+
+      <% if (!isGuest) { %>
+      <div class="info-panel__section info-panel__report">
+        <span class="info-panel__label">⚑ <%= t('report_link') %></span>
+        <form method="POST" action="/report/<%= site.id %>">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <textarea name="reason" rows="2" maxlength="500" class="comments-input"
+            placeholder="<%= t('report_reason_placeholder') %>"></textarea>
+          <button type="submit" class="btn btn-secondary btn-sm" style="margin-top:0.4rem;width:100%">
+            <%= t('report_submit') %>
+          </button>
+        </form>
+      </div>
+      <% } %>
+
+    </div>
+  </div>
+
+  <!-- ── Tiroir de commentaires (desktop uniquement) ────────────────────── -->
+  <div class="comments-drawer" id="comments-drawer" style="display:none">
+    <div class="comments-drawer__header">
+      <span class="comments-drawer__title">💬 <%= t('comments_title') %></span>
+      <button class="btn btn-ghost btn-sm" id="comments-close">✕</button>
+    </div>
+    <div class="comments-drawer__list" id="comments-list">
+      <% if (!comments.length) { %>
+        <p class="comments-empty" id="comments-empty"><%= t('comments_empty') %></p>
+      <% } else { %>
+        <% comments.forEach(function(comment) { %>
+        <div class="comment-item" data-id="<%= comment.id %>">
+          <div class="comment-meta">
+            <span class="comment-username"><%= comment.username %></span>
+            <span class="comment-date"><%= comment.created_at.slice(0, 16) %></span>
+            <% if (!isGuest && (currentUserId === comment.user_id || (user && user.isAdmin))) { %>
+            <button class="comment-delete btn btn-ghost btn-sm" data-id="<%= comment.id %>">✕</button>
+            <% } %>
+          </div>
+          <p class="comment-body"><%= comment.body %></p>
+        </div>
+        <% }) %>
+      <% } %>
+    </div>
+    <div class="comments-drawer__form">
+      <% if (!isGuest) { %>
+        <textarea id="comment-input" class="comments-input" placeholder="<%= t('comments_placeholder') %>" maxlength="500" rows="3"></textarea>
+        <button type="button" id="comment-submit" class="btn btn-primary btn-sm"><%= t('comments_submit') %></button>
+      <% } else { %>
+        <p class="comments-login-prompt"><a href="/login"><%= t('comments_login') %></a></p>
+      <% } %>
     </div>
   </div>
 
   <% if (isGuest) { %>
   <div class="stumble-guest-banner">
-    <span><%- t('guest_banner', { count: guestCount, limit: guestLimit }) %></span>
+    <span><%- t('guest_banner') %></span>
     <a href="/signup" class="btn btn-primary btn-sm"><%= t('guest_banner_cta') %></a>
     <a href="/login" class="btn btn-ghost btn-sm"><%= t('nav_login') %></a>
   </div>
@@ -97,8 +198,17 @@
     <div class="stumble-flash" id="stumble-flash"><%= t('stumble_less_done') %></div>
   <% } %>
 
-  <!-- ── Iframe (uniquement si can_embed != false) ────────────────────── -->
-  <% if (canEmbed) { %>
+  <!-- ── Iframe ────────────────────────────────────────────────────────── -->
+  <% if (isVideo && embedUrl) { %>
+  <iframe
+    src="<%= embedUrl %>"
+    class="stumble-iframe stumble-iframe--video"
+    id="stumble-iframe"
+    title="<%= site.title %>"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+  ></iframe>
+  <% } else if (canEmbed) { %>
   <iframe
     src="<%= site.url %>"
     class="stumble-iframe"
@@ -153,8 +263,9 @@
   </div>
 
   <script>
-    var CSRF    = document.querySelector('meta[name="csrf"]').getAttribute('content');
-    var SITE_ID = '<%= site.id %>';
+    var CSRF     = document.querySelector('meta[name="csrf"]').getAttribute('content');
+    var SITE_ID  = '<%= site.id %>';
+    var IS_GUEST = <%= isGuest ? 'true' : 'false' %>;
     var userVote = <%= userVote === null || userVote === undefined ? 'null' : userVote %>;
     var score    = <%= score %>;
     var ANIMATIONS = document.documentElement.classList.contains('sc-anim');
@@ -194,17 +305,22 @@
       sc.textContent = (score > 0 ? '+' : '') + score;
       sc.className = 'vote-score' + (score > 0 ? ' vote-score--pos' : score < 0 ? ' vote-score--neg' : '');
     }
-    document.getElementById('vote-up').addEventListener('click',  function() { postVote(1);  });
-    document.getElementById('vote-down').addEventListener('click', function() { postVote(-1); });
+    var voteUp = document.getElementById('vote-up');
+    var voteDn = document.getElementById('vote-down');
+    if (voteUp) voteUp.addEventListener('click', function() { postVote(1);  });
+    if (voteDn) voteDn.addEventListener('click', function() { postVote(-1); });
 
     // ── Moins de ça ────────────────────────────────────────────────────────
-    document.getElementById('less-btn').addEventListener('click', function() {
-      fetch('/less-of-this', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: '_csrf=' + encodeURIComponent(CSRF) + '&site_id=' + SITE_ID,
-      }).then(function() { navigateNext(); });
-    });
+    var lessBtnEl = document.getElementById('less-btn');
+    if (lessBtnEl) {
+      lessBtnEl.addEventListener('click', function() {
+        fetch('/less-of-this', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: '_csrf=' + encodeURIComponent(CSRF) + '&site_id=' + SITE_ID,
+        }).then(function() { navigateNext(); });
+      });
+    }
 
     // ── Rejet admin rapide ─────────────────────────────────────────────────
     var adminRejectBtn = document.getElementById('admin-reject-btn');
@@ -228,12 +344,14 @@
     var iframe   = document.getElementById('stumble-iframe');
     var cardWrap = document.getElementById('stumble-card-wrap');
 
-    if (iframe) {
-      function showCard() {
-        iframe.style.display   = 'none';
-        cardWrap.style.display = 'flex';
-      }
+    function showCard() {
+      if (iframe)    iframe.style.display   = 'none';
+      if (cardWrap)  cardWrap.style.display = 'flex';
+      var cantEmbedBtn = document.getElementById('info-cant-embed-btn');
+      if (cantEmbedBtn) cantEmbedBtn.style.display = 'none';
+    }
 
+    if (iframe) {
       iframe.addEventListener('load', function() {
         try {
           var loc = iframe.contentWindow.location.href;
@@ -244,25 +362,56 @@
       });
     }
 
-    // ── Partager ───────────────────────────────────────────────────────────
-    var shareBtn   = document.getElementById('share-btn');
-    var SHARE_URL  = window.location.origin + '/stumble/<%= site.id %>';
+    var cantEmbedBtn = document.getElementById('info-cant-embed-btn');
+    if (cantEmbedBtn) cantEmbedBtn.addEventListener('click', showCard);
+
+    // ── Partager (depuis le volet ℹ️) ─────────────────────────────────────
+    var SHARE_URL   = window.location.origin + '/stumble/<%= site.id %>';
     var SHARE_TITLE = '<%= site.title.replace(/\\/g, "\\\\").replace(/'/g, "\\'") %>';
 
-    if (shareBtn) {
-      shareBtn.addEventListener('click', function () {
-        if (navigator.share) {
-          navigator.share({ title: SHARE_TITLE, url: SHARE_URL }).catch(function () {});
-          return;
+    function doShare(btn) {
+      if (navigator.share) {
+        navigator.share({ title: SHARE_TITLE, url: SHARE_URL }).catch(function() {});
+        return;
+      }
+      navigator.clipboard.writeText(SHARE_URL).then(function() {
+        var orig = btn.textContent;
+        btn.textContent = '✅ Copié !';
+        setTimeout(function() { btn.textContent = orig; }, 2000);
+      }).catch(function() { window.prompt('Copie ce lien :', SHARE_URL); });
+    }
+
+    // ── Volet ℹ️ ──────────────────────────────────────────────────────────
+    var infoPanel   = document.getElementById('info-panel');
+    var infoToggle  = document.getElementById('info-toggle');
+    var infoClose   = document.getElementById('info-close');
+    var infoShareBtn = document.getElementById('info-share-btn');
+
+    function openInfoPanel() {
+      closeDrawer(); // ferme les commentaires si ouverts
+      infoPanel.style.display = 'flex';
+      infoPanel.offsetHeight;
+      infoPanel.classList.add('comments-drawer--open');
+    }
+    function closeInfoPanel() {
+      infoPanel.classList.remove('comments-drawer--open');
+    }
+    infoPanel.addEventListener('transitionend', function() {
+      if (!infoPanel.classList.contains('comments-drawer--open')) {
+        infoPanel.style.display = 'none';
+      }
+    });
+    if (infoToggle) {
+      infoToggle.addEventListener('click', function() {
+        if (infoPanel.style.display === 'none' || !infoPanel.classList.contains('comments-drawer--open')) {
+          openInfoPanel();
+        } else {
+          closeInfoPanel();
         }
-        navigator.clipboard.writeText(SHARE_URL).then(function () {
-          shareBtn.textContent = '✅';
-          setTimeout(function () { shareBtn.innerHTML = '🔗 <span class="stumble-bar__label"><%= t('stumble_share') %></span>'; }, 2000);
-        }).catch(function () {
-          window.prompt('Copie ce lien :', SHARE_URL);
-        });
       });
     }
+    if (infoClose)    infoClose.addEventListener('click', closeInfoPanel);
+    if (infoShareBtn) infoShareBtn.addEventListener('click', function() { doShare(infoShareBtn); });
 
     // ── Raccourcis clavier ─────────────────────────────────────────────────
     document.addEventListener('keydown', function(e) {
@@ -276,12 +425,10 @@
           navigateNext();
           break;
         case 'l': case 'L':
-          e.preventDefault();
-          postVote(1);
+          if (!IS_GUEST) { e.preventDefault(); postVote(1); }
           break;
         case 'd': case 'D':
-          e.preventDefault();
-          postVote(-1);
+          if (!IS_GUEST) { e.preventDefault(); postVote(-1); }
           break;
         case 'o': case 'O':
           e.preventDefault();
@@ -289,6 +436,119 @@
           break;
       }
     });
+
+    // ── Commentaires ───────────────────────────────────────────────────────
+    var commentsDrawer  = document.getElementById('comments-drawer');
+    var commentsToggle  = document.getElementById('comments-toggle');
+    var commentsClose   = document.getElementById('comments-close');
+    var commentsList    = document.getElementById('comments-list');
+    var commentsCount   = document.getElementById('comments-count');
+    var commentInput    = document.getElementById('comment-input');
+    var commentSubmit   = document.getElementById('comment-submit');
+    var IS_ADMIN        = <%= (user && user.isAdmin) ? 'true' : 'false' %>;
+    var CURRENT_USER_ID = <%= currentUserId || 'null' %>;
+    var EMPTY_MSG       = '<%= t('comments_empty') %>';
+
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function updateCount(n) {
+      commentsCount.textContent = n || '';
+      commentsCount.style.display = n > 0 ? '' : 'none';
+    }
+
+    function openDrawer() {
+      closeInfoPanel(); // ferme le volet ℹ️ si ouvert
+      commentsDrawer.style.display = 'flex';
+      commentsDrawer.offsetHeight;
+      commentsDrawer.classList.add('comments-drawer--open');
+    }
+    function closeDrawer() {
+      commentsDrawer.classList.remove('comments-drawer--open');
+    }
+    commentsDrawer.addEventListener('transitionend', function() {
+      if (!commentsDrawer.classList.contains('comments-drawer--open')) {
+        commentsDrawer.style.display = 'none';
+      }
+    });
+
+    if (commentsToggle) {
+      commentsToggle.addEventListener('click', function() {
+        if (commentsDrawer.style.display === 'none' || !commentsDrawer.classList.contains('comments-drawer--open')) {
+          openDrawer();
+        } else {
+          closeDrawer();
+        }
+      });
+    }
+    if (commentsClose) {
+      commentsClose.addEventListener('click', closeDrawer);
+    }
+
+    if (commentSubmit) {
+      commentSubmit.addEventListener('click', function() {
+        var body = commentInput ? commentInput.value.trim() : '';
+        if (!body) return;
+        commentSubmit.disabled = true;
+        fetch('/stumble/' + SITE_ID + '/comment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: '_csrf=' + encodeURIComponent(CSRF) + '&body=' + encodeURIComponent(body),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          commentSubmit.disabled = false;
+          if (!data.comment) return;
+          commentInput.value = '';
+          var emptyEl = document.getElementById('comments-empty');
+          if (emptyEl) emptyEl.remove();
+          var delBtn = '<button class="comment-delete btn btn-ghost btn-sm" data-id="' + data.comment.id + '">✕</button>';
+          var div = document.createElement('div');
+          div.className = 'comment-item';
+          div.dataset.id = data.comment.id;
+          div.innerHTML =
+            '<div class="comment-meta">' +
+              '<span class="comment-username">' + escHtml(data.comment.username) + '</span>' +
+              '<span class="comment-date">' + escHtml(data.comment.created_at) + '</span>' +
+              delBtn +
+            '</div>' +
+            '<p class="comment-body">' + escHtml(data.comment.body) + '</p>';
+          commentsList.appendChild(div);
+          commentsList.scrollTop = commentsList.scrollHeight;
+          var n = parseInt(commentsCount.textContent || '0') + 1;
+          updateCount(n);
+        })
+        .catch(function() { commentSubmit.disabled = false; });
+      });
+    }
+
+    if (commentsList) {
+      commentsList.addEventListener('click', function(e) {
+        var btn = e.target.closest('.comment-delete');
+        if (!btn) return;
+        var id = btn.dataset.id;
+        fetch('/comment/' + id + '/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: '_csrf=' + encodeURIComponent(CSRF),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!data.ok) return;
+          var item = btn.closest('.comment-item');
+          if (item) item.remove();
+          var n = Math.max(0, parseInt(commentsCount.textContent || '1') - 1);
+          updateCount(n);
+          if (!commentsList.querySelector('.comment-item')) {
+            var p = document.createElement('p');
+            p.className = 'comments-empty';
+            p.id = 'comments-empty';
+            p.textContent = EMPTY_MSG;
+            commentsList.appendChild(p);
+          }
+        });
+      });
+    }
 
     // ── Flash auto-dismiss ─────────────────────────────────────────────────
     var flash = document.getElementById('stumble-flash');

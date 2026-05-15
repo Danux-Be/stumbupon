@@ -1,7 +1,39 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const { spawn } = require('child_process');
 const db = require('../db/database');
 const { requireAdmin } = require('../middleware/auth');
 const { verifyToken } = require('../middleware/csrf');
+const { enrichUrl } = require('../lib/enricher');
+const siteConfig   = require('../lib/config');
+
+const BOT_DIR  = path.join(__dirname, '..');
+const LOG_FILE = path.join(BOT_DIR, 'logs/bot.log');
+const PID_FILE = path.join(BOT_DIR, 'logs/bot.pid');
+
+const VALID_SOURCES = new Set(['all','hn','wiby','lobsters','reddit','marginalia','github','neocities','pinboard','metafilter','tildes','kbclub','searchmysite','crawler']);
+
+function isBotRunning() {
+  try {
+    const pid = parseInt(fs.readFileSync(PID_FILE, 'utf8').trim(), 10);
+    if (!pid) return false;
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function readLastLogLines(n = 60) {
+  try {
+    const content = fs.readFileSync(LOG_FILE, 'utf8');
+    const lines = content.split('\n').filter(l => l.trim());
+    return lines.slice(-n);
+  } catch {
+    return [];
+  }
+}
 
 const router = express.Router();
 
@@ -27,6 +59,8 @@ router.get('/admin', requireAdmin, (req, res) => {
     quarantine: db.prepare("SELECT COUNT(*) AS n FROM sites WHERE status='quarantine'").get().n,
     optout:   db.prepare("SELECT COUNT(*) AS n FROM optout_requests WHERE status='pending'").get().n,
     flagged:  db.prepare("SELECT COUNT(*) AS n FROM sites WHERE status='flagged'").get().n,
+    referers: db.prepare("SELECT COUNT(*) AS n FROM referer_queue WHERE status='pending'").get().n,
+    comments: db.prepare('SELECT COUNT(*) AS n FROM comments').get().n,
   };
   res.render('admin/dashboard', {
     title: req.t('admin_title'),
@@ -157,7 +191,39 @@ router.get('/admin/bot', requireAdmin, (req, res) => {
     title: req.t('admin_bot_title'),
     sourceStats,
     recent,
+    botRunning: isBotRunning(),
+    logLines: readLastLogLines(60),
+    launched: req.query.launched === '1',
+    alreadyRunning: req.query.busy === '1',
   });
+});
+
+router.post('/admin/bot/run', requireAdmin, verifyToken, (req, res) => {
+  if (isBotRunning()) return res.redirect('/admin/bot?busy=1');
+
+  const source = VALID_SOURCES.has(req.body.source) ? req.body.source : 'all';
+  const limit  = Math.min(Math.max(parseInt(req.body.limit || '20', 10), 1), 200);
+  const seeds  = Math.min(Math.max(parseInt(req.body.seeds || '5', 10), 1), 20);
+
+  const args = ['bot/index.js', `--source=${source}`, `--limit=${limit}`, `--seeds=${seeds}`];
+
+  try {
+    fs.mkdirSync(path.join(BOT_DIR, 'logs'), { recursive: true });
+    const logFd = fs.openSync(LOG_FILE, 'a');
+    const child = spawn(process.execPath, args, {
+      cwd: BOT_DIR,
+      detached: true,
+      stdio: ['ignore', logFd, logFd],
+      env: { ...process.env },
+    });
+    fs.closeSync(logFd);
+    fs.writeFileSync(PID_FILE, String(child.pid));
+    child.unref();
+  } catch (err) {
+    console.error('Erreur lancement bot:', err);
+  }
+
+  res.redirect('/admin/bot?launched=1');
 });
 
 // ── Rejet rapide depuis la barre Stumble ──────────────────────────────────────
@@ -165,6 +231,16 @@ router.get('/admin/bot', requireAdmin, (req, res) => {
 router.post('/admin/site/:id/reject', requireAdmin, verifyToken, (req, res) => {
   db.prepare("UPDATE sites SET status='rejected' WHERE id=?").run(req.params.id);
   res.json({ ok: true });
+});
+
+// ── Correction de la langue détectée ─────────────────────────────────────────
+
+router.post('/admin/site/:id/language', requireAdmin, verifyToken, (req, res) => {
+  const lang = req.body.language || null;
+  db.prepare('UPDATE sites SET language = ? WHERE id = ?').run(lang, req.params.id);
+  const allowed = ['/admin/reports', '/admin/flagged'];
+  const back = allowed.includes(req.body._redirect) ? req.body._redirect : '/admin/reports';
+  res.redirect(back);
 });
 
 // ── Sites flaggés (re-check morts/redirects) ──────────────────────────────────
@@ -262,6 +338,126 @@ router.post('/admin/optout/:id/approve', requireAdmin, verifyToken, (req, res) =
 router.post('/admin/optout/:id/reject', requireAdmin, verifyToken, (req, res) => {
   db.prepare("UPDATE optout_requests SET status='rejected' WHERE id = ?").run(req.params.id);
   res.redirect('/admin/optout');
+});
+
+// ── Référencements entrants (Referer header) ──────────────────────────────────
+
+router.get('/admin/referers', requireAdmin, (req, res) => {
+  const items = db.prepare(`
+    SELECT * FROM referer_queue
+    WHERE status = 'pending'
+    ORDER BY hits DESC, last_seen DESC
+  `).all();
+  res.render('admin/referers', {
+    title: req.t('admin_referers_title'),
+    items,
+  });
+});
+
+router.post('/admin/referers/:id/approve', requireAdmin, verifyToken, async (req, res) => {
+  const item = db.prepare('SELECT * FROM referer_queue WHERE id = ?').get(req.params.id);
+  if (!item) return res.redirect('/admin/referers');
+
+  const existing = db.prepare("SELECT 1 FROM sites WHERE url = ? LIMIT 1").get(item.url);
+  if (!existing) {
+    const { title, language, riskScore } = await enrichUrl(item.url);
+    db.prepare(`
+      INSERT OR IGNORE INTO sites (url, title, status, language, risk_score, imported_by)
+      VALUES (?, ?, 'pending', ?, ?, 'referer')
+    `).run(item.url, (title || item.url).slice(0, 200), language || null, riskScore);
+  }
+
+  db.prepare("UPDATE referer_queue SET status='approved' WHERE id = ?").run(item.id);
+  res.redirect('/admin/referers');
+});
+
+router.post('/admin/referers/:id/reject', requireAdmin, verifyToken, (req, res) => {
+  db.prepare("UPDATE referer_queue SET status='rejected' WHERE id = ?").run(req.params.id);
+  res.redirect('/admin/referers');
+});
+
+router.post('/admin/referers/reject-all', requireAdmin, verifyToken, (req, res) => {
+  db.prepare("UPDATE referer_queue SET status='rejected' WHERE status='pending'").run();
+  res.redirect('/admin/referers');
+});
+
+// ── Modération des commentaires ───────────────────────────────────────────
+
+router.get('/admin/comments', requireAdmin, (req, res) => {
+  const comments = db.prepare(`
+    SELECT c.id, c.body, c.created_at, c.user_id,
+           u.username,
+           s.id AS site_id, s.title AS site_title, s.url AS site_url
+    FROM comments c
+    JOIN users u ON u.id = c.user_id
+    JOIN sites s ON s.id = c.site_id
+    ORDER BY c.created_at DESC
+    LIMIT 300
+  `).all();
+
+  res.render('admin/comments', {
+    title: 'Commentaires',
+    comments,
+  });
+});
+
+router.post('/admin/comment/:id/delete', requireAdmin, verifyToken, (req, res) => {
+  db.prepare('DELETE FROM comments WHERE id = ?').run(parseInt(req.params.id));
+  res.redirect('/admin/comments');
+});
+
+// ── Re-vérification des iframes (can_embed) ──────────────────────────────
+router.post('/admin/recheck-embed', requireAdmin, verifyToken, async (req, res) => {
+  const sites = db.prepare(
+    "SELECT id, url FROM sites WHERE status = 'approved' ORDER BY RANDOM() LIMIT 50"
+  ).all();
+
+  const update = db.prepare('UPDATE sites SET can_embed = ? WHERE id = ?');
+  let fixed = 0;
+
+  for (const site of sites) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      const r = await fetch(site.url, {
+        method: 'HEAD',
+        signal: controller.signal,
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; StumbleCloneBot/1.0)' },
+        redirect: 'follow',
+      });
+      clearTimeout(timer);
+
+      const xfo = r.headers.get('x-frame-options') || '';
+      const csp = r.headers.get('content-security-policy') || '';
+
+      let canEmbed = 1;
+      if (/deny|sameorigin/i.test(xfo)) canEmbed = 0;
+      if (/frame-ancestors\s+['"]?none['"]?/i.test(csp)) canEmbed = 0;
+      else if (/frame-ancestors/i.test(csp) && !/frame-ancestors[^;]*\*/i.test(csp)) canEmbed = 0;
+
+      update.run(canEmbed, site.id);
+      fixed++;
+    } catch { /* site inaccessible, on ne touche pas */ }
+  }
+
+  res.json({ checked: sites.length, updated: fixed });
+});
+
+// ── Configuration du site ────────────────────────────────────────────────
+router.get('/admin/config', requireAdmin, (req, res) => {
+  res.render('admin/config', {
+    title: 'Configuration',
+    config: siteConfig.getAll(),
+    success: req.query.success === '1',
+  });
+});
+
+router.post('/admin/config', requireAdmin, verifyToken, (req, res) => {
+  siteConfig.set('less_of_this',        req.body.less_of_this        === '1' ? '1' : '0');
+  siteConfig.set('guest_limit_enabled', req.body.guest_limit_enabled === '1' ? '1' : '0');
+  const count = Math.max(1, Math.min(200, parseInt(req.body.guest_limit_count) || 5));
+  siteConfig.set('guest_limit_count', String(count));
+  res.redirect('/admin/config?success=1');
 });
 
 module.exports = router;

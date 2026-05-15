@@ -29,7 +29,7 @@
   <meta name="twitter:title" content="<%= _ogTitle %>" />
   <meta name="twitter:description" content="<%= _ogDesc.slice(0, 200) %>" />
   <meta name="twitter:image" content="<%= _ogImg %>" />
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/style.css?v=<%= cssVersion %>" />
   <script>(function(){var t=localStorage.getItem('sc-theme');if(t==='dark')document.documentElement.classList.add('dark');else if(t==='light')document.documentElement.classList.add('light');}());</script>
   <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
   <script src="/js/alpine.min.js" defer></script>
