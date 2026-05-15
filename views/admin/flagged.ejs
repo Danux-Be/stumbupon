@@ -2,7 +2,7 @@
 
 <div class="admin-page">
   <h1><%= t('admin_flagged_title') %></h1>
-  <a href="/admin" class="btn btn-secondary" style="margin-bottom:1.5rem">← <%= t('admin_back') %></a>
+  <a href="/admin" class="btn btn-secondary" style="margin-bottom:1.5rem"><span class="mdi mdi-arrow-left"></span> <%= t('admin_back') %></a>
 
   <% if (!sites.length) { %>
     <p class="alert alert-success"><%= t('admin_flagged_empty') %></p>
@@ -44,7 +44,7 @@
               <option value="<%= lc %>" <%= site.language === lc ? 'selected' : '' %>><%= lc %></option>
             <% }) %>
           </select>
-          <button type="submit" class="btn btn-secondary" style="padding:.25rem .6rem;font-size:.82rem">✓</button>
+          <button type="submit" class="btn btn-secondary" style="padding:.25rem .6rem;font-size:.82rem"><span class="mdi mdi-check"></span></button>
         </form>
       </div>
     </div>

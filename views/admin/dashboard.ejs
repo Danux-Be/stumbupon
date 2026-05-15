@@ -61,15 +61,15 @@
       <%= t('admin_optout_title') %><% if (stats.optout > 0) { %> (<%= stats.optout %>)<% } %>
     </a>
     <a href="/admin/flagged" class="btn <%= stats.flagged > 0 ? 'btn-primary' : 'btn-secondary' %>">
-      ⚠️ <%= t('admin_flagged_title') %><% if (stats.flagged > 0) { %> (<%= stats.flagged %>)<% } %>
+      <span class="mdi mdi-alert-outline"></span> <%= t('admin_flagged_title') %><% if (stats.flagged > 0) { %> (<%= stats.flagged %>)<% } %>
     </a>
     <a href="/admin/referers" class="btn <%= stats.referers > 0 ? 'btn-primary' : 'btn-secondary' %>">
-      🔗 <%= t('admin_referers_title') %><% if (stats.referers > 0) { %> (<%= stats.referers %>)<% } %>
+      <span class="mdi mdi-link-variant"></span> <%= t('admin_referers_title') %><% if (stats.referers > 0) { %> (<%= stats.referers %>)<% } %>
     </a>
-    <a href="/admin/comments" class="btn btn-secondary">💬 Commentaires<% if (stats.comments > 0) { %> (<%= stats.comments %>)<% } %></a>
-    <a href="/admin/users" class="btn btn-secondary">👥 <%= t('admin_users_title') %></a>
-    <a href="/admin/bot" class="btn btn-secondary">🤖 <%= t('admin_bot_title') %></a>
-    <a href="/admin/config" class="btn btn-secondary">⚙️ Configuration</a>
+    <a href="/admin/comments" class="btn btn-secondary"><span class="mdi mdi-comment-outline"></span> Commentaires<% if (stats.comments > 0) { %> (<%= stats.comments %>)<% } %></a>
+    <a href="/admin/users" class="btn btn-secondary"><span class="mdi mdi-account-group-outline"></span> <%= t('admin_users_title') %></a>
+    <a href="/admin/bot" class="btn btn-secondary"><span class="mdi mdi-robot-outline"></span> <%= t('admin_bot_title') %></a>
+    <a href="/admin/config" class="btn btn-secondary"><span class="mdi mdi-cog-outline"></span> Configuration</a>
   </div>
 </div>
 

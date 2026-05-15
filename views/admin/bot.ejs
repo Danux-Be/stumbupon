@@ -3,14 +3,14 @@
 <div class="admin-page">
   <div class="admin-page-header">
     <a href="/admin" class="admin-back">← <%= t('admin_title') %></a>
-    <h1>🤖 <%= t('admin_bot_title') %></h1>
+    <h1><span class="mdi mdi-robot-outline"></span> <%= t('admin_bot_title') %></h1>
   </div>
 
   <% if (launched) { %>
-    <div class="alert alert--success" style="margin-bottom:1.5rem">✅ <%= t('admin_bot_launched') %></div>
+    <div class="alert alert--success" style="margin-bottom:1.5rem"><span class="mdi mdi-check-circle-outline"></span> <%= t('admin_bot_launched') %></div>
   <% } %>
   <% if (alreadyRunning) { %>
-    <div class="alert alert--warn" style="margin-bottom:1.5rem">⚠️ <%= t('admin_bot_already_running') %></div>
+    <div class="alert alert--warn" style="margin-bottom:1.5rem"><span class="mdi mdi-alert-outline"></span> <%= t('admin_bot_already_running') %></div>
   <% } %>
 
   <%# ── Formulaire de lancement ── %>
@@ -18,7 +18,7 @@
     <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
       <h2 style="margin:0"><%= t('admin_bot_run_title') %></h2>
       <span class="risk-badge risk-badge--<%= botRunning ? 'high' : 'low' %>">
-        <%= botRunning ? '⚙️ ' + t('admin_bot_running') : '⏸ ' + t('admin_bot_idle') %>
+        <%- botRunning ? '<span class="mdi mdi-cog-outline"></span> ' + t('admin_bot_running') : '<span class="mdi mdi-pause-circle-outline"></span> ' + t('admin_bot_idle') %>
       </span>
     </div>
 
@@ -45,7 +45,7 @@
       </div>
 
       <button type="submit" class="btn btn-primary" <%= botRunning ? 'disabled' : '' %>>
-        🚀 <%= t('admin_bot_run_btn') %>
+        <span class="mdi mdi-rocket-launch-outline"></span> <%= t('admin_bot_run_btn') %>
       </button>
     </form>
   </div>
@@ -56,7 +56,7 @@
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem">
         <h2 style="margin:0"><%= t('admin_bot_log_title') %></h2>
         <% if (botRunning) { %>
-          <a href="/admin/bot" class="btn btn-secondary" style="font-size:0.8rem">🔄 Rafraîchir</a>
+          <a href="/admin/bot" class="btn btn-secondary" style="font-size:0.8rem"><span class="mdi mdi-refresh"></span> Rafraîchir</a>
         <% } %>
       </div>
       <div class="bot-log" style="max-height:300px;overflow-y:auto;font-size:0.78rem">

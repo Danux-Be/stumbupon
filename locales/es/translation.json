@@ -342,5 +342,6 @@
   "comments_placeholder": "Comparte tu opinión sobre este sitio…",
   "comments_submit": "Publicar",
   "comments_login": "Inicia sesión para comentar",
-  "stumble_submitted_by": "Enviado por"
+  "stumble_submitted_by": "Enviado por",
+  "error_submit_ssl": "Este sitio no tiene un certificado SSL válido y no puede ser listado."
 }

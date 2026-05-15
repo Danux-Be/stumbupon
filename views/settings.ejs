@@ -23,15 +23,15 @@
 
   <!-- Navigation d'ancres -->
   <nav class="settings-nav" aria-label="<%= t('settings_title') %>">
-    <a href="#decouverte" class="settings-nav__link">🎯 <%= t('settings_group_discovery') %></a>
-    <a href="#interface"  class="settings-nav__link">🎨 <%= t('settings_group_interface') %></a>
-    <a href="#notifications" class="settings-nav__link">📬 <%= t('settings_group_notifications') %></a>
-    <a href="#compte"     class="settings-nav__link">🔐 <%= t('settings_group_account') %></a>
+    <a href="#decouverte" class="settings-nav__link"><span class="mdi mdi-target"></span> <%= t('settings_group_discovery') %></a>
+    <a href="#interface"  class="settings-nav__link"><span class="mdi mdi-palette-outline"></span> <%= t('settings_group_interface') %></a>
+    <a href="#notifications" class="settings-nav__link"><span class="mdi mdi-email-outline"></span> <%= t('settings_group_notifications') %></a>
+    <a href="#compte"     class="settings-nav__link"><span class="mdi mdi-shield-account-outline"></span> <%= t('settings_group_account') %></a>
   </nav>
 
   <!-- ── Découverte ──────────────────────────────────────────────────────── -->
   <div id="decouverte" class="settings-group">
-    <p class="settings-group__title">🎯 <%= t('settings_group_discovery') %></p>
+    <p class="settings-group__title"><span class="mdi mdi-target"></span> <%= t('settings_group_discovery') %></p>
 
     <!-- Centres d'intérêt -->
     <section class="settings-section">
@@ -122,7 +122,7 @@
 
   <!-- ── Interface ───────────────────────────────────────────────────────── -->
   <div id="interface" class="settings-group">
-    <p class="settings-group__title">🎨 <%= t('settings_group_interface') %></p>
+    <p class="settings-group__title"><span class="mdi mdi-palette-outline"></span> <%= t('settings_group_interface') %></p>
 
     <!-- Langue de l'interface -->
     <section class="settings-section">
@@ -143,8 +143,8 @@
       <h2><%= t('settings_bar_title') %></h2>
       <p><%= t('settings_bar_desc') %></p>
       <div class="settings-btn-group">
-        <button type="button" id="bar-pos-top"    class="btn btn-secondary">⬆️ <%= t('settings_bar_top') %></button>
-        <button type="button" id="bar-pos-bottom" class="btn btn-secondary">⬇️ <%= t('settings_bar_bottom') %></button>
+        <button type="button" id="bar-pos-top"    class="btn btn-secondary"><span class="mdi mdi-arrow-up"></span> <%= t('settings_bar_top') %></button>
+        <button type="button" id="bar-pos-bottom" class="btn btn-secondary"><span class="mdi mdi-arrow-down"></span> <%= t('settings_bar_bottom') %></button>
       </div>
       <script>
         (function() {
@@ -197,7 +197,7 @@
 
   <!-- ── Notifications ───────────────────────────────────────────────────── -->
   <div id="notifications" class="settings-group">
-    <p class="settings-group__title">📬 <%= t('settings_group_notifications') %></p>
+    <p class="settings-group__title"><span class="mdi mdi-email-outline"></span> <%= t('settings_group_notifications') %></p>
 
     <!-- Digest hebdomadaire -->
     <section class="settings-section">
@@ -219,7 +219,7 @@
 
   <!-- ── Compte & sécurité ───────────────────────────────────────────────── -->
   <div id="compte" class="settings-group">
-    <p class="settings-group__title">🔐 <%= t('settings_group_account') %></p>
+    <p class="settings-group__title"><span class="mdi mdi-shield-account-outline"></span> <%= t('settings_group_account') %></p>
 
     <!-- Données personnelles (RGPD) -->
     <section class="settings-section">
@@ -227,10 +227,10 @@
       <p><%= t('settings_data_desc') %></p>
 
       <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:0.8rem">
-        <a href="/account/export" class="btn btn-secondary">⬇️ <%= t('settings_export') %></a>
+        <a href="/account/export" class="btn btn-secondary"><span class="mdi mdi-download-outline"></span> <%= t('settings_export') %></a>
 
         <details style="width:100%;margin-top:0.5rem">
-          <summary class="report-toggle" style="color:#dc2626">⚠️ <%= t('settings_delete_title') %></summary>
+          <summary class="report-toggle" style="color:#dc2626"><span class="mdi mdi-alert-outline"></span> <%= t('settings_delete_title') %></summary>
           <div style="margin-top:1rem;padding:1.2rem;background:#fef2f2;border-radius:var(--radius-sm);border:1px solid #fecaca">
             <p style="font-size:0.9rem;color:#7f1d1d;margin-bottom:1rem"><%= t('settings_delete_warning') %></p>
             <form method="POST" action="/account/delete" class="form-card form-card--inline">

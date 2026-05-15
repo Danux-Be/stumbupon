@@ -355,5 +355,6 @@
   "comments_placeholder": "Partage ton avis sur ce site…",
   "comments_submit": "Publier",
   "comments_login": "Connecte-toi pour commenter",
-  "stumble_submitted_by": "Soumis par"
+  "stumble_submitted_by": "Soumis par",
+  "error_submit_ssl": "Ce site ne possède pas de certificat SSL valide et ne peut pas être référencé."
 }

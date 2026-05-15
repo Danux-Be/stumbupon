@@ -342,5 +342,6 @@
   "comments_placeholder": "Podziel się opinią o tej stronie…",
   "comments_submit": "Opublikuj",
   "comments_login": "Zaloguj się, aby komentować",
-  "stumble_submitted_by": "Przesłane przez"
+  "stumble_submitted_by": "Przesłane przez",
+  "error_submit_ssl": "Ta strona nie ma ważnego certyfikatu SSL i nie może zostać dodana."
 }

@@ -93,6 +93,14 @@ async function runSource(source) {
       continue;
     }
 
+    // Rejet si certificat SSL invalide
+    if (enriched.sslError) {
+      insertProcessed.run(hashUrl(url), url, source.name, 'rejected', 0, 'SSL invalide');
+      process.stdout.write('ssl-error\n');
+      stats.rejected++;
+      continue;
+    }
+
     // 4. Classification
     const combinedText = [source_title, enriched.title, url].filter(Boolean).join(' ');
     const categoryIds = classify(combinedText);

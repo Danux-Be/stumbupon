@@ -7,14 +7,14 @@
     <p class="alert alert-success">Configuration enregistrée.</p>
   <% } %>
 
-  <a href="/admin" class="btn btn-secondary btn-sm" style="margin-bottom:1.5rem">← Retour</a>
+  <a href="/admin" class="btn btn-secondary btn-sm" style="margin-bottom:1.5rem"><span class="mdi mdi-arrow-left"></span> Retour</a>
 
   <form method="POST" action="/admin/config">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
     <!-- ── Fonctionnalités invités ───────────────────────────────────────── -->
     <div class="settings-group" style="margin-bottom:1.5rem">
-      <p class="settings-group__title">👤 Invités</p>
+      <p class="settings-group__title"><span class="mdi mdi-account-outline"></span> Invités</p>
 
       <section class="settings-section">
         <h2>Limiter les stumbles des invités</h2>
@@ -43,7 +43,7 @@
 
     <!-- ── Fonctionnalités de la barre ──────────────────────────────────── -->
     <div class="settings-group" style="margin-bottom:1.5rem">
-      <p class="settings-group__title">🎛️ Barre de navigation</p>
+      <p class="settings-group__title"><span class="mdi mdi-tune-variant"></span> Barre de navigation</p>
 
       <section class="settings-section">
         <h2>Bouton "Moins de ça"</h2>
@@ -62,7 +62,7 @@
 
   <!-- ── Maintenance ──────────────────────────────────────────────────────── -->
   <div class="settings-group" style="margin-top:2rem;margin-bottom:1.5rem">
-    <p class="settings-group__title">🔧 Maintenance</p>
+    <p class="settings-group__title"><span class="mdi mdi-wrench-outline"></span> Maintenance</p>
 
     <section class="settings-section">
       <h2>Vérifier les iframes bloquées</h2>
@@ -71,7 +71,7 @@
          À relancer plusieurs fois pour couvrir l'ensemble du catalogue.</p>
       <div style="margin-top:0.75rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
         <button type="button" class="btn btn-secondary" id="recheck-embed-btn">
-          🔍 Vérifier maintenant
+          <span class="mdi mdi-magnify"></span> Vérifier maintenant
         </button>
         <span id="recheck-result" style="color:var(--color-text-muted);font-size:0.9rem"></span>
       </div>
@@ -93,8 +93,8 @@
     var recheckResult = document.getElementById('recheck-result');
     if (recheckBtn) {
       recheckBtn.addEventListener('click', function() {
-        recheckBtn.disabled    = true;
-        recheckBtn.textContent = '⏳ En cours…';
+        recheckBtn.disabled   = true;
+        recheckBtn.innerHTML  = '<span class="mdi mdi-timer-sand"></span> En cours…';
         recheckResult.textContent = '';
         var csrf = document.querySelector('input[name="_csrf"]').value;
         fetch('/admin/recheck-embed', {
@@ -104,14 +104,14 @@
         })
         .then(function(r) { return r.json(); })
         .then(function(d) {
-          recheckBtn.disabled    = false;
-          recheckBtn.textContent = '🔍 Vérifier maintenant';
-          recheckResult.textContent = d.checked + ' vérifiés, ' + d.updated + ' mis à jour.';
+          recheckBtn.disabled  = false;
+          recheckBtn.innerHTML = '<span class="mdi mdi-magnify"></span> Vérifier maintenant';
+          recheckResult.innerHTML = '<span class="mdi mdi-check-circle-outline"></span> ' + d.checked + ' vérifiés, ' + d.updated + ' mis à jour.';
         })
         .catch(function() {
-          recheckBtn.disabled    = false;
-          recheckBtn.textContent = '🔍 Vérifier maintenant';
-          recheckResult.textContent = '❌ Erreur lors de la vérification.';
+          recheckBtn.disabled  = false;
+          recheckBtn.innerHTML = '<span class="mdi mdi-magnify"></span> Vérifier maintenant';
+          recheckResult.innerHTML = '<span class="mdi mdi-alert-circle-outline"></span> Erreur lors de la vérification.';
         });
       });
     }

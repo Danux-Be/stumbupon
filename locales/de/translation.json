@@ -342,5 +342,6 @@
   "comments_placeholder": "Teile deine Meinung zu dieser Seite…",
   "comments_submit": "Veröffentlichen",
   "comments_login": "Anmelden um zu kommentieren",
-  "stumble_submitted_by": "Eingereicht von"
+  "stumble_submitted_by": "Eingereicht von",
+  "error_submit_ssl": "Diese Website hat kein gültiges SSL-Zertifikat und kann nicht aufgenommen werden."
 }

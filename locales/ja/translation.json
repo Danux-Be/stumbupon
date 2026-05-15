@@ -342,5 +342,6 @@
   "comments_placeholder": "このサイトについての感想を共有しよう…",
   "comments_submit": "投稿",
   "comments_login": "コメントするにはログイン",
-  "stumble_submitted_by": "投稿者"
+  "stumble_submitted_by": "投稿者",
+  "error_submit_ssl": "このサイトには有効なSSL証明書がないため、登録できません。"
 }
