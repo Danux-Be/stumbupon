@@ -2,7 +2,7 @@
 
 <div class="admin-page">
   <h1><%= t('admin_users_title') %></h1>
-  <a href="/admin" class="btn btn-secondary" style="margin-bottom:1.5rem">← <%= t('admin_back') %></a>
+  <a href="/admin" class="btn btn-secondary" style="margin-bottom:1.5rem"><span class="mdi mdi-arrow-left"></span> <%= t('admin_back') %></a>
 
   <% if (!users.length) { %>
     <p class="alert alert-info"><%= t('admin_users_empty') %></p>

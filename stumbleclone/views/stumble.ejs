@@ -18,10 +18,14 @@
   <meta name="twitter:title" content="<%= site.title %>" />
   <meta name="twitter:description" content="<%= (site.description || '').slice(0, 200) %>" />
   <link rel="canonical" href="<%= baseUrl %>/stumble/<%= site.id %>" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" />
   <link rel="stylesheet" href="/style.css?v=<%= cssVersion %>" />
   <meta name="csrf" content="<%= csrfToken %>" />
   <script>
     (function(){
+      var t=localStorage.getItem('sc-theme');
+      if(t==='dark') document.documentElement.classList.add('dark');
+      else if(t==='light') document.documentElement.classList.add('light');
       if(localStorage.getItem('sc-animations')==='1') document.documentElement.classList.add('sc-anim');
       if(localStorage.getItem('sc-bar-pos')==='bottom') document.documentElement.classList.add('bar-bottom');
     })();
@@ -41,10 +45,10 @@
     <div class="stumble-bar__left">
       <a href="/" class="stumble-bar__logo" title="StumbleClone">🌀</a>
       <div class="stumble-bar__site">
-        <% if (isVideo) { %><span class="stumble-bar__badge">📹</span><% } %>
+        <% if (isVideo) { %><span class="stumble-bar__badge mdi mdi-video-outline"></span><% } %>
         <span class="stumble-bar__title"><%= site.title %></span>
         <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer"
-           class="stumble-bar__url">↗ <%= hostname %></a>
+           class="stumble-bar__url"><span class="mdi mdi-open-in-new"></span> <%= hostname %></a>
       </div>
     </div>
 
@@ -53,34 +57,34 @@
       <% if (!isGuest) { %>
       <div class="vote-bar">
         <button class="vote-btn <%= userVote === 1  ? 'vote-btn--active' : '' %>"
-                id="vote-up" title="Like (L)">👍</button>
+                id="vote-up" title="Like (L)"><span class="mdi mdi-thumb-up"></span></button>
         <span class="vote-score <%= score > 0 ? 'vote-score--pos' : score < 0 ? 'vote-score--neg' : '' %>"
               id="vote-score"><%= score > 0 ? '+' : '' %><%= score %></span>
         <button class="vote-btn <%= userVote === -1 ? 'vote-btn--active' : '' %>"
-                id="vote-down" title="Dislike (D)">👎</button>
+                id="vote-down" title="Dislike (D)"><span class="mdi mdi-thumb-down"></span></button>
       </div>
       <% } %>
 
       <% if (!isGuest && siteConfig && siteConfig.less_of_this === '1') { %>
       <button class="btn btn-ghost btn-sm" id="less-btn">
-        🔽 <span class="stumble-bar__label"><%= t('stumble_less_of_this') %></span>
+        <span class="mdi mdi-chevron-double-down"></span> <span class="stumble-bar__label"><%= t('stumble_less_of_this') %></span>
       </button>
       <% } %>
 
-      <a href="/stumble" class="btn btn-primary btn-sm" title="Site suivant (Espace / →)"><%= t('stumble_next') %> →</a>
+      <a href="/stumble" class="btn btn-primary btn-sm" title="Site suivant (Espace / →)"><%= t('stumble_next') %> <span class="mdi mdi-arrow-right"></span></a>
     </div>
 
     <!-- Droite : actions secondaires -->
     <div class="stumble-bar__right">
-      <button class="btn btn-ghost btn-sm" id="info-toggle" title="Infos">ℹ️</button>
+      <button class="btn btn-ghost btn-sm" id="info-toggle" title="Infos"><span class="mdi mdi-information-outline"></span></button>
 
       <button class="btn btn-ghost btn-sm comments-toggle" id="comments-toggle" title="<%= t('comments_title') %>">
-        💬<% if (comments.length) { %><span class="comments-badge" id="comments-count"><%= comments.length %></span><% } else { %><span class="comments-badge" id="comments-count" style="display:none">0</span><% } %>
+        <span class="mdi mdi-comment-outline"></span><% if (comments.length) { %><span class="comments-badge" id="comments-count"><%= comments.length %></span><% } else { %><span class="comments-badge" id="comments-count" style="display:none">0</span><% } %>
       </button>
 
       <% if (!isGuest && user && user.isAdmin) { %>
       <button class="btn btn-reject btn-sm" id="admin-reject-btn"
-              title="<%= t('stumble_admin_reject') %>">🗑</button>
+              title="<%= t('stumble_admin_reject') %>"><span class="mdi mdi-delete-outline"></span></button>
       <% } %>
     </div>
 
@@ -90,12 +94,12 @@
   <div class="info-panel" id="info-panel" style="display:none">
     <div class="comments-drawer__header">
       <span class="comments-drawer__title">ℹ️ <%= site.title %></span>
-      <button class="btn btn-ghost btn-sm" id="info-close">✕</button>
+      <button class="btn btn-ghost btn-sm" id="info-close"><span class="mdi mdi-close"></span></button>
     </div>
     <div class="info-panel__body">
 
       <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer" class="info-panel__url">
-        ↗ <%= hostname %>
+        <span class="mdi mdi-open-in-new"></span> <%= hostname %>
       </a>
 
       <% if (site.description) { %>
@@ -122,7 +126,7 @@
 
       <div class="info-panel__section">
         <button class="btn btn-secondary btn-sm" id="info-share-btn" style="width:100%">
-          🔗 <%= t('stumble_share') %>
+          <span class="mdi mdi-share-variant"></span> <%= t('stumble_share') %>
         </button>
       </div>
 
@@ -130,14 +134,14 @@
       <div class="info-panel__section">
         <button class="btn btn-ghost btn-sm" id="info-cant-embed-btn"
                 style="width:100%;color:var(--color-text-muted)">
-          🚫 Ce site ne s'affiche pas ?
+          <span class="mdi mdi-web-off"></span> Ce site ne s'affiche pas ?
         </button>
       </div>
       <% } %>
 
       <% if (!isGuest) { %>
       <div class="info-panel__section info-panel__report">
-        <span class="info-panel__label">⚑ <%= t('report_link') %></span>
+        <span class="info-panel__label"><span class="mdi mdi-flag-outline"></span> <%= t('report_link') %></span>
         <form method="POST" action="/report/<%= site.id %>">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <textarea name="reason" rows="2" maxlength="500" class="comments-input"
@@ -156,7 +160,7 @@
   <div class="comments-drawer" id="comments-drawer" style="display:none">
     <div class="comments-drawer__header">
       <span class="comments-drawer__title">💬 <%= t('comments_title') %></span>
-      <button class="btn btn-ghost btn-sm" id="comments-close">✕</button>
+      <button class="btn btn-ghost btn-sm" id="comments-close"><span class="mdi mdi-close"></span></button>
     </div>
     <div class="comments-drawer__list" id="comments-list">
       <% if (!comments.length) { %>
@@ -168,7 +172,7 @@
             <span class="comment-username"><%= comment.username %></span>
             <span class="comment-date"><%= comment.created_at.slice(0, 16) %></span>
             <% if (!isGuest && (currentUserId === comment.user_id || (user && user.isAdmin))) { %>
-            <button class="comment-delete btn btn-ghost btn-sm" data-id="<%= comment.id %>">✕</button>
+            <button class="comment-delete btn btn-ghost btn-sm" data-id="<%= comment.id %>"><span class="mdi mdi-close"></span></button>
             <% } %>
           </div>
           <p class="comment-body"><%= comment.body %></p>
@@ -233,7 +237,7 @@
       <div class="stumble-actions">
         <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer"
            class="btn btn-primary btn-large">
-          <%= t('stumble_open_tab') %> ↗
+          <%= t('stumble_open_tab') %> <span class="mdi mdi-open-in-new"></span>
         </a>
         <a href="/stumble" class="btn btn-secondary btn-large">
           <%= t('stumble_next') %> →
@@ -502,7 +506,7 @@
           commentInput.value = '';
           var emptyEl = document.getElementById('comments-empty');
           if (emptyEl) emptyEl.remove();
-          var delBtn = '<button class="comment-delete btn btn-ghost btn-sm" data-id="' + data.comment.id + '">✕</button>';
+          var delBtn = '<button class="comment-delete btn btn-ghost btn-sm" data-id="' + data.comment.id + '"><span class="mdi mdi-close"></span></button>';
           var div = document.createElement('div');
           div.className = 'comment-item';
           div.dataset.id = data.comment.id;

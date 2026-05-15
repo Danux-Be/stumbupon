@@ -3,6 +3,16 @@ const UA = 'StumbleCloneBot/1.0 (discovery bot; not for scraping)';
 
 const SPAM_KEYWORDS = /\b(casino|poker|slots|crypto\s*scam|buy\s*followers|payday\s*loan|viagra|cialis|xxx|porn|escort)\b/i;
 
+const SSL_ERROR_CODES = new Set([
+  'CERT_HAS_EXPIRED',
+  'ERR_TLS_CERT_ALTNAME_INVALID',
+  'DEPTH_ZERO_SELF_SIGNED_CERT',
+  'SELF_SIGNED_CERT_IN_CHAIN',
+  'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+  'UNABLE_TO_GET_ISSUER_CERT_LOCALLY',
+  'ERR_CERT_COMMON_NAME_INVALID',
+]);
+
 async function enrichUrl(url) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
@@ -87,10 +97,14 @@ async function enrichUrl(url) {
     // Bonus si lang est une langue supportée
     if (language && ['fr', 'en', 'nl', 'de'].includes(language)) riskScore -= 10;
 
-  } catch {
+  } catch (err) {
     clearTimeout(timer);
+    const code = err?.cause?.code || err?.code || '';
+    if (SSL_ERROR_CODES.has(code)) {
+      return { title: null, language: null, riskScore: 100, canEmbed: false, sslError: true };
+    }
     riskScore += 30;
-    canEmbed = false; // site inaccessible
+    canEmbed = false;
   }
 
   return { title, language, riskScore: Math.max(0, Math.min(100, riskScore)), canEmbed };

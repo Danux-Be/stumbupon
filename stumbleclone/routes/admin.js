@@ -360,11 +360,15 @@ router.post('/admin/referers/:id/approve', requireAdmin, verifyToken, async (req
 
   const existing = db.prepare("SELECT 1 FROM sites WHERE url = ? LIMIT 1").get(item.url);
   if (!existing) {
-    const { title, language, riskScore } = await enrichUrl(item.url);
+    const enriched = await enrichUrl(item.url);
+    if (enriched.sslError) {
+      db.prepare("UPDATE referer_queue SET status='rejected' WHERE id = ?").run(item.id);
+      return res.redirect('/admin/referers');
+    }
     db.prepare(`
       INSERT OR IGNORE INTO sites (url, title, status, language, risk_score, imported_by)
       VALUES (?, ?, 'pending', ?, ?, 'referer')
-    `).run(item.url, (title || item.url).slice(0, 200), language || null, riskScore);
+    `).run(item.url, (enriched.title || item.url).slice(0, 200), enriched.language || null, enriched.riskScore);
   }
 
   db.prepare("UPDATE referer_queue SET status='approved' WHERE id = ?").run(item.id);
@@ -407,6 +411,12 @@ router.post('/admin/comment/:id/delete', requireAdmin, verifyToken, (req, res) =
 });
 
 // ── Re-vérification des iframes (can_embed) ──────────────────────────────
+const SSL_ERROR_CODES = new Set([
+  'CERT_HAS_EXPIRED', 'ERR_TLS_CERT_ALTNAME_INVALID', 'DEPTH_ZERO_SELF_SIGNED_CERT',
+  'SELF_SIGNED_CERT_IN_CHAIN', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE',
+  'UNABLE_TO_GET_ISSUER_CERT_LOCALLY', 'ERR_CERT_COMMON_NAME_INVALID',
+]);
+
 router.post('/admin/recheck-embed', requireAdmin, verifyToken, async (req, res) => {
   const sites = db.prepare(
     "SELECT id, url FROM sites WHERE status = 'approved' ORDER BY RANDOM() LIMIT 50"
@@ -437,7 +447,15 @@ router.post('/admin/recheck-embed', requireAdmin, verifyToken, async (req, res) 
 
       update.run(canEmbed, site.id);
       fixed++;
-    } catch { /* site inaccessible, on ne touche pas */ }
+    } catch (err) {
+      const code = err?.cause?.code || err?.code || '';
+      if (SSL_ERROR_CODES.has(code)) {
+        // Cert invalide → site rejeté définitivement
+        db.prepare("UPDATE sites SET status='rejected' WHERE id=?").run(site.id);
+        fixed++;
+      }
+      // Autre erreur (timeout, DNS) → on ne touche pas
+    }
   }
 
   res.json({ checked: sites.length, updated: fixed });

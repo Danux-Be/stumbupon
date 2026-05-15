@@ -3,7 +3,7 @@
 <div class="admin-page">
   <div class="admin-page-header">
     <a href="/admin" class="admin-back">← <%= t('admin_title') %></a>
-    <h1>🔗 <%= t('admin_referers_title') %> (<%= items.length %>)</h1>
+    <h1><span class="mdi mdi-link-variant"></span> <%= t('admin_referers_title') %> (<%= items.length %>)</h1>
   </div>
 
   <% if (items.length === 0) { %>
@@ -18,7 +18,7 @@
             <a href="<%= item.url %>" target="_blank" rel="noopener noreferrer nofollow"><%= item.url %></a>
           </p>
           <div class="admin-card-meta">
-            <span>🔁 <%= item.hits %> <%= t('admin_referers_hits') %></span>
+            <span><span class="mdi mdi-repeat"></span> <%= item.hits %> <%= t('admin_referers_hits') %></span>
             <span>Dernière vue : <%= new Date(item.last_seen).toLocaleDateString() %></span>
             <span>Détecté le : <%= new Date(item.created_at).toLocaleDateString() %></span>
           </div>

@@ -2,8 +2,8 @@
 
 <div class="admin-page">
   <div class="admin-page-header">
-    <a href="/admin" class="admin-back">← Admin</a>
-    <h1>💬 Commentaires (<%= comments.length %>)</h1>
+    <a href="/admin" class="admin-back"><span class="mdi mdi-arrow-left"></span> Admin</a>
+    <h1><span class="mdi mdi-comment-outline"></span> Commentaires (<%= comments.length %>)</h1>
   </div>
 
   <% if (comments.length === 0) { %>
@@ -15,7 +15,7 @@
       <% comments.forEach(function(c) { %>
         <div class="admin-card" id="comment-<%= c.id %>">
           <div class="fav-meta">
-            <span class="stumble-tag">👤 <%= c.username %></span>
+            <span class="stumble-tag"><span class="mdi mdi-account-outline"></span> <%= c.username %></span>
             <span class="report-date"><%= new Date(c.created_at).toLocaleString('fr-FR') %></span>
           </div>
 
@@ -37,7 +37,7 @@
               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
               <button type="submit" class="btn btn-reject btn-sm"
                       onclick="return confirm('Supprimer ce commentaire ?')">
-                🗑 Supprimer
+                <span class="mdi mdi-delete-outline"></span> Supprimer
               </button>
             </form>
           </div>

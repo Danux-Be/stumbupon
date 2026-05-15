@@ -342,5 +342,6 @@
   "comments_placeholder": "分享你对这个网站的看法…",
   "comments_submit": "发布",
   "comments_login": "登录以发表评论",
-  "stumble_submitted_by": "提交者"
+  "stumble_submitted_by": "提交者",
+  "error_submit_ssl": "此网站没有有效的SSL证书，无法收录。"
 }

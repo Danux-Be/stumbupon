@@ -356,5 +356,6 @@
   "comments_placeholder": "Share your thoughts about this site…",
   "comments_submit": "Post",
   "comments_login": "Log in to comment",
-  "stumble_submitted_by": "Submitted by"
+  "stumble_submitted_by": "Submitted by",
+  "error_submit_ssl": "This site does not have a valid SSL certificate and cannot be listed."
 }

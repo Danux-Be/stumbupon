@@ -125,6 +125,7 @@ router.post('/submit', requireLogin, verifyToken, async (req, res) => {
     url = watchUrl;
   } else {
     const enriched = await enrichUrl(cleanUrl);
+    if (enriched.sslError) return fail('error_submit_ssl');
     finalTitle = (title && title.trim()) || enriched.title || cleanUrl;
     finalLang = enriched.language || 'en';
     riskScore = enriched.riskScore;
