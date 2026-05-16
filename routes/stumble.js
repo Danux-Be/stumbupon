@@ -192,6 +192,12 @@ router.get('/stumble/join', (req, res) => {
   });
 });
 
+router.get('/stumble/join/skip', (req, res) => {
+  if (req.session.userId) return res.redirect('/stumble');
+  req.session.guestCount = 0;
+  res.redirect('/stumble');
+});
+
 // ── Route principale ─────────────────────────────────────────────────────
 router.get('/stumble', (req, res) => {
   const userId = req.session.userId;

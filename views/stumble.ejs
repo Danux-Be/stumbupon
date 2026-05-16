@@ -44,6 +44,9 @@
     <!-- Gauche : logo + infos site -->
     <div class="stumble-bar__left">
       <a href="/" class="stumble-bar__logo" title="StumbleClone">🌀</a>
+      <img src="https://<%= hostname %>/favicon.ico"
+           class="stumble-bar__favicon" width="20" height="20" alt=""
+           onerror="this.onerror=null;this.style.display='none'" />
       <div class="stumble-bar__site">
         <% if (isVideo) { %><span class="stumble-bar__badge mdi mdi-video-outline"></span><% } %>
         <span class="stumble-bar__title"><%= site.title %></span>
@@ -71,7 +74,7 @@
       </button>
       <% } %>
 
-      <a href="/stumble" class="btn btn-primary btn-sm" title="Site suivant (Espace / →)"><%= t('stumble_next') %> <span class="mdi mdi-arrow-right"></span></a>
+      <a href="/stumble" class="btn btn-primary btn-sm" id="bar-next-btn" title="Site suivant (Espace / →)"><%= t('stumble_next') %> <span class="mdi mdi-arrow-right"></span></a>
     </div>
 
     <!-- Droite : actions secondaires -->
@@ -86,6 +89,9 @@
       <button class="btn btn-reject btn-sm" id="admin-reject-btn"
               title="<%= t('stumble_admin_reject') %>"><span class="mdi mdi-delete-outline"></span></button>
       <% } %>
+      <button class="btn btn-ghost btn-sm stumble-bar__hamburger" id="mobile-menu-btn" title="Menu">
+        <span class="mdi mdi-menu"></span>
+      </button>
     </div>
 
   </div>
@@ -190,13 +196,120 @@
     </div>
   </div>
 
-  <% if (isGuest) { %>
-  <div class="stumble-guest-banner">
-    <span><%- t('guest_banner') %></span>
-    <a href="/signup" class="btn btn-primary btn-sm"><%= t('guest_banner_cta') %></a>
-    <a href="/login" class="btn btn-ghost btn-sm"><%= t('nav_login') %></a>
+
+  <!-- ── Volet mobile (hamburger) ──────────────────────────────────────────── -->
+  <div class="mobile-drawer" id="mobile-drawer" style="display:none">
+    <div class="mobile-drawer__header">
+      <div class="mobile-drawer__header-site">
+        <img src="https://<%= hostname %>/favicon.ico"
+             class="mobile-drawer__favicon" width="20" height="20" alt=""
+             onerror="this.onerror=null;this.style.display='none'" />
+        <div style="min-width:0">
+          <div class="stumble-bar__title"><% if (isVideo) { %><span class="stumble-bar__badge mdi mdi-video-outline" style="margin-right:0.3rem"></span><% } %><%= site.title %></div>
+          <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer" class="stumble-bar__url">
+            <span class="mdi mdi-open-in-new"></span> <%= hostname %>
+          </a>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="mobile-drawer-close">
+        <span class="mdi mdi-close"></span>
+      </button>
+    </div>
+
+    <div class="mobile-drawer__body">
+
+      <!-- Infos site -->
+      <% if (site.description || (categories && categories.length) || submittedBy) { %>
+      <div class="mobile-drawer__section">
+        <% if (site.description) { %><p class="info-panel__desc" style="margin:0"><%= site.description %></p><% } %>
+        <% if (categories && categories.length) { %>
+        <div>
+          <div class="info-panel__label" style="margin-bottom:0.35rem"><%= t('stumble_why_categories') %></div>
+          <div class="info-panel__tags">
+            <% categories.forEach(function(cat) { %>
+              <span class="stumble-tag stumble-tag--sm"><%= cat.emoji %> <%= cat.localName %></span>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+        <% if (submittedBy) { %>
+          <div class="info-panel__label" style="margin:0">👤 <%= t('stumble_submitted_by') %> : <span style="font-weight:400;text-transform:none;letter-spacing:0"><%= submittedBy %></span></div>
+        <% } %>
+      </div>
+      <% } %>
+
+      <!-- Actions -->
+      <div class="mobile-drawer__section">
+        <button class="btn btn-secondary btn-sm" id="mobile-share-btn" style="width:100%">
+          <span class="mdi mdi-share-variant"></span> <%= t('stumble_share') %>
+        </button>
+        <% if (canEmbed && !isVideo) { %>
+        <button class="btn btn-ghost btn-sm" id="mobile-cant-embed-btn"
+                style="width:100%;color:var(--color-text-muted)">
+          <span class="mdi mdi-web-off"></span> Ce site ne s'affiche pas ?
+        </button>
+        <% } %>
+        <% if (!isGuest && siteConfig && siteConfig.less_of_this === '1') { %>
+        <button class="btn btn-ghost btn-sm" id="mobile-less-btn" style="width:100%">
+          <span class="mdi mdi-chevron-double-down"></span> <%= t('stumble_less_of_this') %>
+        </button>
+        <% } %>
+      </div>
+
+      <!-- Signaler -->
+      <% if (!isGuest) { %>
+      <div class="mobile-drawer__section">
+        <div class="mobile-drawer__section-title">
+          <span class="mdi mdi-flag-outline"></span> <%= t('report_link') %>
+        </div>
+        <form method="POST" action="/report/<%= site.id %>">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+          <textarea name="reason" rows="2" maxlength="500" class="comments-input"
+            placeholder="<%= t('report_reason_placeholder') %>"></textarea>
+          <button type="submit" class="btn btn-secondary btn-sm" style="margin-top:0.4rem;width:100%">
+            <%= t('report_submit') %>
+          </button>
+        </form>
+      </div>
+      <% } %>
+
+      <!-- Admin -->
+      <% if (!isGuest && user && user.isAdmin) { %>
+      <div class="mobile-drawer__section">
+        <button class="btn btn-reject btn-sm" id="mobile-admin-reject-btn" style="width:100%">
+          <span class="mdi mdi-delete-outline"></span> <%= t('stumble_admin_reject') %>
+        </button>
+      </div>
+      <% } %>
+
+      <!-- Paramètres & nav -->
+      <div class="mobile-drawer__section">
+        <% if (isGuest) { %>
+        <a href="/signup" class="btn btn-primary btn-sm" style="width:100%">
+          <span class="mdi mdi-account-plus-outline"></span> <%= t('guest_banner_cta') %>
+        </a>
+        <a href="/login" class="btn btn-ghost btn-sm" style="width:100%;justify-content:flex-start">
+          <span class="mdi mdi-login"></span> <%= t('nav_login') %>
+        </a>
+        <% } else { %>
+        <a href="/favorites" class="btn btn-ghost btn-sm" style="width:100%;justify-content:flex-start">
+          <span class="mdi mdi-bookmark-outline"></span> Favoris
+        </a>
+        <% } %>
+        <a href="/settings" class="btn btn-ghost btn-sm" style="width:100%;justify-content:flex-start">
+          <span class="mdi mdi-cog-outline"></span> Paramètres
+        </a>
+      </div>
+
+    </div>
   </div>
-  <% } %>
+  <div class="mobile-drawer-overlay" id="mobile-drawer-overlay" style="display:none"></div>
+  <a href="/stumble" class="stumble-mobile-next"><%= t('stumble_next') %> <span class="mdi mdi-arrow-right"></span></a>
+  <button class="stumble-mobile-fab" id="mobile-comments-fab">
+    <span class="mdi mdi-comment-outline"></span>
+    <span class="comments-badge" id="mobile-fab-badge"
+          style="<%= comments.length ? '' : 'display:none' %>"><%= comments.length || '' %></span>
+  </button>
 
   <% if (flashLessOfThis) { %>
     <div class="stumble-flash" id="stumble-flash"><%= t('stumble_less_done') %></div>
@@ -353,6 +466,8 @@
       if (cardWrap)  cardWrap.style.display = 'flex';
       var cantEmbedBtn = document.getElementById('info-cant-embed-btn');
       if (cantEmbedBtn) cantEmbedBtn.style.display = 'none';
+      var mobileCantEmbed = document.getElementById('mobile-cant-embed-btn');
+      if (mobileCantEmbed) mobileCantEmbed.style.display = 'none';
     }
 
     if (iframe) {
@@ -446,19 +561,20 @@
     var commentsToggle  = document.getElementById('comments-toggle');
     var commentsClose   = document.getElementById('comments-close');
     var commentsList    = document.getElementById('comments-list');
-    var commentsCount   = document.getElementById('comments-count');
-    var commentInput    = document.getElementById('comment-input');
-    var commentSubmit   = document.getElementById('comment-submit');
-    var IS_ADMIN        = <%= (user && user.isAdmin) ? 'true' : 'false' %>;
-    var CURRENT_USER_ID = <%= currentUserId || 'null' %>;
-    var EMPTY_MSG       = '<%= t('comments_empty') %>';
+    var commentsCount        = document.getElementById('comments-count');
+    var mobileCommentsCount  = document.getElementById('mobile-fab-badge');
+    var commentInput         = document.getElementById('comment-input');
+    var commentSubmit        = document.getElementById('comment-submit');
+    var IS_ADMIN             = <%= (user && user.isAdmin) ? 'true' : 'false' %>;
+    var CURRENT_USER_ID      = <%= currentUserId || 'null' %>;
+    var EMPTY_MSG            = '<%= t('comments_empty') %>';
 
     function escHtml(s) {
       return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
     function updateCount(n) {
-      commentsCount.textContent = n || '';
-      commentsCount.style.display = n > 0 ? '' : 'none';
+      if (commentsCount) { commentsCount.textContent = n || ''; commentsCount.style.display = n > 0 ? '' : 'none'; }
+      if (mobileCommentsCount) { mobileCommentsCount.textContent = n || ''; mobileCommentsCount.style.display = n > 0 ? '' : 'none'; }
     }
 
     function openDrawer() {
@@ -549,6 +665,150 @@
             p.id = 'comments-empty';
             p.textContent = EMPTY_MSG;
             commentsList.appendChild(p);
+          }
+        });
+      });
+    }
+
+    // ── Volet mobile ──────────────────────────────────────────────────────
+    var mobileDrawer      = document.getElementById('mobile-drawer');
+    var mobileMenuBtn     = document.getElementById('mobile-menu-btn');
+    var mobileDrawerClose = document.getElementById('mobile-drawer-close');
+    var mobileOverlay     = document.getElementById('mobile-drawer-overlay');
+
+    function openMobileDrawer() {
+      if (!mobileDrawer) return;
+      mobileDrawer.style.display = 'flex';
+      mobileDrawer.offsetHeight;
+      mobileDrawer.classList.add('mobile-drawer--open');
+      if (mobileOverlay) {
+        mobileOverlay.style.display = 'block';
+        mobileOverlay.offsetHeight;
+        mobileOverlay.classList.add('mobile-drawer-overlay--visible');
+      }
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMobileDrawer() {
+      if (!mobileDrawer) return;
+      mobileDrawer.classList.remove('mobile-drawer--open');
+      if (mobileOverlay) mobileOverlay.classList.remove('mobile-drawer-overlay--visible');
+      document.body.style.overflow = '';
+    }
+    if (mobileDrawer) {
+      mobileDrawer.addEventListener('transitionend', function() {
+        if (!mobileDrawer.classList.contains('mobile-drawer--open')) {
+          mobileDrawer.style.display = 'none';
+          if (mobileOverlay) mobileOverlay.style.display = 'none';
+        }
+      });
+    }
+    if (mobileMenuBtn)     mobileMenuBtn.addEventListener('click', openMobileDrawer);
+    if (mobileDrawerClose) mobileDrawerClose.addEventListener('click', closeMobileDrawer);
+    if (mobileOverlay)     mobileOverlay.addEventListener('click', closeMobileDrawer);
+
+    var mobileCommentsFab = document.getElementById('mobile-comments-fab');
+    if (mobileCommentsFab) {
+      mobileCommentsFab.addEventListener('click', function() {
+        if (commentsDrawer.style.display === 'none' || !commentsDrawer.classList.contains('comments-drawer--open')) {
+          openDrawer();
+        } else {
+          closeDrawer();
+        }
+      });
+    }
+
+    var mobileShareBtn = document.getElementById('mobile-share-btn');
+    if (mobileShareBtn) mobileShareBtn.addEventListener('click', function() { doShare(mobileShareBtn); });
+
+    var mobileCantEmbedBtn = document.getElementById('mobile-cant-embed-btn');
+    if (mobileCantEmbedBtn) mobileCantEmbedBtn.addEventListener('click', function() { showCard(); closeMobileDrawer(); });
+
+    var mobileLessBtn = document.getElementById('mobile-less-btn');
+    if (mobileLessBtn) {
+      mobileLessBtn.addEventListener('click', function() {
+        fetch('/less-of-this', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: '_csrf=' + encodeURIComponent(CSRF) + '&site_id=' + SITE_ID,
+        }).then(function() { navigateNext(); });
+      });
+    }
+
+    var mobileAdminRejectBtn = document.getElementById('mobile-admin-reject-btn');
+    if (mobileAdminRejectBtn) {
+      mobileAdminRejectBtn.addEventListener('click', function() {
+        if (!confirm('<%= t('stumble_admin_reject_confirm') %>')) return;
+        fetch('/admin/site/' + SITE_ID + '/reject', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: '_csrf=' + encodeURIComponent(CSRF),
+        }).then(function() { navigateNext(); });
+      });
+    }
+
+    var mobileCommentsList  = document.getElementById('mobile-comments-list');
+    var mobileCommentInput  = document.getElementById('mobile-comment-input');
+    var mobileCommentSubmit = document.getElementById('mobile-comment-submit');
+
+    if (mobileCommentSubmit) {
+      mobileCommentSubmit.addEventListener('click', function() {
+        var body = mobileCommentInput ? mobileCommentInput.value.trim() : '';
+        if (!body) return;
+        mobileCommentSubmit.disabled = true;
+        fetch('/stumble/' + SITE_ID + '/comment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: '_csrf=' + encodeURIComponent(CSRF) + '&body=' + encodeURIComponent(body),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          mobileCommentSubmit.disabled = false;
+          if (!data.comment) return;
+          mobileCommentInput.value = '';
+          var emptyEl = document.getElementById('mobile-comments-empty');
+          if (emptyEl) emptyEl.remove();
+          var div = document.createElement('div');
+          div.className = 'comment-item';
+          div.dataset.id = data.comment.id;
+          div.innerHTML =
+            '<div class="comment-meta">' +
+              '<span class="comment-username">' + escHtml(data.comment.username) + '</span>' +
+              '<span class="comment-date">' + escHtml(data.comment.created_at) + '</span>' +
+              '<button class="comment-delete btn btn-ghost btn-sm" data-id="' + data.comment.id + '"><span class="mdi mdi-close"></span></button>' +
+            '</div>' +
+            '<p class="comment-body">' + escHtml(data.comment.body) + '</p>';
+          mobileCommentsList.appendChild(div);
+          mobileCommentsList.scrollTop = mobileCommentsList.scrollHeight;
+          var n = parseInt((commentsCount && commentsCount.textContent) || '0') + 1;
+          updateCount(n);
+        })
+        .catch(function() { mobileCommentSubmit.disabled = false; });
+      });
+    }
+
+    if (mobileCommentsList) {
+      mobileCommentsList.addEventListener('click', function(e) {
+        var btn = e.target.closest('.comment-delete');
+        if (!btn) return;
+        var id = btn.dataset.id;
+        fetch('/comment/' + id + '/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: '_csrf=' + encodeURIComponent(CSRF),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!data.ok) return;
+          var item = btn.closest('.comment-item');
+          if (item) item.remove();
+          var n = Math.max(0, parseInt((commentsCount && commentsCount.textContent) || '1') - 1);
+          updateCount(n);
+          if (!mobileCommentsList.querySelector('.comment-item')) {
+            var p = document.createElement('p');
+            p.className = 'comments-empty';
+            p.id = 'mobile-comments-empty';
+            p.textContent = EMPTY_MSG;
+            mobileCommentsList.appendChild(p);
           }
         });
       });
