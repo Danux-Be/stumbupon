@@ -27,6 +27,9 @@
             <% if (u.is_admin) { %>
               <span class="user-badge user-badge--admin">admin</span>
             <% } %>
+            <% if (u.is_curator) { %>
+              <span class="user-badge user-badge--curator">curateur</span>
+            <% } %>
             <% if (u.is_banned) { %>
               <span class="user-badge user-badge--banned"><%= t('admin_badge_banned') %></span>
             <% } %>
@@ -60,6 +63,17 @@
                 <form method="POST" action="/admin/users/<%= u.id %>/promote" style="display:inline">
                   <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                   <button class="btn btn-secondary btn-sm"><%= t('admin_promote') %></button>
+                </form>
+              <% } %>
+              <% if (u.is_curator) { %>
+                <form method="POST" action="/admin/users/<%= u.id %>/unmake-curator" style="display:inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  <button class="btn btn-ghost btn-sm">- Curateur</button>
+                </form>
+              <% } else if (!u.is_admin) { %>
+                <form method="POST" action="/admin/users/<%= u.id %>/make-curator" style="display:inline">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                  <button class="btn btn-ghost btn-sm">+ Curateur</button>
                 </form>
               <% } %>
             <% } else { %>

@@ -1,0 +1,70 @@
+<%- include('partials/header', { title }) %>
+
+<div class="admin-page">
+  <div class="admin-page-header">
+    <h1>🏷️ Curation — <%= total %> site<%= total > 1 ? 's' : '' %> sans catégorie ou avec 1 seule</h1>
+  </div>
+
+  <% if (sites.length === 0) { %>
+    <div class="favorites-empty">
+      <p>Tous les sites ont au moins 2 catégories. Bravo !</p>
+    </div>
+  <% } else { %>
+    <div class="admin-list">
+      <% sites.forEach(site => { %>
+        <div class="admin-card">
+          <h2 class="fav-title"><%= site.title %></h2>
+          <p class="admin-url">
+            <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer"><%= site.url %></a>
+          </p>
+          <% if (site.description) { %>
+            <p class="fav-desc"><%= site.description %></p>
+          <% } %>
+
+          <div class="admin-card-meta">
+            <span>🌐 <strong><%= site.language || '?' %></strong></span>
+            <span>
+              Catégories actuelles :
+              <% if ((catsBySite[site.id] || []).length) { %>
+                <% (catsBySite[site.id] || []).forEach(cat => { %>
+                  <span class="admin-edit-curtag"><%= cat.emoji %> <%= cat.localName %></span>
+                <% }) %>
+              <% } else { %>
+                <em>aucune</em>
+              <% } %>
+            </span>
+          </div>
+
+          <form method="POST" action="/curate/site/<%= site.id %>/categories" class="curate-form">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <input type="hidden" name="_page" value="<%= page %>" />
+            <div class="admin-edit-cats">
+              <% allCategories.forEach(cat => { %>
+                <label class="admin-edit-cat-label">
+                  <input type="checkbox" name="categories" value="<%= cat.id %>"
+                    <%= (catIdsBySite[site.id] || []).includes(cat.id) ? 'checked' : '' %> />
+                  <%= cat.emoji %> <%= cat.name %>
+                </label>
+              <% }) %>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm" style="margin-top:0.5rem">Enregistrer</button>
+          </form>
+        </div>
+      <% }) %>
+    </div>
+
+    <% if (totalPages > 1) { %>
+    <nav class="admin-pagination">
+      <% if (page > 1) { %>
+        <a href="/curate?page=<%= page - 1 %>" class="btn btn-ghost btn-sm">← Précédent</a>
+      <% } %>
+      <span class="admin-pagination-info">Page <%= page %> / <%= totalPages %></span>
+      <% if (page < totalPages) { %>
+        <a href="/curate?page=<%= page + 1 %>" class="btn btn-ghost btn-sm">Suivant →</a>
+      <% } %>
+    </nav>
+    <% } %>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

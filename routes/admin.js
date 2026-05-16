@@ -68,23 +68,46 @@ router.get('/admin', requireAdmin, (req, res) => {
   });
 });
 
+const PENDING_PAGE_SIZE = 20;
+
 router.get('/admin/pending', requireAdmin, (req, res) => {
-  const lang = res.locals.currentLang;
+  const lang  = res.locals.currentLang;
+  const page  = Math.max(1, parseInt(req.query.page || '1', 10));
+
+  const total = db.prepare("SELECT COUNT(*) AS n FROM sites WHERE status='pending'").get().n;
+  const totalPages = Math.ceil(total / PENDING_PAGE_SIZE);
+  const offset = (page - 1) * PENDING_PAGE_SIZE;
+
+  const lowRiskCount = db.prepare(
+    "SELECT COUNT(*) AS n FROM sites WHERE status='pending' AND (risk_score IS NULL OR risk_score <= 30)"
+  ).get().n;
+
   const sites = db.prepare(`
     SELECT s.*, u.username AS submitter
     FROM sites s
     LEFT JOIN users u ON u.id = s.submitted_by
     WHERE s.status = 'pending'
     ORDER BY s.created_at ASC
-  `).all();
+    LIMIT ? OFFSET ?
+  `).all(PENDING_PAGE_SIZE, offset);
+
+  const allCategories = db.prepare('SELECT id, slug, name, emoji FROM categories ORDER BY name').all();
 
   let catsBySite = {};
+  let catIdsBySite = {};
   if (sites.length) {
     const ids = JSON.stringify(sites.map(s => s.id));
     const rows = queryCatsForSites.all(lang, ids);
+    const idRows = db.prepare(
+      'SELECT site_id, category_id FROM site_categories WHERE site_id IN (SELECT value FROM json_each(?))'
+    ).all(ids);
     for (const row of rows) {
       if (!catsBySite[row.site_id]) catsBySite[row.site_id] = [];
       catsBySite[row.site_id].push({ emoji: row.emoji, localName: row.localName });
+    }
+    for (const row of idRows) {
+      if (!catIdsBySite[row.site_id]) catIdsBySite[row.site_id] = [];
+      catIdsBySite[row.site_id].push(row.category_id);
     }
   }
 
@@ -92,7 +115,21 @@ router.get('/admin/pending', requireAdmin, (req, res) => {
     title: req.t('admin_pending_title'),
     sites,
     catsBySite,
+    catIdsBySite,
+    allCategories,
+    total,
+    page,
+    totalPages,
+    lowRiskCount,
   });
+});
+
+router.post('/admin/pending/bulk-approve', requireAdmin, verifyToken, (req, res) => {
+  db.prepare(`
+    UPDATE sites SET status='approved', approved_at=CURRENT_TIMESTAMP
+    WHERE status='pending' AND (risk_score IS NULL OR risk_score <= 30)
+  `).run();
+  res.redirect('/admin/pending');
 });
 
 router.post('/admin/approve/:id', requireAdmin, verifyToken, (req, res) => {
@@ -238,8 +275,26 @@ router.post('/admin/site/:id/reject', requireAdmin, verifyToken, (req, res) => {
 router.post('/admin/site/:id/language', requireAdmin, verifyToken, (req, res) => {
   const lang = req.body.language || null;
   db.prepare('UPDATE sites SET language = ? WHERE id = ?').run(lang, req.params.id);
-  const allowed = ['/admin/reports', '/admin/flagged'];
+  const allowed = ['/admin/reports', '/admin/flagged', '/admin/pending'];
   const back = allowed.includes(req.body._redirect) ? req.body._redirect : '/admin/reports';
+  res.redirect(back);
+});
+
+// ── Mise à jour langue + catégories (page pending) ────────────────────────────
+
+router.post('/admin/site/:id/update', requireAdmin, verifyToken, (req, res) => {
+  const id   = parseInt(req.params.id, 10);
+  const lang = req.body.language || null;
+  const cats = [].concat(req.body.categories || []).map(Number).filter(Boolean);
+
+  db.prepare('UPDATE sites SET language = ? WHERE id = ?').run(lang, id);
+  db.prepare('DELETE FROM site_categories WHERE site_id = ?').run(id);
+  const ins = db.prepare('INSERT OR IGNORE INTO site_categories (site_id, category_id) VALUES (?, ?)');
+  const tx  = db.transaction((ids) => { for (const cid of ids) ins.run(id, cid); });
+  tx(cats);
+
+  const allowed = ['/admin/reports', '/admin/flagged', '/admin/pending'];
+  const back = allowed.includes(req.body._redirect) ? req.body._redirect : '/admin/pending';
   res.redirect(back);
 });
 
@@ -270,7 +325,7 @@ router.post('/admin/flagged/:id/reject', requireAdmin, verifyToken, (req, res) =
 
 router.get('/admin/users', requireAdmin, (req, res) => {
   const users = db.prepare(`
-    SELECT u.id, u.username, u.email, u.is_admin, u.is_banned,
+    SELECT u.id, u.username, u.email, u.is_admin, u.is_banned, u.is_curator,
            u.email_verified, u.created_at,
            COUNT(DISTINCT s.id)  AS site_count,
            COUNT(DISTINCT v.rowid) AS vote_count
@@ -313,6 +368,16 @@ router.post('/admin/users/:id/demote', requireAdmin, verifyToken, (req, res) => 
   const id = Number(req.params.id);
   if (id === req.session.userId) return res.redirect('/admin/users');
   db.prepare('UPDATE users SET is_admin = 0 WHERE id = ?').run(id);
+  res.redirect('/admin/users');
+});
+
+router.post('/admin/users/:id/make-curator', requireAdmin, verifyToken, (req, res) => {
+  db.prepare('UPDATE users SET is_curator = 1 WHERE id = ?').run(Number(req.params.id));
+  res.redirect('/admin/users');
+});
+
+router.post('/admin/users/:id/unmake-curator', requireAdmin, verifyToken, (req, res) => {
+  db.prepare('UPDATE users SET is_curator = 0 WHERE id = ?').run(Number(req.params.id));
   res.redirect('/admin/users');
 });
 

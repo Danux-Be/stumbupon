@@ -3,10 +3,24 @@
 <div class="admin-page">
   <div class="admin-page-header">
     <a href="/admin" class="admin-back">← <%= t('admin_title') %></a>
-    <h1><%= t('admin_pending_title') %> (<%= sites.length %>)</h1>
+    <h1><%= t('admin_pending_title') %> (<%= total %>)</h1>
   </div>
 
-  <% if (sites.length === 0) { %>
+  <!-- Approbation en masse -->
+  <% if (lowRiskCount > 0) { %>
+  <div class="admin-bulk-bar">
+    <span class="admin-bulk-info">
+      <strong><%= lowRiskCount %></strong> site<%= lowRiskCount > 1 ? 's' : '' %> avec un score de risque ≤ 30
+    </span>
+    <form method="POST" action="/admin/pending/bulk-approve"
+          onsubmit="return confirm('Approuver <%= lowRiskCount %> site(s) avec risque ≤ 30 ?')">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button type="submit" class="btn btn-approve btn-sm">✅ Tout approuver</button>
+    </form>
+  </div>
+  <% } %>
+
+  <% if (sites.length === 0 && total === 0) { %>
     <div class="favorites-empty">
       <p><%= t('admin_pending_empty') %></p>
     </div>
@@ -14,13 +28,6 @@
     <div class="admin-list">
       <% sites.forEach(site => { %>
         <div class="admin-card">
-          <div class="fav-meta">
-            <% (catsBySite[site.id] || []).forEach(cat => { %>
-              <span class="stumble-tag"><%= cat.emoji %> <%= cat.localName %></span>
-            <% }) %>
-            <span class="stumble-tag">🌐 <%= site.language || '?' %></span>
-          </div>
-
           <h2 class="fav-title"><%= site.title %></h2>
           <p class="admin-url">
             <a href="<%= site.url %>" target="_blank" rel="noopener noreferrer"><%= site.url %></a>
@@ -39,6 +46,47 @@
             <% } %>
           </div>
 
+          <!-- Formulaire d'édition inline -->
+          <details class="admin-edit-details">
+            <summary class="admin-edit-toggle">
+              ✏️ Langue&nbsp;: <strong><%= site.language || '?' %></strong>
+              &nbsp;·&nbsp; Catégories&nbsp;:
+              <% if ((catsBySite[site.id] || []).length) { %>
+                <% (catsBySite[site.id] || []).forEach(cat => { %><span class="admin-edit-curtag"><%= cat.emoji %> <%= cat.localName %></span><% }) %>
+              <% } else { %>
+                <em>aucune</em>
+              <% } %>
+            </summary>
+            <form method="POST" action="/admin/site/<%= site.id %>/update" class="admin-edit-form">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <input type="hidden" name="_redirect" value="/admin/pending?page=<%- page %>" />
+
+              <div class="admin-edit-row">
+                <label class="admin-edit-label">Langue</label>
+                <select name="language" class="admin-edit-select">
+                  <% ['en','fr','de','es','pt','it','nl','ja','zh','ru','ar','pl','da','sv','fi','ko'].forEach(l => { %>
+                    <option value="<%= l %>" <%= site.language === l ? 'selected' : '' %>><%= l %></option>
+                  <% }) %>
+                </select>
+              </div>
+
+              <div class="admin-edit-row">
+                <label class="admin-edit-label">Catégories</label>
+                <div class="admin-edit-cats">
+                  <% allCategories.forEach(cat => { %>
+                    <label class="admin-edit-cat-label">
+                      <input type="checkbox" name="categories" value="<%= cat.id %>"
+                        <%= (catIdsBySite[site.id] || []).includes(cat.id) ? 'checked' : '' %> />
+                      <%= cat.emoji %> <%= cat.name %>
+                    </label>
+                  <% }) %>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-secondary btn-sm">Enregistrer</button>
+            </form>
+          </details>
+
           <div class="admin-actions">
             <form method="POST" action="/admin/approve/<%= site.id %>" style="display:inline">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
@@ -52,6 +100,19 @@
         </div>
       <% }) %>
     </div>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+    <nav class="admin-pagination">
+      <% if (page > 1) { %>
+        <a href="/admin/pending?page=<%= page - 1 %>" class="btn btn-ghost btn-sm">← Précédent</a>
+      <% } %>
+      <span class="admin-pagination-info">Page <%= page %> / <%= totalPages %></span>
+      <% if (page < totalPages) { %>
+        <a href="/admin/pending?page=<%= page + 1 %>" class="btn btn-ghost btn-sm">Suivant →</a>
+      <% } %>
+    </nav>
+    <% } %>
   <% } %>
 </div>
 

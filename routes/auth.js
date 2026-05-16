@@ -151,6 +151,7 @@ router.post('/login', authLimiter, verifyToken, async (req, res) => {
     req.session.userId        = user.id;
     req.session.username      = user.username;
     req.session.isAdmin       = user.is_admin;
+    req.session.isCurator     = user.is_curator;
     req.session.userLang      = user.language || 'fr';
     req.session.emailVerified = !!user.email_verified;
     res.redirect('/');

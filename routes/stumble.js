@@ -278,6 +278,12 @@ router.get('/stumble/:id', (req, res) => {
   const submittedBy = site.submitted_by_name
     || (site.imported_by === 'referer' ? null : site.imported_by ? 'Bot' : null);
 
+  const isCurator = !isGuest && (req.session.isCurator || req.session.isAdmin);
+  const allCategories = isCurator
+    ? db.prepare('SELECT id, slug, name, emoji FROM categories ORDER BY name').all()
+    : null;
+  const currentCatIds = isCurator ? categories.map(c => c.category_id) : null;
+
   res.render('stumble', {
     title: site.title,
     site,
@@ -293,6 +299,9 @@ router.get('/stumble/:id', (req, res) => {
     currentUserId: userId || null,
     comments,
     submittedBy,
+    isCurator,
+    allCategories,
+    currentCatIds,
     flashLessOfThis: req.query.lessofthis === '1',
     flashReported: req.query.reported || null,
     ogTitle: site.title,

@@ -26,6 +26,7 @@ const tastesRoutes    = require('./routes/tastes');
 const legalRoutes     = require('./routes/legal');
 const accountRoutes   = require('./routes/account');
 const searchRoutes    = require('./routes/search');
+const curateRoutes    = require('./routes/curate');
 
 const fs   = require('fs');
 const app  = express();
@@ -76,7 +77,7 @@ app.use(applyLang);
 // Rend l'utilisateur, le token CSRF et l'URL de base disponibles dans tous les templates
 app.use((req, res, next) => {
   res.locals.user = req.session.userId
-    ? { id: req.session.userId, username: req.session.username, isAdmin: req.session.isAdmin }
+    ? { id: req.session.userId, username: req.session.username, isAdmin: req.session.isAdmin, isCurator: req.session.isCurator }
     : null;
   res.locals.baseUrl    = process.env.BASE_URL || 'https://stumble.danux.be';
   res.locals.cssVersion = CSS_VERSION;
@@ -102,6 +103,7 @@ app.use(tastesRoutes);
 app.use(legalRoutes);
 app.use(accountRoutes);
 app.use(searchRoutes);
+app.use(curateRoutes);
 
 const db = require('./db/database');
 const stmtRecentSites = db.prepare(`
