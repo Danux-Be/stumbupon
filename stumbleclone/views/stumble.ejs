@@ -85,6 +85,11 @@
         <span class="mdi mdi-comment-outline"></span><% if (comments.length) { %><span class="comments-badge" id="comments-count"><%= comments.length %></span><% } else { %><span class="comments-badge" id="comments-count" style="display:none">0</span><% } %>
       </button>
 
+      <% if (isCurator) { %>
+      <button class="btn btn-ghost btn-sm curator-toggle-btn" id="curator-toggle" title="Curation">
+        <span class="mdi mdi-tag-outline"></span>
+      </button>
+      <% } %>
       <% if (!isGuest && user && user.isAdmin) { %>
       <button class="btn btn-reject btn-sm" id="admin-reject-btn"
               title="<%= t('stumble_admin_reject') %>"><span class="mdi mdi-delete-outline"></span></button>
@@ -161,6 +166,42 @@
 
     </div>
   </div>
+
+  <!-- ── Volet curateur (desktop uniquement) ──────────────────────────────── -->
+  <% if (isCurator) { %>
+  <div class="curator-panel" id="curator-panel" style="display:none">
+    <div class="comments-drawer__header">
+      <span class="comments-drawer__title">🏷️ Curation</span>
+      <button class="btn btn-ghost btn-sm" id="curator-close"><span class="mdi mdi-close"></span></button>
+    </div>
+    <div class="curator-panel__body">
+      <div class="curator-panel__row">
+        <label class="curator-panel__label">Langue</label>
+        <select id="curator-lang" class="admin-edit-select">
+          <% ['en','fr','de','es','pt','it','nl','ja','zh','ru','ar','pl','da','sv','fi','ko'].forEach(function(l) { %>
+            <option value="<%= l %>" <%= site.language === l ? 'selected' : '' %>><%= l %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="curator-panel__row curator-panel__row--cats">
+        <label class="curator-panel__label">Catégories</label>
+        <div class="admin-edit-cats" id="curator-cats">
+          <% allCategories.forEach(function(cat) { %>
+            <label class="admin-edit-cat-label">
+              <input type="checkbox" name="categories" value="<%= cat.id %>"
+                <%= (currentCatIds || []).includes(cat.id) ? 'checked' : '' %> />
+              <%= cat.emoji %> <%= cat.name %>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" id="curator-save" style="width:100%">
+        <span class="mdi mdi-content-save-outline"></span> Enregistrer
+      </button>
+      <p class="curator-panel__status" id="curator-status"></p>
+    </div>
+  </div>
+  <% } %>
 
   <!-- ── Tiroir de commentaires (desktop uniquement) ────────────────────── -->
   <div class="comments-drawer" id="comments-drawer" style="display:none">
@@ -813,6 +854,62 @@
         });
       });
     }
+
+    // ── Volet curateur ────────────────────────────────────────────────────
+    <% if (isCurator) { %>
+    var curatorPanel  = document.getElementById('curator-panel');
+    var curatorToggle = document.getElementById('curator-toggle');
+    var curatorClose  = document.getElementById('curator-close');
+    var curatorSave   = document.getElementById('curator-save');
+    var curatorStatus = document.getElementById('curator-status');
+
+    function openCuratorPanel() {
+      closeDrawer(); closeInfoPanel();
+      curatorPanel.style.display = 'flex';
+      curatorPanel.offsetHeight;
+      curatorPanel.classList.add('comments-drawer--open');
+    }
+    function closeCuratorPanel() {
+      curatorPanel.classList.remove('comments-drawer--open');
+    }
+    curatorPanel.addEventListener('transitionend', function() {
+      if (!curatorPanel.classList.contains('comments-drawer--open'))
+        curatorPanel.style.display = 'none';
+    });
+    curatorToggle.addEventListener('click', function() {
+      if (curatorPanel.style.display === 'none' || !curatorPanel.classList.contains('comments-drawer--open'))
+        openCuratorPanel();
+      else
+        closeCuratorPanel();
+    });
+    curatorClose.addEventListener('click', closeCuratorPanel);
+
+    curatorSave.addEventListener('click', function() {
+      var lang = document.getElementById('curator-lang').value;
+      var boxes = document.querySelectorAll('#curator-cats input[type=checkbox]:checked');
+      var cats  = Array.from(boxes).map(function(b) { return b.value; });
+      var body  = '_csrf=' + encodeURIComponent(CSRF) +
+                  '&language=' + encodeURIComponent(lang) +
+                  cats.map(function(c) { return '&categories=' + encodeURIComponent(c); }).join('');
+      curatorSave.disabled = true;
+      curatorStatus.textContent = '';
+      fetch('/curate/site/' + SITE_ID + '/update-json', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body,
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        curatorSave.disabled = false;
+        curatorStatus.textContent = data.ok ? '✅ Enregistré' : '❌ Erreur';
+        setTimeout(function() { curatorStatus.textContent = ''; }, 2500);
+      })
+      .catch(function() {
+        curatorSave.disabled = false;
+        curatorStatus.textContent = '❌ Erreur réseau';
+      });
+    });
+    <% } %>
 
     // ── Flash auto-dismiss ─────────────────────────────────────────────────
     var flash = document.getElementById('stumble-flash');

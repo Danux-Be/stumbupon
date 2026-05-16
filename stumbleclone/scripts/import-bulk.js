@@ -35,14 +35,18 @@ const args = Object.fromEntries(
 
 const FILE        = args.file;
 const LIMIT       = parseInt(args.limit       || '10000', 10);
-const OFFSET      = parseInt(args.offset      || '0',     10);
 const THRESHOLD   = parseInt(args.threshold   || '60',    10);
 const CONCURRENCY = parseInt(args.concurrency || '5',     10);
 const DRY_RUN     = args['dry-run'] === 'true';
 const LANGS       = args.lang ? args.lang.split(',') : null;
+const RESUME      = 'resume' in args;
+
+const OFFSET = RESUME
+  ? (db.prepare("SELECT COUNT(*) AS n FROM bot_processed WHERE source='bulk-import'").get().n)
+  : parseInt(args.offset || '0', 10);
 
 if (!FILE) {
-  console.error('Usage: node scripts/import-bulk.js --file=<path> [--limit=10000] [--offset=0] [--threshold=60] [--concurrency=5] [--lang=fr,en] [--dry-run]');
+  console.error('Usage: node scripts/import-bulk.js --file=<path> [--limit=10000] [--offset=0|--resume] [--threshold=60] [--concurrency=5] [--lang=fr,en] [--dry-run]');
   process.exit(1);
 }
 
@@ -131,12 +135,18 @@ async function main() {
   // Lecture du fichier
   const rl   = readline.createInterface({ input: fs.createReadStream(FILE) });
   const urls = [];
+  let firstLine = true;
   for await (const line of rl) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) continue;
+    // Ignorer l'en-tête CSV (contient des lettres en 1ère colonne)
+    if (firstLine) { firstLine = false; if (!/^\d/.test(trimmed)) continue; }
     const parts = trimmed.split(',');
-    // Tranco : "rank,domain" → 2e colonne ; sinon URL brute
-    urls.push(parts.length >= 2 ? parts[1].trim() : parts[0].trim());
+    let domain;
+    if (parts.length >= 12) domain = parts[2].trim();       // Majestic Million (12 colonnes)
+    else if (parts.length >= 2) domain = parts[1].trim();   // Tranco (rank,domain)
+    else domain = parts[0].trim();                          // URL brute
+    urls.push(domain);
   }
 
   const slice = urls.slice(OFFSET, OFFSET + LIMIT);
