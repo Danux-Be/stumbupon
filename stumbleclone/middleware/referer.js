@@ -1,6 +1,6 @@
 const db = require('../db/database');
 
-const OWN_HOSTS = new Set(['stumble.danux.be', 'localhost', '127.0.0.1']);
+const OWN_HOSTS = new Set(['stumble.danux.be', 'stumbupon.com', 'www.stumbupon.com', 'uponstumble.com', 'www.uponstumble.com', 'localhost', '127.0.0.1']);
 const STATIC_EXT = /\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|map)$/i;
 const BOT_UA = /bot|crawler|spider|slurp|bingpreview|facebot|twitterbot|linkedinbot|whatsapp|telegram|discord/i;
 

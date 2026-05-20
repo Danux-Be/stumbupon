@@ -13,7 +13,7 @@ const QUERIES = [
 async function searchQuery(query, size, apiKey) {
   const url = `https://api.searchmysite.net/api/v1/search/basic/?q=${encodeURIComponent(query)}&size=${size}`;
   const headers = {
-    'User-Agent': 'StumbleCloneBot/1.0 (+https://stumble.danux.be/bot)',
+    'User-Agent': 'StumbUpon.comBot/1.0 (+https://stumble.danux.be/bot)',
     'Accept': 'application/json',
   };
   if (apiKey) headers['Authorization'] = `ApiKey ${apiKey}`;

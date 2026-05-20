@@ -77,7 +77,7 @@ async function fetchReadme(repo, branch) {
   const token = process.env.GITHUB_TOKEN;
   const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/README.md`;
 
-  const headers = { 'User-Agent': 'StumbleCloneBot/1.0 (+https://stumble.danux.be/bot)' };
+  const headers = { 'User-Agent': 'StumbUpon.comBot/1.0 (+https://stumble.danux.be/bot)' };
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
   try {

@@ -1,7 +1,7 @@
 const db = require('../../db/database');
 const { isDuplicate } = require('../lib/deduper');
 
-const UA = 'StumbleCloneBot/1.0 (+https://stumble.danux.be/bot)';
+const UA = 'StumbUpon.comBot/1.0 (+https://stumble.danux.be/bot)';
 const TIMEOUT_MS = 10_000;
 const DELAY_MS = 700;
 const MAX_PER_DOMAIN = 3;

@@ -39,7 +39,7 @@ async function fetch(options = {}) {
   try {
     const res = await nodeFetch('https://www.metafilter.com/rss.xml', {
       signal: ctrl.signal,
-      headers: { 'User-Agent': 'StumbleCloneBot/1.0 (+https://stumble.danux.be/bot)' },
+      headers: { 'User-Agent': 'StumbUpon.comBot/1.0 (+https://stumble.danux.be/bot)' },
     });
     clearTimeout(t);
     if (!res.ok) { console.error('[MetaFilter] HTTP', res.status); return []; }

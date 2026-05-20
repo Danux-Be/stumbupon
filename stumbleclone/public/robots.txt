@@ -1,0 +1,17 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /settings
+Disallow: /favorites
+Disallow: /interests
+Disallow: /tastes
+Disallow: /curate
+Disallow: /account/
+Disallow: /stumble/join
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /reset-password/
+Disallow: /verify-email/
+Disallow: /offline
+
+Sitemap: https://stumbupon.com/sitemap.xml

@@ -310,6 +310,12 @@ router.get('/stumble/:id', (req, res) => {
   });
 });
 
+router.post('/stumble/:id/cant-embed', verifyToken, (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  db.prepare("UPDATE sites SET can_embed=0, status='rejected' WHERE id=?").run(id);
+  res.json({ ok: true });
+});
+
 router.post('/stumble/:id/comment', requireLogin, verifyToken, (req, res) => {
   const site = querySiteById.get(req.params.id);
   if (!site) return res.status(404).json({ error: 'not found' });

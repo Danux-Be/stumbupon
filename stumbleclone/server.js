@@ -27,6 +27,7 @@ const legalRoutes     = require('./routes/legal');
 const accountRoutes   = require('./routes/account');
 const searchRoutes    = require('./routes/search');
 const curateRoutes    = require('./routes/curate');
+const seoRoutes       = require('./routes/seo');
 
 const fs   = require('fs');
 const app  = express();
@@ -79,12 +80,31 @@ app.use((req, res, next) => {
   res.locals.user = req.session.userId
     ? { id: req.session.userId, username: req.session.username, isAdmin: req.session.isAdmin, isCurator: req.session.isCurator }
     : null;
-  res.locals.baseUrl    = process.env.BASE_URL || 'https://stumble.danux.be';
+  res.locals.baseUrl    = process.env.BASE_URL || 'https://stumbupon.com';
   res.locals.cssVersion = CSS_VERSION;
   res.locals.siteConfig = siteConfig.getAll();
   next();
 });
 app.use(generateToken);
+
+// URL canonique automatique pour toutes les pages
+app.use((req, res, next) => {
+  res.locals.canonicalUrl = res.locals.baseUrl + req.path;
+  next();
+});
+
+// noindex sur les pages privées / sans valeur SEO
+const _NOINDEX_EXACT = new Set([
+  '/stumble', '/stumble/join', '/stumble/join/skip',
+  '/login', '/signup', '/forgot-password',
+  '/settings', '/favorites', '/interests', '/tastes', '/curate', '/offline',
+]);
+const _NOINDEX_PREFIX = ['/admin', '/account/', '/reset-password/', '/verify-email/'];
+app.use((req, res, next) => {
+  res.locals.noindex = _NOINDEX_EXACT.has(req.path)
+    || _NOINDEX_PREFIX.some(p => req.path.startsWith(p));
+  next();
+});
 
 // Capture des Referers entrants (avant les routes)
 app.use(captureReferer);
@@ -104,6 +124,7 @@ app.use(legalRoutes);
 app.use(accountRoutes);
 app.use(searchRoutes);
 app.use(curateRoutes);
+app.use(seoRoutes);
 
 const db = require('./db/database');
 const stmtRecentSites = db.prepare(`
@@ -133,13 +154,25 @@ const stmtUserStats = db.prepare(`
     (SELECT COUNT(*) FROM views WHERE user_id = ?) AS discovered
 `);
 
+const HOME_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'StumbUpon.com',
+  url: 'https://stumbupon.com',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: 'https://stumbupon.com/search?q={search_term_string}' },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
 app.get('/', (req, res) => {
   const stats = stmtStats.get();
   const userId = req.session?.userId;
 
   if (userId) {
     const userStats = stmtUserStats.get(userId, userId);
-    return res.render('home', { title: 'StumbleClone', stats, userStats, recentSites: null });
+    return res.render('home', { title: 'StumbUpon.com', stats, userStats, recentSites: null, jsonLd: null });
   }
 
   const lang = res.locals.currentLang || 'fr';
@@ -153,11 +186,11 @@ app.get('/', (req, res) => {
   }
   const recentSites = recent.map(s => ({ ...s, categories: catsBySite[s.id] || [] }));
 
-  res.render('home', { title: 'StumbleClone', stats, userStats: null, recentSites });
+  res.render('home', { title: 'StumbUpon.com', stats, userStats: null, recentSites, jsonLd: HOME_JSON_LD });
 });
 
 app.get('/offline', (req, res) => res.render('offline'));
 
 app.listen(PORT, () => {
-  console.log(`StumbleClone lancé sur http://localhost:${PORT}`);
+  console.log(`StumbUpon.com lancé sur http://localhost:${PORT}`);
 });

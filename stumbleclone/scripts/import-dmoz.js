@@ -42,7 +42,7 @@ if (!FILE) {
   process.exit(1);
 }
 
-// ── Mapping DMOZ → slugs StumbleClone ────────────────────────────────────────
+// ── Mapping DMOZ → slugs StumbUpon.com ────────────────────────────────────────
 // Ordonné du plus spécifique au plus général (premier match gagne)
 const CATEGORY_MAP = [
   // Computers / Tech

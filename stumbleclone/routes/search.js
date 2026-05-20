@@ -38,10 +38,12 @@ function toFtsQuery(raw) {
 router.get('/search', (req, res) => {
   const q = (req.query.q || '').trim();
   const lang = res.locals.currentLang;
+  const searchDesc = req.t('search_title') + ' — ' + req.t('home_hero_desc').slice(0, 100);
 
   if (!q) {
     return res.render('search', {
       title: req.t('search_title'),
+      ogDescription: searchDesc,
       q: '',
       results: [],
       error: null,
@@ -52,6 +54,7 @@ router.get('/search', (req, res) => {
   if (!ftsQuery) {
     return res.render('search', {
       title: req.t('search_title'),
+      ogDescription: searchDesc,
       q,
       results: [],
       error: null,
@@ -64,6 +67,7 @@ router.get('/search', (req, res) => {
   } catch {
     return res.render('search', {
       title: req.t('search_title'),
+      ogDescription: searchDesc,
       q,
       results: [],
       error: req.t('search_error'),
@@ -84,6 +88,7 @@ router.get('/search', (req, res) => {
 
   res.render('search', {
     title: req.t('search_title'),
+    ogDescription: searchDesc,
     q,
     results,
     error: null,
