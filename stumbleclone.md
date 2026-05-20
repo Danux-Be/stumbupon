@@ -1,4 +1,4 @@
-# StumbleClone — Cahier des charges
+# StumbUpon.com — Cahier des charges
 
 Recréation moderne et open d'un service de découverte aléatoire du web inspiré de StumbleUpon. L'utilisateur clique sur un bouton « Stumble » et est envoyé sur un site web aléatoire correspondant à ses centres d'intérêt. Il peut voter (pouce vert / pouce rouge), ce qui affine ses recommandations futures.
 
@@ -574,7 +574,7 @@ ALTER TABLE sites ADD COLUMN quality_score INTEGER;  -- score au moment de l'imp
 ### Considérations éthiques et légales
 
 **Respect des sources** :
-- User-agent identifié : `StumbleCloneBot/1.0 (+https://tonsite.com/bot)`. Une page `/bot` explique ce qu'il fait et comment être exclu.
+- User-agent identifié : `StumbUpon.comBot/1.0 (+https://tonsite.com/bot)`. Une page `/bot` explique ce qu'il fait et comment être exclu.
 - Lecture systématique de `robots.txt` avant tout fetch d'une URL candidate.
 - Rate limit strict : maximum 1 requête par seconde par domaine.
 - Respect du `Crawl-Delay` si présent dans robots.txt.
@@ -659,7 +659,7 @@ Lancer le serveur Node via **systemd** pour qu'il redémarre auto :
 ```ini
 # /etc/systemd/system/stumble.service
 [Unit]
-Description=StumbleClone
+Description=StumbUpon.com
 After=network.target
 
 [Service]

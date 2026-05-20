@@ -56,7 +56,7 @@ const insertProcessed = db.prepare(`
 `);
 
 async function runSource(source) {
-  console.log(`\n🤖 StumbleClone Bot — source: ${source.name}, limit: ${LIMIT}, threshold: ${APPROVE_THRESHOLD}${DRY_RUN ? ' [DRY RUN]' : ''}\n`);
+  console.log(`\n🤖 StumbUpon.com Bot — source: ${source.name}, limit: ${LIMIT}, threshold: ${APPROVE_THRESHOLD}${DRY_RUN ? ' [DRY RUN]' : ''}\n`);
 
   const candidates = await source.fetch({ limit: LIMIT * 3, ...args });
 

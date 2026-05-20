@@ -3,32 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title %> — StumbleClone</title>
+  <title><%= title %> — StumbUpon.com</title>
   <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/icons/icon-512.svg" />
   <link rel="manifest" href="/manifest.json" />
+  <link rel="alternate" type="application/rss+xml" title="StumbUpon.com — nouveaux sites" href="<%= baseUrl %>/feed.xml" />
   <meta name="theme-color" content="#5c6bc0" />
   <%
     var _ogDesc = locals.ogDescription || t('home_hero_desc');
-    var _ogTitle = locals.ogTitle || (title === 'StumbleClone' ? 'StumbleClone' : title + ' — StumbleClone');
-    var _ogImg = locals.ogImage || (baseUrl + '/icons/icon-512.svg');
+    var _ogTitle = locals.ogTitle || (title === 'StumbUpon.com' ? 'StumbUpon.com' : title + ' — StumbUpon.com');
+    var _ogImg = locals.ogImage || (baseUrl + '/og-image.png');
   %>
   <meta name="description" content="<%= _ogDesc.slice(0, 160) %>" />
+  <% if (locals.noindex) { %>
+  <meta name="robots" content="noindex, nofollow" />
+  <% } %>
+  <%
+    var _canonical = locals.ogUrl || locals.canonicalUrl;
+  %>
+  <% if (_canonical) { %>
+  <link rel="canonical" href="<%= _canonical %>" />
+  <% if (!locals.noindex) { %>
+  <link rel="alternate" hreflang="x-default" href="<%= _canonical %>" />
+  <% Object.keys(langLabels).forEach(function(l) { %><link rel="alternate" hreflang="<%= l %>" href="<%= _canonical %>" />
+  <% }); %>
+  <% } %>
+  <% } %>
   <!-- OpenGraph -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="StumbleClone" />
+  <meta property="og:site_name" content="StumbUpon.com" />
   <meta property="og:title" content="<%= _ogTitle %>" />
   <meta property="og:description" content="<%= _ogDesc.slice(0, 200) %>" />
   <meta property="og:image" content="<%= _ogImg %>" />
-  <% if (locals.ogUrl) { %>
-  <meta property="og:url" content="<%= ogUrl %>" />
-  <link rel="canonical" href="<%= ogUrl %>" />
+  <% if (_canonical) { %>
+  <meta property="og:url" content="<%= _canonical %>" />
   <% } %>
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="<%= _ogTitle %>" />
   <meta name="twitter:description" content="<%= _ogDesc.slice(0, 200) %>" />
   <meta name="twitter:image" content="<%= _ogImg %>" />
+  <% if (locals.jsonLd) { %>
+  <script type="application/ld+json"><%- JSON.stringify(locals.jsonLd) %></script>
+  <% } %>
+  <meta name="google-site-verification" content="O3UcH20nMBVPANf_OORYet2A7YciF_mCNzU4yyLP0nc" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" />
   <link rel="stylesheet" href="/style.css?v=<%= cssVersion %>" />
   <script>(function(){var t=localStorage.getItem('sc-theme');if(t==='dark')document.documentElement.classList.add('dark');else if(t==='light')document.documentElement.classList.add('light');}());</script>
@@ -38,7 +56,7 @@
 </head>
 <body>
   <header class="site-header">
-    <a href="/" class="logo">🌀 StumbleClone</a>
+    <a href="/" class="logo">🌀 StumbUpon.com</a>
     <nav>
       <% if (locals.user) { %>
         <a href="/stumble" class="btn btn-primary btn-sm"><%= t('nav_stumble') %></a>

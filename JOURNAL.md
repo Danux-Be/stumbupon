@@ -1,4 +1,4 @@
-# Journal de développement — StumbleClone
+# Journal de développement — StumbUpon.com
 
 Fichier de suivi des modifications apportées à chaque étape d'implémentation.
 

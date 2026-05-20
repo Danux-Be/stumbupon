@@ -16,7 +16,7 @@ async function fetchPage(offset) {
   try {
     const res = await nodeFetch(url, {
       signal: ctrl.signal,
-      headers: { 'User-Agent': 'StumbleCloneBot/1.0 (+https://stumble.danux.be/bot)' },
+      headers: { 'User-Agent': 'StumbUpon.comBot/1.0 (+https://stumble.danux.be/bot)' },
     });
     clearTimeout(t);
     return res.ok ? res.text() : null;

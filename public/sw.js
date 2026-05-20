@@ -1,4 +1,4 @@
-// Service Worker — StumbleClone
+// Service Worker — StumbUpon.com
 const CACHE = 'stumble-v2';
 const STATIC = [
   '/style.css',

@@ -71,6 +71,19 @@
     <a href="/admin/bot" class="btn btn-secondary"><span class="mdi mdi-robot-outline"></span> <%= t('admin_bot_title') %></a>
     <a href="/admin/config" class="btn btn-secondary"><span class="mdi mdi-cog-outline"></span> Configuration</a>
   </div>
+
+  <% if (stats.noEmbed > 0) { %>
+  <div class="admin-bulk-bar" style="margin-top:1.5rem">
+    <span class="admin-bulk-info">
+      <strong><%= stats.noEmbed %></strong> site<%= stats.noEmbed > 1 ? 's' : '' %> approuvés non-embeddables (<code>can_embed = 0</code>)
+    </span>
+    <form method="POST" action="/admin/sites/delete-no-embed"
+          onsubmit="return confirm('Supprimer les <%= stats.noEmbed %> sites non-embeddables ? Irréversible.')">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button type="submit" class="btn btn-reject btn-sm">🗑️ Supprimer tous</button>
+    </form>
+  </div>
+  <% } %>
 </div>
 
 <%- include('../partials/footer') %>

@@ -12,21 +12,33 @@ const checkOptout = db.prepare(
   "SELECT id FROM optout_requests WHERE url = ? AND status = 'pending'"
 );
 
+const _strip = s => s.replace(/<[^>]*>/g, '');
+
 router.get('/about', (req, res) => {
-  res.render('about', { title: req.t('about_title') });
+  res.render('about', {
+    title: req.t('about_title'),
+    ogDescription: _strip(req.t('about_s1_body')),
+  });
 });
 
 router.get('/legal', (req, res) => {
-  res.render('legal', { title: req.t('legal_title') });
+  res.render('legal', {
+    title: req.t('legal_title'),
+    ogDescription: _strip(req.t('legal_s1_body')),
+  });
 });
 
 router.get('/privacy', (req, res) => {
-  res.render('privacy', { title: req.t('privacy_title') });
+  res.render('privacy', {
+    title: req.t('privacy_title'),
+    ogDescription: _strip(req.t('privacy_s1_body')),
+  });
 });
 
 router.get('/optout', (req, res) => {
   res.render('optout', {
     title: req.t('optout_title'),
+    ogDescription: _strip(req.t('optout_desc')),
     success: req.query.success === '1',
     error: req.query.error || null,
   });

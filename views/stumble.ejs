@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= site.title %> — StumbleClone</title>
+  <title><%= site.title %> — StumbUpon.com</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>" />
   <meta name="description" content="<%= (site.description || '').slice(0, 160) %>" />
   <!-- OpenGraph -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="StumbleClone" />
+  <meta property="og:site_name" content="StumbUpon.com" />
   <meta property="og:title" content="<%= site.title %>" />
   <meta property="og:description" content="<%= (site.description || '').slice(0, 200) %>" />
   <meta property="og:url" content="<%= baseUrl %>/stumble/<%= site.id %>" />
@@ -43,7 +43,7 @@
 
     <!-- Gauche : logo + infos site -->
     <div class="stumble-bar__left">
-      <a href="/" class="stumble-bar__logo" title="StumbleClone">🌀</a>
+      <a href="/" class="stumble-bar__logo" title="StumbUpon.com">🌀</a>
       <img src="https://<%= hostname %>/favicon.ico"
            class="stumble-bar__favicon" width="20" height="20" alt=""
            onerror="this.onerror=null;this.style.display='none'" />
@@ -502,6 +502,14 @@
     var iframe   = document.getElementById('stumble-iframe');
     var cardWrap = document.getElementById('stumble-card-wrap');
 
+    function rejectCantEmbed() {
+      fetch('/stumble/' + SITE_ID + '/cant-embed', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: '_csrf=' + encodeURIComponent(CSRF),
+      }).then(function() { navigateNext(); });
+    }
+
     function showCard() {
       if (iframe)    iframe.style.display   = 'none';
       if (cardWrap)  cardWrap.style.display = 'flex';
@@ -515,7 +523,7 @@
       iframe.addEventListener('load', function() {
         try {
           var loc = iframe.contentWindow.location.href;
-          if (loc === 'about:blank') showCard();
+          if (loc === 'about:blank') rejectCantEmbed();
         } catch (e) {
           // SecurityError → cross-origin → chargement réussi
         }
@@ -523,7 +531,7 @@
     }
 
     var cantEmbedBtn = document.getElementById('info-cant-embed-btn');
-    if (cantEmbedBtn) cantEmbedBtn.addEventListener('click', showCard);
+    if (cantEmbedBtn) cantEmbedBtn.addEventListener('click', rejectCantEmbed);
 
     // ── Partager (depuis le volet ℹ️) ─────────────────────────────────────
     var SHARE_URL   = window.location.origin + '/stumble/<%= site.id %>';
@@ -593,6 +601,16 @@
         case 'o': case 'O':
           e.preventDefault();
           window.open('<%= site.url %>', '_blank', 'noopener,noreferrer');
+          break;
+        case 'Delete':
+          <% if (user && user.isAdmin) { %>
+          e.preventDefault();
+          fetch('/admin/site/' + SITE_ID + '/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: '_csrf=' + encodeURIComponent(CSRF),
+          }).then(function() { navigateNext(); });
+          <% } %>
           break;
       }
     });
@@ -762,7 +780,7 @@
     if (mobileShareBtn) mobileShareBtn.addEventListener('click', function() { doShare(mobileShareBtn); });
 
     var mobileCantEmbedBtn = document.getElementById('mobile-cant-embed-btn');
-    if (mobileCantEmbedBtn) mobileCantEmbedBtn.addEventListener('click', function() { showCard(); closeMobileDrawer(); });
+    if (mobileCantEmbedBtn) mobileCantEmbedBtn.addEventListener('click', function() { closeMobileDrawer(); rejectCantEmbed(); });
 
     var mobileLessBtn = document.getElementById('mobile-less-btn');
     if (mobileLessBtn) {

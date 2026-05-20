@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Import massif d'URLs dans StumbleClone.
+ * Import massif d'URLs dans StumbUpon.com.
  *
  * Usage:
  *   node scripts/import-bulk.js --file=top-1m.csv [options]
@@ -33,9 +33,34 @@ const args = Object.fromEntries(
     .map(a => { const [k, ...v] = a.slice(2).split('='); return [k, v.join('=')]; })
 );
 
+// ── Blacklists ───────────────────────────────────────────────────────────────
+const BLACKLIST_KEYWORDS = [
+  'casino', 'poker', 'slots', 'gambling', 'betting', 'blackjack', 'roulette',
+  'baccarat', 'sportsbet', 'sportbet', 'bookie', 'bookmaker', 'betway',
+  'bet365', '1xbet', 'unibet', 'payday', 'paydayloan', 'quickloan',
+  'pharma', 'viagra', 'cialis', 'xanax', 'tramadol',
+  'porn', 'xxx', 'adult', 'escort', 'webcam-sex',
+  'crypto-earn', 'nft-drop', 'airdrop-claim',
+];
+const BLACKLIST_DOMAINS = [
+  'wix.com', 'weebly.com', 'wordpress.com', 'blogger.com', 'blogspot.com',
+  'tumblr.com', 'squarespace.com', 'strikingly.com', 'jimdo.com', 'webnode.com',
+  'webflow.io', 'carrd.co', 'glitch.me', 'netlify.app', 'vercel.app',
+  'pages.dev', 'github.io', 'gitlab.io', 'herokuapp.com', 'fly.dev',
+  'azurewebsites.net', 'web.app', 'firebaseapp.com',
+];
+
+function isBlacklisted(url) {
+  const lower = url.toLowerCase();
+  if (BLACKLIST_KEYWORDS.some(k => lower.includes(k))) return 'keyword';
+  const host = (() => { try { return new URL(url).hostname; } catch { return ''; } })();
+  if (BLACKLIST_DOMAINS.some(d => host === d || host.endsWith('.' + d))) return 'domain';
+  return null;
+}
+
 const FILE        = args.file;
 const LIMIT       = parseInt(args.limit       || '10000', 10);
-const THRESHOLD   = parseInt(args.threshold   || '60',    10);
+const THRESHOLD   = parseInt(args.threshold   || '0',     10);
 const CONCURRENCY = parseInt(args.concurrency || '5',     10);
 const DRY_RUN     = args['dry-run'] === 'true';
 const LANGS       = args.lang ? args.lang.split(',') : null;
@@ -93,6 +118,9 @@ async function processUrl(raw) {
 
   if (isDuplicate(url)) return { skip: true, reason: 'duplicate' };
 
+  const blacklisted = isBlacklisted(url);
+  if (blacklisted) return { skip: true, reason: `blacklist:${blacklisted}` };
+
   const err = validateUrl(url);
   if (err) return { skip: true, reason: 'invalid' };
 
@@ -105,6 +133,9 @@ async function processUrl(raw) {
 
   if (LANGS && enriched.language && !LANGS.includes(enriched.language))
     return { skip: true, reason: `lang:${enriched.language}` };
+
+  if (enriched.riskScore > 30)  return { skip: true, reason: `risk:${enriched.riskScore}` };
+  if (!enriched.canEmbed)       return { skip: true, reason: 'no-embed' };
 
   const categoryIds  = classify([enriched.title, url].filter(Boolean).join(' '));
   const qualityScore = scoreCandidate({ url, enriched, sourceScore: 0, categoryCount: categoryIds.length });

@@ -30,7 +30,7 @@ async function getAccessToken() {
     method: 'POST',
     headers: {
       'Authorization': `Basic ${credentials}`,
-      'User-Agent':    'StumbleCloneBot/1.0 (+https://stumble.danux.be/bot)',
+      'User-Agent':    'StumbUpon.comBot/1.0 (+https://stumble.danux.be/bot)',
       'Content-Type':  'application/x-www-form-urlencoded',
     },
     body: 'grant_type=client_credentials',
@@ -60,7 +60,7 @@ async function fetchSubreddit(sub, limit, minScore, token) {
       signal: ctrl.signal,
       headers: {
         'Authorization': `Bearer ${token}`,
-        'User-Agent':    'StumbleCloneBot/1.0 (+https://stumble.danux.be/bot)',
+        'User-Agent':    'StumbUpon.comBot/1.0 (+https://stumble.danux.be/bot)',
         'Accept':        'application/json',
       },
     });

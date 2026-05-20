@@ -9,7 +9,7 @@ const CONCURRENCY = parseInt(process.argv.find(a => a.startsWith('--concurrency=
 const LIMIT       = parseInt(process.argv.find(a => a.startsWith('--limit='))?.split('=')[1] || '0');
 const FORCE       = process.argv.includes('--force');
 const TIMEOUT_MS  = 10_000;
-const UA = 'StumbleCloneBot/1.0 (health-check)';
+const UA = 'StumbUpon.comBot/1.0 (health-check)';
 
 const updateSite = db.prepare(`
   UPDATE sites

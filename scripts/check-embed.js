@@ -7,7 +7,7 @@ const db = require('../db/database');
 const CONCURRENCY = parseInt(process.argv.find(a => a.startsWith('--concurrency='))?.split('=')[1] || '10');
 const LIMIT       = parseInt(process.argv.find(a => a.startsWith('--limit='))?.split('=')[1] || '0');
 const TIMEOUT_MS  = 8_000;
-const UA = 'StumbleCloneBot/1.0 (embed-check)';
+const UA = 'StumbUpon.comBot/1.0 (embed-check)';
 
 const updateEmbed = db.prepare('UPDATE sites SET can_embed = ? WHERE id = ?');
 

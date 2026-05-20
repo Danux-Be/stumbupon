@@ -61,6 +61,7 @@ router.get('/admin', requireAdmin, (req, res) => {
     flagged:  db.prepare("SELECT COUNT(*) AS n FROM sites WHERE status='flagged'").get().n,
     referers: db.prepare("SELECT COUNT(*) AS n FROM referer_queue WHERE status='pending'").get().n,
     comments: db.prepare('SELECT COUNT(*) AS n FROM comments').get().n,
+    noEmbed:  db.prepare("SELECT COUNT(*) AS n FROM sites WHERE can_embed=0 AND status='approved'").get().n,
   };
   res.render('admin/dashboard', {
     title: req.t('admin_title'),
@@ -130,6 +131,16 @@ router.post('/admin/pending/bulk-approve', requireAdmin, verifyToken, (req, res)
     WHERE status='pending' AND (risk_score IS NULL OR risk_score <= 30)
   `).run();
   res.redirect('/admin/pending');
+});
+
+router.post('/admin/pending/bulk-delete', requireAdmin, verifyToken, (req, res) => {
+  db.prepare("DELETE FROM sites WHERE status='pending'").run();
+  res.redirect('/admin/pending');
+});
+
+router.post('/admin/sites/delete-no-embed', requireAdmin, verifyToken, (req, res) => {
+  db.prepare("DELETE FROM sites WHERE can_embed = 0").run();
+  res.redirect('/admin');
 });
 
 router.post('/admin/approve/:id', requireAdmin, verifyToken, (req, res) => {
@@ -267,6 +278,11 @@ router.post('/admin/bot/run', requireAdmin, verifyToken, (req, res) => {
 
 router.post('/admin/site/:id/reject', requireAdmin, verifyToken, (req, res) => {
   db.prepare("UPDATE sites SET status='rejected' WHERE id=?").run(req.params.id);
+  res.json({ ok: true });
+});
+
+router.post('/admin/site/:id/delete', requireAdmin, verifyToken, (req, res) => {
+  db.prepare('DELETE FROM sites WHERE id=?').run(parseInt(req.params.id, 10));
   res.json({ ok: true });
 });
 
@@ -497,7 +513,7 @@ router.post('/admin/recheck-embed', requireAdmin, verifyToken, async (req, res) 
       const r = await fetch(site.url, {
         method: 'HEAD',
         signal: controller.signal,
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; StumbleCloneBot/1.0)' },
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; StumbUpon.comBot/1.0)' },
         redirect: 'follow',
       });
       clearTimeout(timer);

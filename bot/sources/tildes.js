@@ -33,7 +33,7 @@ async function fetchGroup(group) {
   try {
     const res = await nodeFetch(`https://tildes.net/~${group}.rss`, {
       signal: ctrl.signal,
-      headers: { 'User-Agent': 'StumbleCloneBot/1.0 (+https://stumble.danux.be/bot)' },
+      headers: { 'User-Agent': 'StumbUpon.comBot/1.0 (+https://stumble.danux.be/bot)' },
     });
     clearTimeout(t);
     if (!res.ok) return [];

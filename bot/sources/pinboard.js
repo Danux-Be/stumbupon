@@ -25,7 +25,7 @@ async function fetch(options = {}) {
   try {
     const res = await nodeFetch('https://feeds.pinboard.in/rss/popular/', {
       signal: ctrl.signal,
-      headers: { 'User-Agent': 'StumbleCloneBot/1.0 (+https://stumble.danux.be/bot)' },
+      headers: { 'User-Agent': 'StumbUpon.comBot/1.0 (+https://stumble.danux.be/bot)' },
     });
     clearTimeout(t);
     if (!res.ok) { console.error('[Pinboard] HTTP', res.status); return []; }

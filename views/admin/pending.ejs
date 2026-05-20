@@ -7,8 +7,8 @@
   </div>
 
   <!-- Approbation en masse -->
-  <% if (lowRiskCount > 0) { %>
   <div class="admin-bulk-bar">
+    <% if (lowRiskCount > 0) { %>
     <span class="admin-bulk-info">
       <strong><%= lowRiskCount %></strong> site<%= lowRiskCount > 1 ? 's' : '' %> avec un score de risque ≤ 30
     </span>
@@ -17,8 +17,15 @@
       <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <button type="submit" class="btn btn-approve btn-sm">✅ Tout approuver</button>
     </form>
+    <% } else { %>
+    <span class="admin-bulk-info"><%= total %> site<%= total > 1 ? 's' : '' %> en attente</span>
+    <% } %>
+    <form method="POST" action="/admin/pending/bulk-delete"
+          onsubmit="return confirm('Supprimer les <%= total %> sites en attente ? Cette action est irréversible.')">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button type="submit" class="btn btn-reject btn-sm">🗑️ Tout supprimer</button>
+    </form>
   </div>
-  <% } %>
 
   <% if (sites.length === 0 && total === 0) { %>
     <div class="favorites-empty">
