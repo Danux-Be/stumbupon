@@ -2291,3 +2291,19 @@ html.bar-bottom .stumble-bar__report-popup {
 
 .pagination { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 2rem; }
 .pagination__info { font-size: 0.82rem; color: var(--color-muted); }
+
+/* ─── Settings — profil public ───────────────────────────────────────────── */
+.settings-bio-input { width: 100%; resize: vertical; min-height: 80px; font-family: inherit; font-size: 0.9rem; padding: 0.55rem 0.7rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-text); }
+.settings-bio-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent); }
+.settings-social-label { font-size: 0.82rem; font-weight: 600; color: var(--color-muted); text-transform: uppercase; letter-spacing: .05em; margin: 1.2rem 0 0.6rem; display: flex; align-items: center; gap: 0.4rem; }
+.settings-social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1.2rem; }
+@media (max-width: 600px) { .settings-social-grid { grid-template-columns: 1fr; } }
+
+/* ─── Profil public — bio & réseaux sociaux ──────────────────────────────── */
+.profile-bio-block { margin: 0.6rem 0 1rem; }
+.profile-bio { font-size: 0.95rem; color: var(--color-text); line-height: 1.55; white-space: pre-wrap; word-break: break-word; margin-bottom: 0.7rem; }
+.profile-socials { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; margin-top: 0.3rem; }
+.profile-social-link { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; color: var(--color-muted); text-decoration: none; transition: color .15s; }
+.profile-social-link:hover { color: var(--color-primary); }
+.profile-social-link .mdi { font-size: 1rem; }
+.profile-social-link__label { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

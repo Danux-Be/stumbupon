@@ -441,5 +441,20 @@
   "history_empty": "Δεν έχεις εξερευνήσει ακόμα σελίδες. Ξεκίνα!",
   "pagination_page": "Σελίδα {{page}} από {{total}}",
   "nav_profile": "Το προφίλ μου",
-  "nav_history": "Ιστορικό"
+  "nav_history": "Ιστορικό",
+  "settings_profile_title": "Δημόσιο προφίλ",
+  "settings_profile_desc": "Αυτές οι πληροφορίες είναι ορατές σε όλους στο δημόσιο προφίλ σας.",
+  "settings_bio_label": "Βιογραφικό",
+  "settings_bio_placeholder": "Παρουσιαστείτε με λίγα λόγια…",
+  "settings_bio_hint": "χαρακτήρες μέγ.",
+  "settings_social_title": "Κοινωνικά δίκτυα",
+  "settings_social_website": "Ιστότοπος",
+  "settings_social_twitter": "Twitter / X",
+  "settings_social_github": "GitHub",
+  "settings_social_mastodon": "Mastodon",
+  "settings_social_linkedin": "LinkedIn",
+  "settings_social_instagram": "Instagram",
+  "settings_social_handle_hint": "Όνομα χρήστη χωρίς @",
+  "settings_profile_submit": "Αποθήκευση",
+  "success_profile": "Το προφίλ ενημερώθηκε."
 }

@@ -13,6 +13,8 @@
     <p class="alert alert-success"><%= t('success_content_langs') %></p>
   <% } else if (success === 'digest') { %>
     <p class="alert alert-success"><%= t('success_digest') %></p>
+  <% } else if (success === 'profile') { %>
+    <p class="alert alert-success"><%= t('success_profile') %></p>
   <% } else if (success === 'avatar') { %>
     <p class="alert alert-success"><%= t('success_avatar') %></p>
   <% } else if (success === 'username') { %>
@@ -234,6 +236,75 @@
         <span class="mdi mdi-account-circle-outline"></span> <%= t('nav_profile') %>
       </a>
     </p>
+
+    <!-- Profil public -->
+    <section class="settings-section">
+      <h2><%= t('settings_profile_title') %></h2>
+      <p><%= t('settings_profile_desc') %></p>
+
+      <form method="POST" action="/settings/profile" class="form-card">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+        <div class="form-group">
+          <label for="bio"><%= t('settings_bio_label') %></label>
+          <textarea id="bio" name="bio" rows="3" maxlength="300"
+                    placeholder="<%= t('settings_bio_placeholder') %>"
+                    class="settings-bio-input"><%= bio %></textarea>
+          <span class="form-hint">
+            <span id="bio-count"><%= bio.length %></span>/300 <%= t('settings_bio_hint') %>
+          </span>
+        </div>
+
+        <p class="settings-social-label"><span class="mdi mdi-share-variant-outline"></span> <%= t('settings_social_title') %></p>
+        <div class="settings-social-grid">
+          <div class="form-group">
+            <label><span class="mdi mdi-web"></span> <%= t('settings_social_website') %></label>
+            <input type="url" name="social_website" value="<%= socialWebsite %>"
+                   placeholder="https://monsite.com" maxlength="300" />
+          </div>
+          <div class="form-group">
+            <label><span class="mdi mdi-twitter"></span> <%= t('settings_social_twitter') %></label>
+            <input type="text" name="social_twitter" value="<%= socialTwitter %>"
+                   placeholder="pseudo" maxlength="50" />
+            <span class="form-hint"><%= t('settings_social_handle_hint') %></span>
+          </div>
+          <div class="form-group">
+            <label><span class="mdi mdi-github"></span> <%= t('settings_social_github') %></label>
+            <input type="text" name="social_github" value="<%= socialGithub %>"
+                   placeholder="pseudo" maxlength="50" />
+            <span class="form-hint"><%= t('settings_social_handle_hint') %></span>
+          </div>
+          <div class="form-group">
+            <label><span class="mdi mdi-mastodon"></span> <%= t('settings_social_mastodon') %></label>
+            <input type="url" name="social_mastodon" value="<%= socialMastodon %>"
+                   placeholder="https://mastodon.social/@vous" maxlength="300" />
+          </div>
+          <div class="form-group">
+            <label><span class="mdi mdi-linkedin"></span> <%= t('settings_social_linkedin') %></label>
+            <input type="text" name="social_linkedin" value="<%= socialLinkedin %>"
+                   placeholder="pseudo" maxlength="50" />
+            <span class="form-hint"><%= t('settings_social_handle_hint') %></span>
+          </div>
+          <div class="form-group">
+            <label><span class="mdi mdi-instagram"></span> <%= t('settings_social_instagram') %></label>
+            <input type="text" name="social_instagram" value="<%= socialInstagram %>"
+                   placeholder="pseudo" maxlength="50" />
+            <span class="form-hint"><%= t('settings_social_handle_hint') %></span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary"><%= t('settings_profile_submit') %></button>
+      </form>
+
+      <script>
+        (function() {
+          var ta = document.getElementById('bio');
+          var ct = document.getElementById('bio-count');
+          if (!ta || !ct) return;
+          ta.addEventListener('input', function() { ct.textContent = ta.value.length; });
+        })();
+      </script>
+    </section>
 
     <!-- Avatar -->
     <section class="settings-section">

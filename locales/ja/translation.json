@@ -441,5 +441,20 @@
   "history_empty": "まだサイトを探索していません。始めましょう！",
   "pagination_page": "{{page}} / {{total}} ページ",
   "nav_profile": "マイプロフィール",
-  "nav_history": "履歴"
+  "nav_history": "履歴",
+  "settings_profile_title": "公開プロフィール",
+  "settings_profile_desc": "この情報は公開プロフィールで全員に表示されます。",
+  "settings_bio_label": "自己紹介",
+  "settings_bio_placeholder": "自己紹介を入力してください…",
+  "settings_bio_hint": "文字以内",
+  "settings_social_title": "ソーシャルメディア",
+  "settings_social_website": "ウェブサイト",
+  "settings_social_twitter": "Twitter / X",
+  "settings_social_github": "GitHub",
+  "settings_social_mastodon": "Mastodon",
+  "settings_social_linkedin": "LinkedIn",
+  "settings_social_instagram": "Instagram",
+  "settings_social_handle_hint": "@なしのユーザー名",
+  "settings_profile_submit": "保存",
+  "success_profile": "プロフィールを更新しました。"
 }

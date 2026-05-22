@@ -441,5 +441,20 @@
   "history_empty": "Je hebt nog geen sites verkend. Begin nu!",
   "pagination_page": "Pagina {{page}} van {{total}}",
   "nav_profile": "Mijn profiel",
-  "nav_history": "Geschiedenis"
+  "nav_history": "Geschiedenis",
+  "settings_profile_title": "Openbaar profiel",
+  "settings_profile_desc": "Deze informatie is zichtbaar voor iedereen op uw openbare profiel.",
+  "settings_bio_label": "Bio",
+  "settings_bio_placeholder": "Stel jezelf voor in een paar woorden…",
+  "settings_bio_hint": "tekens max",
+  "settings_social_title": "Sociale netwerken",
+  "settings_social_website": "Website",
+  "settings_social_twitter": "Twitter / X",
+  "settings_social_github": "GitHub",
+  "settings_social_mastodon": "Mastodon",
+  "settings_social_linkedin": "LinkedIn",
+  "settings_social_instagram": "Instagram",
+  "settings_social_handle_hint": "Gebruikersnaam zonder @",
+  "settings_profile_submit": "Opslaan",
+  "success_profile": "Profiel bijgewerkt."
 }

@@ -49,7 +49,7 @@ router.get('/settings', requireLogin, (req, res) => {
     'SELECT category_id FROM user_interests WHERE user_id = ?'
   ).all(req.session.userId).map(r => r.category_id);
 
-  const user = db.prepare('SELECT content_languages, email_digest, include_videos, avatar, username, username_changes_this_year, username_year, email, pending_email FROM users WHERE id = ?').get(req.session.userId);
+  const user = db.prepare('SELECT content_languages, email_digest, include_videos, avatar, username, username_changes_this_year, username_year, email, pending_email, bio, social_website, social_twitter, social_github, social_mastodon, social_linkedin, social_instagram FROM users WHERE id = ?').get(req.session.userId);
   const rawLangs = user?.content_languages;
   const contentLangs = (!rawLangs || rawLangs === 'all')
     ? [...ALL_LANGS]
@@ -74,6 +74,13 @@ router.get('/settings', requireLogin, (req, res) => {
     avatarUrl: user?.avatar ? `/avatars/${user.avatar}` : null,
     usernameChangesLeft,
     achievements: getUserAchievements(req.session.userId),
+    bio: user?.bio || '',
+    socialWebsite: user?.social_website || '',
+    socialTwitter: user?.social_twitter || '',
+    socialGithub: user?.social_github || '',
+    socialMastodon: user?.social_mastodon || '',
+    socialLinkedin: user?.social_linkedin || '',
+    socialInstagram: user?.social_instagram || '',
     success: req.query.success || null,
     error: req.query.error || null,
   });
@@ -139,6 +146,38 @@ router.post('/settings/password', requireLogin, verifyToken, async (req, res) =>
   const hash = await bcrypt.hash(newpass, BCRYPT_ROUNDS);
   db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(hash, req.session.userId);
   res.redirect('/settings?success=password');
+});
+
+// ── Profil public (bio + réseaux sociaux) ─────────────────────────────────────
+
+function sanitizeUrl(raw) {
+  const s = (raw || '').trim();
+  if (!s) return null;
+  if (!/^https?:\/\/.+/i.test(s)) return null;
+  return s.slice(0, 300);
+}
+
+function sanitizeHandle(raw) {
+  const s = (raw || '').trim().replace(/^@/, '');
+  if (!s) return null;
+  return s.replace(/[^\w.\-]/g, '').slice(0, 50) || null;
+}
+
+router.post('/settings/profile', requireLogin, verifyToken, (req, res) => {
+  const bio       = (req.body.bio || '').trim().slice(0, 300) || null;
+  const website   = sanitizeUrl(req.body.social_website);
+  const twitter   = sanitizeHandle(req.body.social_twitter);
+  const github    = sanitizeHandle(req.body.social_github);
+  const mastodon  = sanitizeUrl(req.body.social_mastodon);
+  const linkedin  = sanitizeHandle(req.body.social_linkedin);
+  const instagram = sanitizeHandle(req.body.social_instagram);
+
+  db.prepare(`
+    UPDATE users SET bio=?, social_website=?, social_twitter=?, social_github=?,
+      social_mastodon=?, social_linkedin=?, social_instagram=? WHERE id=?
+  `).run(bio, website, twitter, github, mastodon, linkedin, instagram, req.session.userId);
+
+  res.redirect('/settings?success=profile#compte');
 });
 
 // ── Avatar ────────────────────────────────────────────────────────────────────

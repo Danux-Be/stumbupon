@@ -44,6 +44,32 @@
     </div>
   </div>
 
+  <!-- ── Bio & réseaux sociaux ───────────────────────────────────────── -->
+  <% if (profile.bio || profile.social_website || profile.social_twitter || profile.social_github || profile.social_mastodon || profile.social_linkedin || profile.social_instagram) { %>
+  <div class="profile-bio-block">
+    <% if (profile.bio) { %>
+      <p class="profile-bio"><%= profile.bio %></p>
+    <% } %>
+    <% const socials = [
+      profile.social_website   ? { icon: 'mdi-web',       href: profile.social_website,                             label: profile.social_website.replace(/^https?:\/\//, '').split('/')[0] } : null,
+      profile.social_twitter   ? { icon: 'mdi-twitter',   href: 'https://x.com/' + profile.social_twitter,          label: '@' + profile.social_twitter } : null,
+      profile.social_github    ? { icon: 'mdi-github',    href: 'https://github.com/' + profile.social_github,       label: profile.social_github } : null,
+      profile.social_mastodon  ? { icon: 'mdi-mastodon',  href: profile.social_mastodon,                             label: profile.social_mastodon.replace(/^https?:\/\//, '') } : null,
+      profile.social_linkedin  ? { icon: 'mdi-linkedin',  href: 'https://linkedin.com/in/' + profile.social_linkedin, label: profile.social_linkedin } : null,
+      profile.social_instagram ? { icon: 'mdi-instagram', href: 'https://instagram.com/' + profile.social_instagram,  label: '@' + profile.social_instagram } : null,
+    ].filter(Boolean); %>
+    <% if (socials.length) { %>
+    <div class="profile-socials">
+      <% socials.forEach(function(s) { %>
+        <a href="<%= s.href %>" class="profile-social-link" target="_blank" rel="noopener noreferrer">
+          <span class="mdi <%= s.icon %>"></span><span class="profile-social-link__label"><%= s.label %></span>
+        </a>
+      <% }); %>
+    </div>
+    <% } %>
+  </div>
+  <% } %>
+
   <!-- ── Stats ────────────────────────────────────────────────────────── -->
   <div class="profile-stats">
     <div class="profile-stat">

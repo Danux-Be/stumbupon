@@ -441,5 +441,20 @@
   "history_empty": "你还没有探索过任何网站，开始吧！",
   "pagination_page": "第 {{page}} 页，共 {{total}} 页",
   "nav_profile": "我的主页",
-  "nav_history": "历史记录"
+  "nav_history": "历史记录",
+  "settings_profile_title": "公开资料",
+  "settings_profile_desc": "这些信息将对所有人公开显示在您的个人主页上。",
+  "settings_bio_label": "个人简介",
+  "settings_bio_placeholder": "用几句话介绍一下自己…",
+  "settings_bio_hint": "字符以内",
+  "settings_social_title": "社交网络",
+  "settings_social_website": "网站",
+  "settings_social_twitter": "Twitter / X",
+  "settings_social_github": "GitHub",
+  "settings_social_mastodon": "Mastodon",
+  "settings_social_linkedin": "LinkedIn",
+  "settings_social_instagram": "Instagram",
+  "settings_social_handle_hint": "用户名（不含@）",
+  "settings_profile_submit": "保存",
+  "success_profile": "资料已更新。"
 }

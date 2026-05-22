@@ -441,5 +441,20 @@
   "history_empty": "Du har endnu ikke udforsket nogen sider. Kom i gang!",
   "pagination_page": "Side {{page}} af {{total}}",
   "nav_profile": "Min profil",
-  "nav_history": "Historik"
+  "nav_history": "Historik",
+  "settings_profile_title": "Offentlig profil",
+  "settings_profile_desc": "Disse oplysninger er synlige for alle på din offentlige profil.",
+  "settings_bio_label": "Bio",
+  "settings_bio_placeholder": "Præsentér dig selv i få ord…",
+  "settings_bio_hint": "tegn maks.",
+  "settings_social_title": "Sociale netværk",
+  "settings_social_website": "Hjemmeside",
+  "settings_social_twitter": "Twitter / X",
+  "settings_social_github": "GitHub",
+  "settings_social_mastodon": "Mastodon",
+  "settings_social_linkedin": "LinkedIn",
+  "settings_social_instagram": "Instagram",
+  "settings_social_handle_hint": "Brugernavn uden @",
+  "settings_profile_submit": "Gem",
+  "success_profile": "Profil opdateret."
 }

@@ -441,5 +441,20 @@
   "history_empty": "لم تستكشف أي مواقع بعد. ابدأ الآن!",
   "pagination_page": "صفحة {{page}} من {{total}}",
   "nav_profile": "ملفي الشخصي",
-  "nav_history": "السجل"
+  "nav_history": "السجل",
+  "settings_profile_title": "الملف الشخصي العام",
+  "settings_profile_desc": "هذه المعلومات مرئية للجميع على ملفك الشخصي العام.",
+  "settings_bio_label": "نبذة شخصية",
+  "settings_bio_placeholder": "قدّم نفسك في بضع كلمات…",
+  "settings_bio_hint": "حرف كحد أقصى",
+  "settings_social_title": "الشبكات الاجتماعية",
+  "settings_social_website": "موقع إلكتروني",
+  "settings_social_twitter": "Twitter / X",
+  "settings_social_github": "GitHub",
+  "settings_social_mastodon": "Mastodon",
+  "settings_social_linkedin": "LinkedIn",
+  "settings_social_instagram": "Instagram",
+  "settings_social_handle_hint": "اسم المستخدم بدون @",
+  "settings_profile_submit": "حفظ",
+  "success_profile": "تم تحديث الملف الشخصي."
 }

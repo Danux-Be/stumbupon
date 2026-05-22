@@ -441,5 +441,20 @@
   "history_empty": "Nie odkryłeś jeszcze żadnych stron. Zacznij!",
   "pagination_page": "Strona {{page}} z {{total}}",
   "nav_profile": "Mój profil",
-  "nav_history": "Historia"
+  "nav_history": "Historia",
+  "settings_profile_title": "Publiczny profil",
+  "settings_profile_desc": "Te informacje są widoczne dla wszystkich na Twoim publicznym profilu.",
+  "settings_bio_label": "Bio",
+  "settings_bio_placeholder": "Przedstaw się w kilku słowach…",
+  "settings_bio_hint": "znaków maks.",
+  "settings_social_title": "Sieci społecznościowe",
+  "settings_social_website": "Strona internetowa",
+  "settings_social_twitter": "Twitter / X",
+  "settings_social_github": "GitHub",
+  "settings_social_mastodon": "Mastodon",
+  "settings_social_linkedin": "LinkedIn",
+  "settings_social_instagram": "Instagram",
+  "settings_social_handle_hint": "Nazwa użytkownika bez @",
+  "settings_profile_submit": "Zapisz",
+  "success_profile": "Profil zaktualizowany."
 }

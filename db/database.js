@@ -208,6 +208,18 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_achievements_user ON user_achievements(user_id);
 `);
 
+// Bio et réseaux sociaux sur le profil public
+const userCols9 = db.prepare('PRAGMA table_info(users)').all().map(c => c.name);
+if (!userCols9.includes('bio')) {
+  db.exec('ALTER TABLE users ADD COLUMN bio TEXT DEFAULT NULL');
+  db.exec('ALTER TABLE users ADD COLUMN social_website TEXT DEFAULT NULL');
+  db.exec('ALTER TABLE users ADD COLUMN social_twitter TEXT DEFAULT NULL');
+  db.exec('ALTER TABLE users ADD COLUMN social_github TEXT DEFAULT NULL');
+  db.exec('ALTER TABLE users ADD COLUMN social_mastodon TEXT DEFAULT NULL');
+  db.exec('ALTER TABLE users ADD COLUMN social_linkedin TEXT DEFAULT NULL');
+  db.exec('ALTER TABLE users ADD COLUMN social_instagram TEXT DEFAULT NULL');
+}
+
 // Référencements entrants — sites détectés via l'en-tête Referer
 db.exec(`
   CREATE TABLE IF NOT EXISTS referer_queue (

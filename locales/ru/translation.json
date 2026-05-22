@@ -441,5 +441,20 @@
   "history_empty": "Вы ещё не исследовали ни одного сайта. Начните!",
   "pagination_page": "Страница {{page}} из {{total}}",
   "nav_profile": "Мой профиль",
-  "nav_history": "История"
+  "nav_history": "История",
+  "settings_profile_title": "Публичный профиль",
+  "settings_profile_desc": "Эта информация видна всем на вашем публичном профиле.",
+  "settings_bio_label": "Биография",
+  "settings_bio_placeholder": "Расскажите о себе кратко…",
+  "settings_bio_hint": "символов макс.",
+  "settings_social_title": "Социальные сети",
+  "settings_social_website": "Веб-сайт",
+  "settings_social_twitter": "Twitter / X",
+  "settings_social_github": "GitHub",
+  "settings_social_mastodon": "Mastodon",
+  "settings_social_linkedin": "LinkedIn",
+  "settings_social_instagram": "Instagram",
+  "settings_social_handle_hint": "Имя пользователя без @",
+  "settings_profile_submit": "Сохранить",
+  "success_profile": "Профиль обновлён."
 }

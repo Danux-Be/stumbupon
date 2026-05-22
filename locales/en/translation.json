@@ -471,5 +471,20 @@
   "history_empty": "You haven't explored any sites yet. Get started!",
   "pagination_page": "Page {{page}} of {{total}}",
   "nav_profile": "My profile",
-  "nav_history": "History"
+  "nav_history": "History",
+  "settings_profile_title": "Public profile",
+  "settings_profile_desc": "This information is visible to everyone on your public profile.",
+  "settings_bio_label": "Bio",
+  "settings_bio_placeholder": "Tell us a bit about yourself…",
+  "settings_bio_hint": "characters max",
+  "settings_social_title": "Social networks",
+  "settings_social_website": "Website",
+  "settings_social_twitter": "Twitter / X",
+  "settings_social_github": "GitHub",
+  "settings_social_mastodon": "Mastodon",
+  "settings_social_linkedin": "LinkedIn",
+  "settings_social_instagram": "Instagram",
+  "settings_social_handle_hint": "Username without @",
+  "settings_profile_submit": "Save",
+  "success_profile": "Profile updated."
 }

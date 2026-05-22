@@ -10,7 +10,8 @@ const PER_PAGE = 20;
 // ── Profil public ─────────────────────────────────────────────────────────────
 
 const stmtUser = db.prepare(`
-  SELECT id, username, avatar, language, created_at
+  SELECT id, username, avatar, language, created_at, bio,
+    social_website, social_twitter, social_github, social_mastodon, social_linkedin, social_instagram
   FROM users WHERE username = ? AND is_banned = 0
 `);
 const stmtStats = db.prepare(`
