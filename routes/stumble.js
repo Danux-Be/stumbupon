@@ -6,6 +6,7 @@ const { extractVideoId, toEmbedUrl } = require('../lib/youtube');
 const siteConfig         = require('../lib/config');
 const { checkAndGrant }  = require('../lib/achievements');
 const { stmtUserColsForSite } = require('./collections');
+const { createNotification } = require('../lib/notify');
 
 const router = express.Router();
 
@@ -91,7 +92,7 @@ const queryGuestCandidates = db.prepare(`
 
 const querySiteById = db.prepare(`
   SELECT s.id, s.url, s.title, s.description, s.language, s.quality_score, s.can_embed, s.type,
-         u.username AS submitted_by_name, s.imported_by
+         s.submitted_by, u.username AS submitted_by_name, s.imported_by
   FROM sites s
   LEFT JOIN users u ON u.id = s.submitted_by
   WHERE s.id = ? AND s.status = 'approved'
@@ -333,6 +334,9 @@ router.post('/stumble/:id/comment', requireLogin, verifyToken, (req, res) => {
   const result  = insertComment.run(req.session.userId, site.id, body);
   const newAch  = checkAndGrant(req.session.userId);
   const user    = db.prepare('SELECT username FROM users WHERE id = ?').get(req.session.userId);
+  if (site.submitted_by && site.submitted_by !== req.session.userId) {
+    createNotification(site.submitted_by, 'comment', req.session.userId, site.id);
+  }
 
   res.json({
     comment: {

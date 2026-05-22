@@ -510,5 +510,11 @@
   "following_empty_desc": "Esplora i profili e segui i membri per vedere le loro scoperte qui.",
   "following_no_activity": "Nessuna attività recente dai tuoi abbonamenti.",
   "nav_home": "Home",
-  "stumble_btn": "Esplora!"
+  "stumble_btn": "Esplora!",
+  "notif_title": "Notifiche",
+  "notif_empty": "Nessuna notifica per ora.",
+  "notif_unread": "Non letta",
+  "notif_follow": "<strong>{{actor}}</strong> ti segue ora.",
+  "notif_comment": "<strong>{{actor}}</strong> ha commentato su <em>{{site}}</em>.",
+  "notif_collection_add": "<strong>{{actor}}</strong> ha aggiunto <em>{{site}}</em> a una collezione."
 }

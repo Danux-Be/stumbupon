@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db/database');
 const { requireLogin } = require('../middleware/auth');
 const { verifyToken }  = require('../middleware/csrf');
+const { createNotification } = require('../lib/notify');
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.post('/u/:username/follow', requireLogin, verifyToken, (req, res) => {
     db.prepare('DELETE FROM follows WHERE follower_id=? AND followed_id=?').run(req.session.userId, target.id);
   } else {
     db.prepare('INSERT OR IGNORE INTO follows (follower_id,followed_id) VALUES (?,?)').run(req.session.userId, target.id);
+    createNotification(target.id, 'follow', req.session.userId, null);
   }
 
   const followerCount = db.prepare('SELECT COUNT(*) AS n FROM follows WHERE followed_id=?').get(target.id).n;

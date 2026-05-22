@@ -256,6 +256,20 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_follows_followed ON follows(followed_id);
 `);
 
+// Notifications
+db.exec(`
+  CREATE TABLE IF NOT EXISTS notifications (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type       TEXT NOT NULL,
+    actor_id   INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    site_id    INTEGER REFERENCES sites(id) ON DELETE CASCADE,
+    read_at    DATETIME DEFAULT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+  CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, created_at);
+`);
+
 // Référencements entrants — sites détectés via l'en-tête Referer
 db.exec(`
   CREATE TABLE IF NOT EXISTS referer_queue (

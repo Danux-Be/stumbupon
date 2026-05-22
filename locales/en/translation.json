@@ -524,5 +524,11 @@
   "following_empty_desc": "Explore profiles and follow members to see their discoveries here.",
   "following_no_activity": "No recent activity from your subscriptions.",
   "nav_home": "Home",
-  "stumble_btn": "Stumble!"
+  "stumble_btn": "Stumble!",
+  "notif_title": "Notifications",
+  "notif_empty": "No notifications yet.",
+  "notif_unread": "Unread",
+  "notif_follow": "<strong>{{actor}}</strong> is now following you.",
+  "notif_comment": "<strong>{{actor}}</strong> commented on <em>{{site}}</em>.",
+  "notif_collection_add": "<strong>{{actor}}</strong> added <em>{{site}}</em> to a collection."
 }

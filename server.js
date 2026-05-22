@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const passport    = require('passport');
 
 // Initialise la BDD et applique le schéma + migrations au démarrage
-require('./db/database');
+const db = require('./db/database');
 const BetterSQLiteStore = require('./db/session-store');
 const { generateToken } = require('./middleware/csrf');
 const { i18next, middleware: i18nMiddleware } = require('./lib/i18n');
@@ -31,7 +31,8 @@ const curateRoutes    = require('./routes/curate');
 const seoRoutes       = require('./routes/seo');
 const profileRoutes   = require('./routes/profile');
 const { router: collectionsRoutes } = require('./routes/collections');
-const followsRoutes   = require('./routes/follows');
+const followsRoutes         = require('./routes/follows');
+const notificationsRoutes   = require('./routes/notifications');
 
 const fs   = require('fs');
 const { version: APP_VERSION } = require('./package.json');
@@ -90,12 +91,23 @@ app.use((req, res, next) => {
   res.locals.cssVersion = CSS_VERSION;
   res.locals.appVersion = APP_VERSION;
   res.locals.siteConfig = siteConfig.getAll();
+  res.locals.unreadNotifications = 0;
 
   // Empêche tout cache (navigateur + CDN) pour les pages personnalisées
   if (req.session.userId) {
     res.set('Cache-Control', 'private, no-store');
   }
 
+  next();
+});
+
+const stmtUnreadNotif = db.prepare(
+  'SELECT COUNT(*) AS n FROM notifications WHERE user_id=? AND read_at IS NULL'
+);
+app.use((req, res, next) => {
+  if (req.session.userId) {
+    res.locals.unreadNotifications = stmtUnreadNotif.get(req.session.userId).n;
+  }
   next();
 });
 app.use(generateToken);
@@ -118,7 +130,7 @@ const _NOINDEX_EXACT = new Set([
   '/stumble', '/stumble/join', '/stumble/join/skip',
   '/login', '/signup', '/forgot-password',
   '/settings', '/favorites', '/interests', '/tastes', '/curate', '/offline',
-  '/collections', '/following',
+  '/collections', '/following', '/notifications',
 ]);
 const _NOINDEX_PREFIX = ['/admin', '/account/', '/reset-password/', '/verify-email/'];
 app.use((req, res, next) => {
@@ -149,8 +161,8 @@ app.use(seoRoutes);
 app.use(profileRoutes);
 app.use(collectionsRoutes);
 app.use(followsRoutes);
+app.use(notificationsRoutes);
 
-const db = require('./db/database');
 const stmtRecentSites = db.prepare(`
   SELECT s.id, s.url, s.title, s.description, s.language
   FROM sites s

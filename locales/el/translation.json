@@ -494,5 +494,11 @@
   "following_empty_desc": "Εξερευνήστε προφίλ και ακολουθήστε μέλη για να δείτε τις ανακαλύψεις τους εδώ.",
   "following_no_activity": "Δεν υπάρχει πρόσφατη δραστηριότητα από τις συνδρομές σας.",
   "nav_home": "Αρχική",
-  "stumble_btn": "Εξερεύνηση!"
+  "stumble_btn": "Εξερεύνηση!",
+  "notif_title": "Ειδοποιήσεις",
+  "notif_empty": "Δεν υπάρχουν ειδοποιήσεις ακόμα.",
+  "notif_unread": "Αδιάβαστο",
+  "notif_follow": "<strong>{{actor}}</strong> σας ακολουθεί τώρα.",
+  "notif_comment": "<strong>{{actor}}</strong> σχολίασε στο <em>{{site}}</em>.",
+  "notif_collection_add": "<strong>{{actor}}</strong> πρόσθεσε το <em>{{site}}</em> σε μια συλλογή."
 }

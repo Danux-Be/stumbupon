@@ -494,5 +494,11 @@
   "following_empty_desc": "Udforsk profiler og følg medlemmer for at se deres opdagelser her.",
   "following_no_activity": "Ingen nylig aktivitet fra dine abonnementer.",
   "nav_home": "Hjem",
-  "stumble_btn": "Udforsk!"
+  "stumble_btn": "Udforsk!",
+  "notif_title": "Notifikationer",
+  "notif_empty": "Ingen notifikationer endnu.",
+  "notif_unread": "Ulæst",
+  "notif_follow": "<strong>{{actor}}</strong> følger dig nu.",
+  "notif_comment": "<strong>{{actor}}</strong> kommenterede på <em>{{site}}</em>.",
+  "notif_collection_add": "<strong>{{actor}}</strong> tilføjede <em>{{site}}</em> til en samling."
 }

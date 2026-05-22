@@ -494,5 +494,11 @@
   "following_empty_desc": "Verken profielen en volg leden om hun ontdekkingen hier te zien.",
   "following_no_activity": "Geen recente activiteit van je abonnementen.",
   "nav_home": "Home",
-  "stumble_btn": "Verkennen!"
+  "stumble_btn": "Verkennen!",
+  "notif_title": "Meldingen",
+  "notif_empty": "Nog geen meldingen.",
+  "notif_unread": "Ongelezen",
+  "notif_follow": "<strong>{{actor}}</strong> volgt je nu.",
+  "notif_comment": "<strong>{{actor}}</strong> heeft gereageerd op <em>{{site}}</em>.",
+  "notif_collection_add": "<strong>{{actor}}</strong> heeft <em>{{site}}</em> aan een collectie toegevoegd."
 }

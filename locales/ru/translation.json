@@ -494,5 +494,11 @@
   "following_empty_desc": "Исследуйте профили и подписывайтесь на участников, чтобы видеть их открытия здесь.",
   "following_no_activity": "Нет последней активности от ваших подписок.",
   "nav_home": "Главная",
-  "stumble_btn": "Исследовать!"
+  "stumble_btn": "Исследовать!",
+  "notif_title": "Уведомления",
+  "notif_empty": "Уведомлений пока нет.",
+  "notif_unread": "Непрочитанное",
+  "notif_follow": "<strong>{{actor}}</strong> теперь подписан(а) на вас.",
+  "notif_comment": "<strong>{{actor}}</strong> прокомментировал(а) <em>{{site}}</em>.",
+  "notif_collection_add": "<strong>{{actor}}</strong> добавил(а) <em>{{site}}</em> в коллекцию."
 }

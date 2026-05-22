@@ -494,5 +494,11 @@
   "following_empty_desc": "Przeglądaj profile i obserwuj członków, aby zobaczyć ich odkrycia tutaj.",
   "following_no_activity": "Brak ostatniej aktywności od twoich subskrypcji.",
   "nav_home": "Strona główna",
-  "stumble_btn": "Odkryj!"
+  "stumble_btn": "Odkryj!",
+  "notif_title": "Powiadomienia",
+  "notif_empty": "Brak powiadomień.",
+  "notif_unread": "Nieprzeczytane",
+  "notif_follow": "<strong>{{actor}}</strong> teraz cię obserwuje.",
+  "notif_comment": "<strong>{{actor}}</strong> skomentował(a) <em>{{site}}</em>.",
+  "notif_collection_add": "<strong>{{actor}}</strong> dodał(a) <em>{{site}}</em> do kolekcji."
 }

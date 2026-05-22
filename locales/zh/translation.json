@@ -494,5 +494,11 @@
   "following_empty_desc": "探索个人资料并关注成员，以在此处查看他们的发现。",
   "following_no_activity": "您关注的人最近没有活动。",
   "nav_home": "主页",
-  "stumble_btn": "探索！"
+  "stumble_btn": "探索！",
+  "notif_title": "通知",
+  "notif_empty": "暂无通知。",
+  "notif_unread": "未读",
+  "notif_follow": "<strong>{{actor}}</strong> 现在关注了您。",
+  "notif_comment": "<strong>{{actor}}</strong> 评论了 <em>{{site}}</em>。",
+  "notif_collection_add": "<strong>{{actor}}</strong> 将 <em>{{site}}</em> 添加到了合集。"
 }

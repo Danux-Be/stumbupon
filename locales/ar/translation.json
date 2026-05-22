@@ -494,5 +494,11 @@
   "following_empty_desc": "استكشف الملفات الشخصية وتابع الأعضاء لرؤية اكتشافاتهم هنا.",
   "following_no_activity": "لا يوجد نشاط حديث من اشتراكاتك.",
   "nav_home": "الرئيسية",
-  "stumble_btn": "استكشاف!"
+  "stumble_btn": "استكشاف!",
+  "notif_title": "الإشعارات",
+  "notif_empty": "لا توجد إشعارات حتى الآن.",
+  "notif_unread": "غير مقروء",
+  "notif_follow": "<strong>{{actor}}</strong> يتابعك الآن.",
+  "notif_comment": "<strong>{{actor}}</strong> علّق على <em>{{site}}</em>.",
+  "notif_collection_add": "<strong>{{actor}}</strong> أضاف <em>{{site}}</em> إلى مجموعة."
 }

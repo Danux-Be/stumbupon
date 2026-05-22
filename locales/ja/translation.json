@@ -494,5 +494,11 @@
   "following_empty_desc": "プロファイルを探索してメンバーをフォローし、ここで彼らの発見を見てください。",
   "following_no_activity": "フォロー中のメンバーから最近の活動はありません。",
   "nav_home": "ホーム",
-  "stumble_btn": "探索！"
+  "stumble_btn": "探索！",
+  "notif_title": "通知",
+  "notif_empty": "通知はまだありません。",
+  "notif_unread": "未読",
+  "notif_follow": "<strong>{{actor}}</strong> があなたをフォローしました。",
+  "notif_comment": "<strong>{{actor}}</strong> が <em>{{site}}</em> にコメントしました。",
+  "notif_collection_add": "<strong>{{actor}}</strong> が <em>{{site}}</em> をコレクションに追加しました。"
 }

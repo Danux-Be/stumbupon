@@ -1,0 +1,57 @@
+<%- include('partials/header', { title: t('notif_title') }) %>
+
+<div class="notif-page">
+  <div class="notif-header">
+    <h1><span class="mdi mdi-bell-outline"></span> <%= t('notif_title') %></h1>
+  </div>
+
+  <% if (!items.length) { %>
+    <div class="history-empty">
+      <p class="history-empty__icon">🔔</p>
+      <p><%= t('notif_empty') %></p>
+    </div>
+  <% } else { %>
+    <div class="notif-list">
+      <% items.forEach(function(n) { %>
+        <%
+          var href = '/';
+          var icon = 'mdi-bell-outline';
+          var text = '';
+          var actor = n.actor_username || '?';
+          if (n.type === 'follow') {
+            href = '/u/' + actor;
+            icon = 'mdi-account-plus-outline';
+            text = t('notif_follow', { actor: actor });
+          } else if (n.type === 'comment') {
+            href = n.site_id ? '/stumble/' + n.site_id : '/';
+            icon = 'mdi-comment-outline';
+            text = t('notif_comment', { actor: actor, site: n.site_title || '' });
+          } else if (n.type === 'collection_add') {
+            href = n.site_id ? '/stumble/' + n.site_id : '/';
+            icon = 'mdi-folder-plus-outline';
+            text = t('notif_collection_add', { actor: actor, site: n.site_title || '' });
+          }
+        %>
+        <a href="<%= href %>" class="notif-item<%= n.read_at ? '' : ' notif-item--unread' %>">
+          <div class="notif-item__icon-wrap">
+            <% if (n.actor_avatar) { %>
+              <img src="/avatars/<%= n.actor_avatar %>" class="notif-item__avatar" alt="<%= actor %>" />
+            <% } else { %>
+              <div class="notif-item__avatar notif-item__avatar--placeholder"><%= actor.charAt(0).toUpperCase() %></div>
+            <% } %>
+            <span class="notif-item__type-icon mdi <%= icon %>"></span>
+          </div>
+          <div class="notif-item__body">
+            <p class="notif-item__text"><%- text %></p>
+            <span class="notif-item__date"><%= new Date(n.created_at).toLocaleDateString(currentLang, { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+          </div>
+          <% if (!n.read_at) { %>
+            <span class="notif-item__dot" aria-label="<%= t('notif_unread') %>"></span>
+          <% } %>
+        </a>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

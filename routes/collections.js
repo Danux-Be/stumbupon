@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db/database');
 const { requireLogin } = require('../middleware/auth');
 const { verifyToken }  = require('../middleware/csrf');
+const { createNotification } = require('../lib/notify');
 
 const router = express.Router();
 
@@ -102,6 +103,10 @@ router.post('/collections/:id/toggle-site', requireLogin, verifyToken, (req, res
     return res.json({ ok: true, added: false, title: col.title });
   }
   db.prepare('INSERT OR IGNORE INTO collection_sites (collection_id,site_id) VALUES (?,?)').run(col.id, siteId);
+  const siteOwner = db.prepare('SELECT submitted_by FROM sites WHERE id=?').get(siteId);
+  if (siteOwner && siteOwner.submitted_by) {
+    createNotification(siteOwner.submitted_by, 'collection_add', req.session.userId, siteId);
+  }
   return res.json({ ok: true, added: true, title: col.title });
 });
 

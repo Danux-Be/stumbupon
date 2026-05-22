@@ -98,6 +98,14 @@
         <a href="/signup" class="btn btn-primary"><%= t('nav_signup') %></a>
       <% } %>
 
+      <% if (locals.user) { %>
+      <a href="/notifications" class="nav-notif-btn" title="<%= t('notif_title') %>" aria-label="<%= t('notif_title') %>">
+        <span class="mdi mdi-bell-outline"></span>
+        <% if (unreadNotifications > 0) { %>
+          <span class="nav-notif-badge"><%= unreadNotifications > 99 ? '99+' : unreadNotifications %></span>
+        <% } %>
+      </a>
+      <% } %>
       <a href="/search" class="nav-search-btn" title="<%= t('search_title') %>" aria-label="<%= t('search_title') %>"><span class="mdi mdi-magnify"></span></a>
 
       <button id="theme-toggle" class="theme-toggle" title="Changer de thème" aria-label="Changer de thème"><span class="mdi mdi-theme-light-dark"></span></button>

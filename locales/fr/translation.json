@@ -523,5 +523,11 @@
   "following_empty_desc": "Explorez des profils et abonnez-vous pour voir leurs découvertes ici.",
   "following_no_activity": "Aucune activité récente de vos abonnements.",
   "nav_home": "Accueil",
-  "stumble_btn": "Explorer !"
+  "stumble_btn": "Explorer !",
+  "notif_title": "Notifications",
+  "notif_empty": "Aucune notification pour le moment.",
+  "notif_unread": "Non lue",
+  "notif_follow": "<strong>{{actor}}</strong> vous suit maintenant.",
+  "notif_comment": "<strong>{{actor}}</strong> a commenté sur <em>{{site}}</em>.",
+  "notif_collection_add": "<strong>{{actor}}</strong> a ajouté <em>{{site}}</em> à une collection."
 }
