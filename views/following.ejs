@@ -1,0 +1,58 @@
+<%- include('partials/header', { title: t('following_title') }) %>
+
+<div class="following-page">
+  <div class="following-header">
+    <h1><span class="mdi mdi-account-multiple-outline"></span> <%= t('following_title') %></h1>
+    <% if (total > 0) { %>
+      <p class="following-subtitle"><%- t('following_subtitle', { count: '<strong>' + total.toLocaleString(currentLang) + '</strong>' }) %></p>
+    <% } %>
+  </div>
+
+  <% if (!followingCount) { %>
+    <div class="history-empty">
+      <p class="history-empty__icon">🌍</p>
+      <p><%= t('following_empty') %></p>
+      <p class="following-empty-hint"><%= t('following_empty_desc') %></p>
+      <a href="/stumble" class="btn btn-primary"><%= t('stumble_btn') %></a>
+    </div>
+  <% } else if (!items.length) { %>
+    <div class="history-empty">
+      <p class="history-empty__icon">😴</p>
+      <p><%= t('following_no_activity') %></p>
+    </div>
+  <% } else { %>
+    <div class="following-list">
+      <% items.forEach(function(item) { %>
+        <a href="/stumble/<%= item.id %>" class="following-card">
+          <div class="following-card__meta">
+            <span class="following-card__by">
+              <span class="mdi mdi-account-circle-outline"></span>
+              <a href="/u/<%= item.discovered_by %>" class="following-card__username" onclick="event.stopPropagation()"><%= item.discovered_by %></a>
+            </span>
+            <span class="following-card__cats"><%= item.cats || '' %></span>
+            <span class="following-card__date"><%= new Date(item.viewed_at).toLocaleDateString(currentLang, { day: 'numeric', month: 'short' }) %></span>
+          </div>
+          <div class="following-card__title"><%= item.title %></div>
+          <% if (item.description) { %>
+            <div class="following-card__desc"><%= item.description.slice(0, 120) %><%= item.description.length > 120 ? '…' : '' %></div>
+          <% } %>
+          <span class="following-card__url"><%= item.url.replace(/^https?:\/\//, '').split('/')[0] %></span>
+        </a>
+      <% }); %>
+    </div>
+
+    <% if (totalPages > 1) { %>
+    <nav class="pagination">
+      <% if (page > 1) { %>
+        <a href="/following?page=<%= page - 1 %>" class="btn btn-ghost btn-sm">← <%= t('pagination_prev') %></a>
+      <% } %>
+      <span class="pagination__info"><%= t('pagination_page', { page, total: totalPages }) %></span>
+      <% if (page < totalPages) { %>
+        <a href="/following?page=<%= page + 1 %>" class="btn btn-ghost btn-sm"><%= t('pagination_next') %> →</a>
+      <% } %>
+    </nav>
+    <% } %>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

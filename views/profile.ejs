@@ -29,18 +29,27 @@
         <span class="mdi mdi-calendar-outline"></span>
         <%= t('profile_member_since') %> <%= new Date(profile.created_at).toLocaleDateString(currentLang, { year: 'numeric', month: 'long' }) %>
       </p>
-      <% if (isOwnProfile) { %>
-        <div class="profile-own-actions">
+      <p class="profile-follow-counts">
+        <span><strong><%= followerCount %></strong> <%= t('followers_count_label') %></span>
+        <span>·</span>
+        <span><strong><%= followingCountVal %></strong> <%= t('following_count_label') %></span>
+      </p>
+      <div class="profile-own-actions">
+        <% if (isOwnProfile) { %>
           <a href="/settings" class="btn btn-ghost btn-sm"><span class="mdi mdi-cog-outline"></span> <%= t('settings_title') %></a>
-          <button class="btn btn-ghost btn-sm" id="profile-share-btn">
-            <span class="mdi mdi-share-variant"></span> <%= t('profile_share') %>
+        <% } else if (locals.user) { %>
+          <button class="btn <%= isFollowing ? 'btn-secondary' : 'btn-primary' %> btn-sm" id="follow-btn"
+                  data-username="<%= profile.username %>"
+                  data-csrf="<%= csrfToken %>"
+                  data-following="<%= isFollowing ? '1' : '0' %>">
+            <span class="mdi <%= isFollowing ? 'mdi-account-minus-outline' : 'mdi-account-plus-outline' %>"></span>
+            <span id="follow-btn-label"><%= isFollowing ? t('unfollow_btn') : t('follow_btn') %></span>
           </button>
-        </div>
-      <% } else { %>
+        <% } %>
         <button class="btn btn-ghost btn-sm" id="profile-share-btn">
           <span class="mdi mdi-share-variant"></span> <%= t('profile_share') %>
         </button>
-      <% } %>
+      </div>
     </div>
   </div>
 
@@ -124,6 +133,24 @@
   </section>
   <% } %>
 
+  <!-- ── Collections publiques ───────────────────────────────────────── -->
+  <% if (publicCollections && publicCollections.length) { %>
+  <section class="profile-section">
+    <h2 class="profile-section__title"><span class="mdi mdi-folder-multiple-outline"></span> <%= t('collections_title') %></h2>
+    <div class="profile-collections">
+      <% publicCollections.forEach(function(col) { %>
+        <a href="/c/<%= profile.username %>/<%= col.slug %>" class="profile-collection-card">
+          <span class="mdi mdi-folder-outline profile-collection-card__icon"></span>
+          <div>
+            <div class="profile-collection-card__title"><%= col.title %></div>
+            <div class="profile-collection-card__count"><%= t('collections_sites_count', { count: col.site_count }) %></div>
+          </div>
+        </a>
+      <% }); %>
+    </div>
+  </section>
+  <% } %>
+
   <!-- ── CTA pour les visiteurs ───────────────────────────────────────── -->
   <% if (!locals.user) { %>
   <div class="profile-cta">
@@ -138,6 +165,37 @@
 
 <script>
 (function() {
+  // Follow/unfollow
+  var followBtn = document.getElementById('follow-btn');
+  if (followBtn) {
+    followBtn.addEventListener('click', function() {
+      followBtn.disabled = true;
+      var username = followBtn.dataset.username;
+      var csrf     = followBtn.dataset.csrf;
+      fetch('/u/' + username + '/follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: '_csrf=' + encodeURIComponent(csrf),
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        followBtn.disabled = false;
+        if (!data.ok) return;
+        var label = document.getElementById('follow-btn-label');
+        var icon  = followBtn.querySelector('.mdi');
+        if (data.following) {
+          if (label) label.textContent = '<%= t("unfollow_btn") %>';
+          if (icon)  icon.className = 'mdi mdi-account-minus-outline';
+          followBtn.classList.replace('btn-primary', 'btn-secondary');
+        } else {
+          if (label) label.textContent = '<%= t("follow_btn") %>';
+          if (icon)  icon.className = 'mdi mdi-account-plus-outline';
+          followBtn.classList.replace('btn-secondary', 'btn-primary');
+        }
+        var fc = document.querySelector('.profile-follow-counts strong');
+        if (fc) fc.textContent = data.followerCount;
+      }).catch(function() { followBtn.disabled = false; });
+    });
+  }
+
   var btn = document.getElementById('profile-share-btn');
   if (!btn) return;
   var url  = '<%= ogUrl %>';

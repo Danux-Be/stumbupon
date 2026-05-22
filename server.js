@@ -30,6 +30,8 @@ const searchRoutes    = require('./routes/search');
 const curateRoutes    = require('./routes/curate');
 const seoRoutes       = require('./routes/seo');
 const profileRoutes   = require('./routes/profile');
+const { router: collectionsRoutes } = require('./routes/collections');
+const followsRoutes   = require('./routes/follows');
 
 const fs   = require('fs');
 const { version: APP_VERSION } = require('./package.json');
@@ -116,6 +118,7 @@ const _NOINDEX_EXACT = new Set([
   '/stumble', '/stumble/join', '/stumble/join/skip',
   '/login', '/signup', '/forgot-password',
   '/settings', '/favorites', '/interests', '/tastes', '/curate', '/offline',
+  '/collections', '/following',
 ]);
 const _NOINDEX_PREFIX = ['/admin', '/account/', '/reset-password/', '/verify-email/'];
 app.use((req, res, next) => {
@@ -144,6 +147,8 @@ app.use(searchRoutes);
 app.use(curateRoutes);
 app.use(seoRoutes);
 app.use(profileRoutes);
+app.use(collectionsRoutes);
+app.use(followsRoutes);
 
 const db = require('./db/database');
 const stmtRecentSites = db.prepare(`

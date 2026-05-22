@@ -1,0 +1,63 @@
+<%- include('partials/header', { title, ogTitle, ogDescription, ogUrl }) %>
+
+<div class="collection-page">
+<% if (notFound) { %>
+  <div class="profile-not-found">
+    <p class="profile-not-found__icon">📁</p>
+    <h1><%= t('collection_not_found') %></h1>
+    <p><%= t('collection_not_found_desc') %></p>
+    <a href="/" class="btn btn-primary"><%= t('nav_home') %></a>
+  </div>
+<% } else { %>
+
+  <div class="collection-header">
+    <div class="collection-header__left">
+      <h1 class="collection-header__title">
+        <span class="mdi mdi-folder-outline"></span> <%= collection.title %>
+        <% if (!collection.is_public) { %>
+          <span class="collection-badge collection-badge--private"><span class="mdi mdi-lock-outline"></span> <%= t('collection_private_badge') %></span>
+        <% } %>
+      </h1>
+      <% if (collection.description) { %>
+        <p class="collection-header__desc"><%= collection.description %></p>
+      <% } %>
+      <div class="collection-header__meta">
+        <% if (avatarUrl) { %>
+          <img src="<%= avatarUrl %>" class="collection-header__avatar" alt="<%= owner.username %>" />
+        <% } else { %>
+          <div class="collection-header__avatar collection-header__avatar--placeholder"><%= owner.username.charAt(0).toUpperCase() %></div>
+        <% } %>
+        <span><%= t('collection_by') %> <a href="/u/<%= owner.username %>" class="collection-header__owner"><%= owner.username %></a></span>
+        <span class="collection-header__count"><%= t('collections_sites_count', { count: sites.length }) %></span>
+      </div>
+    </div>
+    <% if (isOwner) { %>
+      <a href="/collections" class="btn btn-ghost btn-sm"><span class="mdi mdi-pencil-outline"></span> <%= t('collections_manage') %></a>
+    <% } %>
+  </div>
+
+  <% if (!sites.length) { %>
+    <div class="my-collections-empty">
+      <p class="my-collections-empty__icon">🌀</p>
+      <p><%= t('collections_empty_sites') %></p>
+      <% if (isOwner) { %><a href="/stumble" class="btn btn-primary"><%= t('stumble_btn') %></a><% } %>
+    </div>
+  <% } else { %>
+    <div class="collection-sites">
+      <% sites.forEach(function(s) { %>
+        <a href="/stumble/<%= s.id %>" class="collection-site-card">
+          <div class="collection-site-card__cats"><%= s.cats || '' %></div>
+          <div class="collection-site-card__title"><%= s.title %></div>
+          <% if (s.description) { %>
+            <div class="collection-site-card__desc"><%= s.description.slice(0, 120) %><%= s.description.length > 120 ? '…' : '' %></div>
+          <% } %>
+          <span class="collection-site-card__url"><%= s.url.replace(/^https?:\/\//, '').split('/')[0] %></span>
+        </a>
+      <% }); %>
+    </div>
+  <% } %>
+
+<% } %>
+</div>
+
+<%- include('partials/footer') %>

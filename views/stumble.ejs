@@ -95,6 +95,11 @@
       <button class="btn btn-reject btn-sm" id="admin-reject-btn"
               title="<%= t('stumble_admin_reject') %>"><span class="mdi mdi-delete-outline"></span></button>
       <% } %>
+      <% if (!isGuest) { %>
+      <button class="btn btn-ghost btn-sm" id="collection-toggle" title="<%= t('collections_add_btn') %>">
+        <span class="mdi mdi-folder-plus-outline"></span>
+      </button>
+      <% } %>
       <button class="btn btn-ghost btn-sm stumble-bar__hamburger" id="mobile-menu-btn" title="Menu">
         <span class="mdi mdi-menu"></span>
       </button>
@@ -175,6 +180,38 @@
 
     </div>
   </div>
+
+  <!-- ── Volet collections ────────────────────────────────────────────────── -->
+  <% if (!isGuest) { %>
+  <div class="comments-drawer" id="collection-panel" style="display:none">
+    <div class="comments-drawer__header">
+      <span class="comments-drawer__title"><span class="mdi mdi-folder-multiple-outline"></span> <%= t('collections_panel_title') %></span>
+      <button class="btn btn-ghost btn-sm" id="collection-close"><span class="mdi mdi-close"></span></button>
+    </div>
+    <div class="coll-panel-body">
+      <div class="coll-list" id="coll-list">
+        <% if (!userCollections.length) { %>
+          <p class="coll-empty" id="coll-empty"><%= t('collections_empty_panel') %></p>
+        <% } else { %>
+          <% userCollections.forEach(function(col) { %>
+            <div class="coll-item">
+              <button class="coll-item-btn <%= col.has_site ? 'coll-item-btn--active' : '' %>" data-id="<%= col.id %>">
+                <span class="mdi <%= col.has_site ? 'mdi-check-circle' : 'mdi-circle-outline' %> coll-item-icon"></span>
+                <span class="coll-item-title"><%= col.title %></span>
+              </button>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
+      <form class="coll-create-form" id="coll-create-form">
+        <input type="text" id="coll-create-input" class="coll-create-input"
+               placeholder="<%= t('collections_new_placeholder') %>" maxlength="80" />
+        <button type="submit" class="btn btn-primary btn-sm"><span class="mdi mdi-plus"></span></button>
+      </form>
+      <a href="/collections" class="coll-manage-link"><span class="mdi mdi-cog-outline"></span> <%= t('collections_manage') %></a>
+    </div>
+  </div>
+  <% } %>
 
   <!-- ── Volet curateur (desktop uniquement) ──────────────────────────────── -->
   <% if (isCurator) { %>
@@ -953,6 +990,78 @@
         curatorStatus.textContent = '❌ Erreur réseau';
       });
     });
+    <% } %>
+
+    // ── Panneau collections ────────────────────────────────────────────────
+    <% if (!isGuest) { %>
+    var collPanel   = document.getElementById('collection-panel');
+    var collToggle  = document.getElementById('collection-toggle');
+    var collClose   = document.getElementById('collection-close');
+
+    function openCollPanel() {
+      closeDrawer(); closeInfoPanel();
+      <% if (isCurator) { %>if (typeof closeCuratorPanel === 'function') closeCuratorPanel();<% } %>
+      collPanel.style.display = 'flex';
+      collPanel.offsetHeight;
+      collPanel.classList.add('comments-drawer--open');
+    }
+    function closeCollPanel() { collPanel.classList.remove('comments-drawer--open'); }
+    collPanel.addEventListener('transitionend', function() {
+      if (!collPanel.classList.contains('comments-drawer--open')) collPanel.style.display = 'none';
+    });
+    if (collToggle) collToggle.addEventListener('click', function() {
+      if (collPanel.style.display === 'none' || !collPanel.classList.contains('comments-drawer--open'))
+        openCollPanel(); else closeCollPanel();
+    });
+    if (collClose) collClose.addEventListener('click', closeCollPanel);
+
+    // Toggle site dans une collection
+    document.getElementById('coll-list').addEventListener('click', function(e) {
+      var btn = e.target.closest('.coll-item-btn');
+      if (!btn) return;
+      btn.disabled = true;
+      fetch('/collections/' + btn.dataset.id + '/toggle-site', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: '_csrf=' + encodeURIComponent(CSRF) + '&site_id=' + SITE_ID,
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        btn.disabled = false;
+        if (!data.ok) return;
+        var icon = btn.querySelector('.coll-item-icon');
+        if (icon) icon.className = 'mdi ' + (data.added ? 'mdi-check-circle' : 'mdi-circle-outline') + ' coll-item-icon';
+        btn.classList.toggle('coll-item-btn--active', data.added);
+        var collToggleIcon = document.querySelector('#collection-toggle .mdi');
+        if (collToggleIcon) collToggleIcon.className = 'mdi mdi-folder-' + (document.querySelector('.coll-item-btn--active') ? 'check' : 'plus') + '-outline';
+      }).catch(function() { btn.disabled = false; });
+    });
+
+    // Créer rapidement une collection
+    var collCreateForm = document.getElementById('coll-create-form');
+    if (collCreateForm) {
+      collCreateForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var input = document.getElementById('coll-create-input');
+        var title = input.value.trim();
+        if (!title) return;
+        fetch('/collections/quick-create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: '_csrf=' + encodeURIComponent(CSRF) + '&title=' + encodeURIComponent(title) + '&site_id=' + SITE_ID,
+        }).then(function(r) { return r.json(); }).then(function(data) {
+          if (!data.ok) return;
+          input.value = '';
+          var empty = document.getElementById('coll-empty');
+          if (empty) empty.remove();
+          var list = document.getElementById('coll-list');
+          var div = document.createElement('div');
+          div.className = 'coll-item';
+          div.innerHTML = '<button class="coll-item-btn coll-item-btn--active" data-id="' + data.id + '">' +
+            '<span class="mdi mdi-check-circle coll-item-icon"></span>' +
+            '<span class="coll-item-title">' + escHtml(data.title) + '</span></button>';
+          list.insertBefore(div, list.firstChild);
+        }).catch(function() {});
+      });
+    }
     <% } %>
 
     // ── Flash auto-dismiss ─────────────────────────────────────────────────

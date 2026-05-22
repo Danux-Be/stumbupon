@@ -2307,3 +2307,89 @@ html.bar-bottom .stumble-bar__report-popup {
 .profile-social-link:hover { color: var(--color-primary); }
 .profile-social-link .mdi { font-size: 1rem; }
 .profile-social-link__label { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ─── Profil — follow counts & collections ────────────────────────────────── */
+.profile-follow-counts { font-size: 0.82rem; color: var(--color-muted); display: flex; gap: 0.5rem; margin: 0.15rem 0 0.5rem; }
+.profile-collections { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
+.profile-collection-card { display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 1rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); text-decoration: none; color: var(--color-text); transition: border-color .15s, box-shadow .15s; }
+.profile-collection-card:hover { border-color: var(--color-primary); box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 15%, transparent); }
+.profile-collection-card__icon { font-size: 1.4rem; color: var(--color-primary); opacity: .8; }
+.profile-collection-card__title { font-weight: 600; font-size: 0.88rem; }
+.profile-collection-card__count { font-size: 0.75rem; color: var(--color-muted); margin-top: 0.1rem; }
+
+/* ─── Collections — panel stumble ────────────────────────────────────────── */
+.coll-panel-body { display: flex; flex-direction: column; gap: 0; padding: 0.5rem 0; flex: 1; overflow: hidden; }
+.coll-list { flex: 1; overflow-y: auto; padding: 0 1rem; }
+.coll-item { border-bottom: 1px solid var(--color-border); }
+.coll-item:last-child { border-bottom: none; }
+.coll-item-btn { display: flex; align-items: center; gap: 0.6rem; width: 100%; padding: 0.6rem 0; background: none; border: none; cursor: pointer; color: var(--color-text); font-size: 0.88rem; text-align: left; }
+.coll-item-btn:hover { color: var(--color-primary); }
+.coll-item-btn--active .coll-item-icon { color: var(--color-primary); }
+.coll-item-icon { font-size: 1.1rem; flex-shrink: 0; }
+.coll-item-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.coll-empty { padding: 1rem; text-align: center; color: var(--color-muted); font-size: 0.85rem; }
+.coll-create-form { display: flex; gap: 0.4rem; padding: 0.75rem 1rem; border-top: 1px solid var(--color-border); }
+.coll-create-input { flex: 1; font-size: 0.85rem; padding: 0.4rem 0.6rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-bg); color: var(--color-text); }
+.coll-manage-link { display: block; text-align: center; font-size: 0.78rem; color: var(--color-muted); padding: 0.5rem; text-decoration: none; border-top: 1px solid var(--color-border); }
+.coll-manage-link:hover { color: var(--color-primary); }
+
+/* ─── Mes collections — page ──────────────────────────────────────────────── */
+.my-collections-page { max-width: 760px; margin: 0 auto; padding: 2rem 1rem; }
+.my-collections-header h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 1rem; }
+.my-collections-create { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 1.2rem 1.4rem; margin-bottom: 2rem; }
+.my-collections-create h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.8rem; }
+.collections-form__row { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.collections-form__input { flex: 1; min-width: 140px; font-size: 0.9rem; padding: 0.5rem 0.7rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-bg); color: var(--color-text); }
+.collections-form__desc { width: 100%; }
+.collections-form__public { display: flex; align-items: center; gap: 0.3rem; font-size: 0.82rem; white-space: nowrap; cursor: pointer; }
+.my-collections-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.my-collection-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1rem 1.2rem; }
+.my-collection-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.3rem; }
+.my-collection-card__title { font-weight: 700; font-size: 0.95rem; color: var(--color-text); text-decoration: none; }
+.my-collection-card__title:hover { color: var(--color-primary); }
+.my-collection-card__count { font-size: 0.78rem; color: var(--color-muted); white-space: nowrap; }
+.my-collection-card__desc { font-size: 0.82rem; color: var(--color-muted); margin-bottom: 0.5rem; }
+.my-collection-card__actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem; }
+.my-collections-empty { text-align: center; padding: 3rem 1rem; color: var(--color-muted); }
+.my-collections-empty__icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.collection-badge { display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 999px; vertical-align: middle; margin-left: 0.4rem; }
+.collection-badge--private { background: var(--color-border); color: var(--color-muted); }
+.my-collection-edit-details summary { list-style: none; }
+.my-collection-edit-details summary::-webkit-details-marker { display: none; }
+.collections-edit-form { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; padding: 0.75rem; background: var(--color-bg); border-radius: var(--radius-sm); border: 1px solid var(--color-border); }
+
+/* ─── Collection publique ─────────────────────────────────────────────────── */
+.collection-page { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+.collection-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+.collection-header__title { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.3rem; }
+.collection-header__desc { color: var(--color-muted); font-size: 0.9rem; margin-bottom: 0.6rem; }
+.collection-header__meta { display: flex; align-items: center; gap: 0.6rem; font-size: 0.82rem; color: var(--color-muted); }
+.collection-header__avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+.collection-header__avatar--placeholder { width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; }
+.collection-header__owner { color: var(--color-primary); text-decoration: none; font-weight: 600; }
+.collection-header__count { background: var(--color-border); padding: 0.1rem 0.5rem; border-radius: 999px; font-size: 0.75rem; }
+.collection-sites { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.75rem; }
+.collection-site-card { display: flex; flex-direction: column; padding: 0.9rem 1.1rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); text-decoration: none; color: var(--color-text); transition: border-color .15s; }
+.collection-site-card:hover { border-color: var(--color-primary); }
+.collection-site-card__cats { font-size: 0.78rem; color: var(--color-muted); margin-bottom: 0.3rem; }
+.collection-site-card__title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.25rem; }
+.collection-site-card__desc { font-size: 0.78rem; color: var(--color-muted); flex: 1; margin-bottom: 0.4rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.collection-site-card__url { font-size: 0.7rem; color: var(--color-primary); font-family: monospace; }
+
+/* ─── Abonnements — feed ──────────────────────────────────────────────────── */
+.following-page { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; }
+.following-header h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.4rem; }
+.following-subtitle { color: var(--color-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+.following-empty-hint { font-size: 0.85rem; color: var(--color-muted); margin-top: 0.4rem; }
+.following-list { display: flex; flex-direction: column; gap: 0.6rem; }
+.following-card { display: flex; flex-direction: column; padding: 0.85rem 1.1rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); text-decoration: none; color: var(--color-text); transition: border-color .15s; }
+.following-card:hover { border-color: var(--color-primary); }
+.following-card__meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.3rem; font-size: 0.78rem; color: var(--color-muted); }
+.following-card__by { display: flex; align-items: center; gap: 0.25rem; }
+.following-card__username { color: var(--color-primary); font-weight: 600; text-decoration: none; }
+.following-card__username:hover { text-decoration: underline; }
+.following-card__cats { margin-left: auto; }
+.following-card__date { white-space: nowrap; }
+.following-card__title { font-weight: 700; font-size: 0.92rem; margin-bottom: 0.2rem; }
+.following-card__desc { font-size: 0.78rem; color: var(--color-muted); margin-bottom: 0.25rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.following-card__url { font-size: 0.7rem; color: var(--color-primary); font-family: monospace; }

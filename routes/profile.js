@@ -14,6 +14,15 @@ const stmtUser = db.prepare(`
     social_website, social_twitter, social_github, social_mastodon, social_linkedin, social_instagram, social_reddit
   FROM users WHERE username = ? AND is_banned = 0
 `);
+const stmtFollowerCount  = db.prepare('SELECT COUNT(*) AS n FROM follows WHERE followed_id=?');
+const stmtFollowingCount = db.prepare('SELECT COUNT(*) AS n FROM follows WHERE follower_id=?');
+const stmtIsFollowing    = db.prepare('SELECT 1 FROM follows WHERE follower_id=? AND followed_id=?');
+const stmtPublicCols     = db.prepare(`
+  SELECT c.id, c.title, c.slug,
+    (SELECT COUNT(*) FROM collection_sites cs WHERE cs.collection_id = c.id) AS site_count
+  FROM collections c WHERE c.user_id = ? AND c.is_public = 1
+  ORDER BY c.created_at DESC LIMIT 6
+`);
 const stmtStats = db.prepare(`
   SELECT
     (SELECT COUNT(*) FROM views    WHERE user_id = u.id)                           AS discoveries,
@@ -64,7 +73,11 @@ router.get('/u/:username', (req, res) => {
     .map(a => ({ ...a, earnedAt: earnedMap.get(a.id) }));
   const submissions = stmtSubmissions.all(lang, user.id);
 
-  const isOwnProfile = req.session.userId === user.id;
+  const isOwnProfile    = req.session.userId === user.id;
+  const followerCount   = stmtFollowerCount.get(user.id).n;
+  const followingCountVal = stmtFollowingCount.get(user.id).n;
+  const isFollowing     = req.session.userId ? !!stmtIsFollowing.get(req.session.userId, user.id) : false;
+  const publicCollections = stmtPublicCols.all(user.id);
   const baseUrl = res.locals.baseUrl;
   const avatarUrl = user.avatar ? `${baseUrl}/avatars/${user.avatar}` : null;
 
@@ -83,6 +96,10 @@ router.get('/u/:username', (req, res) => {
     achievements,
     submissions,
     isOwnProfile,
+    followerCount,
+    followingCountVal,
+    isFollowing,
+    publicCollections,
     avatarUrl,
     ogTitle,
     ogDescription: ogDesc,
@@ -90,6 +107,7 @@ router.get('/u/:username', (req, res) => {
     ogUrl: `${baseUrl}/u/${user.username}`,
     canonicalUrl: `${baseUrl}/u/${user.username}`,
     noindex: false,
+    currentUsername: user.username,
   });
 });
 

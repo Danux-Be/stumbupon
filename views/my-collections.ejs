@@ -1,0 +1,85 @@
+<%- include('partials/header', { title: t('collections_title') }) %>
+
+<div class="my-collections-page">
+  <div class="my-collections-header">
+    <h1><span class="mdi mdi-folder-multiple-outline"></span> <%= t('collections_title') %></h1>
+    <% if (success === 'created') { %>
+      <p class="alert alert-success"><%= t('collections_created') %></p>
+    <% } %>
+  </div>
+
+  <!-- Créer une collection -->
+  <section class="my-collections-create">
+    <h2><%= t('collections_create_title') %></h2>
+    <form method="POST" action="/collections" class="collections-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <div class="collections-form__row">
+        <input type="text" name="title" maxlength="80" required
+               placeholder="<%= t('collections_name_placeholder') %>" class="collections-form__input" />
+        <label class="collections-form__public">
+          <input type="checkbox" name="is_public" value="1" checked />
+          <span class="mdi mdi-earth"></span> <%= t('collections_public_label') %>
+        </label>
+        <button type="submit" class="btn btn-primary btn-sm"><span class="mdi mdi-plus"></span> <%= t('collections_create_submit') %></button>
+      </div>
+      <input type="text" name="description" maxlength="300"
+             placeholder="<%= t('collections_desc_placeholder') %>" class="collections-form__input collections-form__desc" />
+    </form>
+  </section>
+
+  <!-- Liste des collections -->
+  <% if (!collections.length) { %>
+    <div class="my-collections-empty">
+      <p class="my-collections-empty__icon">📁</p>
+      <p><%= t('collections_empty') %></p>
+    </div>
+  <% } else { %>
+    <div class="my-collections-list">
+      <% collections.forEach(function(col) { %>
+        <div class="my-collection-card">
+          <div class="my-collection-card__head">
+            <div>
+              <a href="/c/<%= currentUsername %>/<%= col.slug %>" class="my-collection-card__title">
+                <span class="mdi mdi-folder-outline"></span> <%= col.title %>
+              </a>
+              <% if (!col.is_public) { %>
+                <span class="collection-badge collection-badge--private"><span class="mdi mdi-lock-outline"></span> <%= t('collection_private_badge') %></span>
+              <% } %>
+            </div>
+            <span class="my-collection-card__count"><%= t('collections_sites_count', { count: col.site_count }) %></span>
+          </div>
+          <% if (col.description) { %>
+            <p class="my-collection-card__desc"><%= col.description %></p>
+          <% } %>
+          <div class="my-collection-card__actions">
+            <a href="/c/<%= currentUsername %>/<%= col.slug %>" class="btn btn-ghost btn-sm">
+              <span class="mdi mdi-eye-outline"></span> <%= t('collections_view') %>
+            </a>
+            <details class="my-collection-edit-details">
+              <summary class="btn btn-ghost btn-sm"><span class="mdi mdi-pencil-outline"></span> <%= t('collections_edit') %></summary>
+              <form method="POST" action="/collections/<%= col.id %>/edit" class="collections-edit-form">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <input type="text" name="title" value="<%= col.title %>" maxlength="80" class="collections-form__input" />
+                <input type="text" name="description" value="<%= col.description || '' %>" maxlength="300" placeholder="<%= t('collections_desc_placeholder') %>" class="collections-form__input" />
+                <label class="collections-form__public">
+                  <input type="checkbox" name="is_public" value="1" <%= col.is_public ? 'checked' : '' %> />
+                  <%= t('collections_public_label') %>
+                </label>
+                <button type="submit" class="btn btn-primary btn-sm"><%= t('settings_save') %></button>
+              </form>
+            </details>
+            <form method="POST" action="/collections/<%= col.id %>/delete"
+                  onsubmit="return confirm('<%= t('collections_delete_confirm') %>')">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--color-danger)">
+                <span class="mdi mdi-delete-outline"></span> <%= t('collections_delete') %>
+              </button>
+            </form>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

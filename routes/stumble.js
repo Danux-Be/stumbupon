@@ -5,6 +5,7 @@ const { verifyToken }  = require('../middleware/csrf');
 const { extractVideoId, toEmbedUrl } = require('../lib/youtube');
 const siteConfig         = require('../lib/config');
 const { checkAndGrant }  = require('../lib/achievements');
+const { stmtUserColsForSite } = require('./collections');
 
 const router = express.Router();
 
@@ -286,6 +287,7 @@ router.get('/stumble/:id', (req, res) => {
     ? db.prepare('SELECT id, slug, name, emoji FROM categories ORDER BY name').all()
     : null;
   const currentCatIds = isCurator ? categories.map(c => c.category_id) : null;
+  const userCollections = (!isGuest && userId) ? stmtUserColsForSite.all(site.id, userId) : [];
 
   res.render('stumble', {
     title: site.title,
@@ -306,6 +308,7 @@ router.get('/stumble/:id', (req, res) => {
     isCurator,
     allCategories,
     currentCatIds,
+    userCollections,
     flashLessOfThis: req.query.lessofthis === '1',
     flashReported: req.query.reported || null,
     ogTitle: site.title,

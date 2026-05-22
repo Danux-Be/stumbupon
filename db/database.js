@@ -224,6 +224,38 @@ if (!userCols10.includes('social_reddit')) {
   db.exec('ALTER TABLE users ADD COLUMN social_reddit TEXT DEFAULT NULL');
 }
 
+// Collections et abonnements
+db.exec(`
+  CREATE TABLE IF NOT EXISTS collections (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title       TEXT NOT NULL,
+    slug        TEXT NOT NULL,
+    description TEXT,
+    is_public   INTEGER DEFAULT 1,
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, slug)
+  );
+  CREATE INDEX IF NOT EXISTS idx_collections_user ON collections(user_id);
+
+  CREATE TABLE IF NOT EXISTS collection_sites (
+    collection_id INTEGER NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
+    site_id       INTEGER NOT NULL REFERENCES sites(id) ON DELETE CASCADE,
+    added_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (collection_id, site_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS follows (
+    follower_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    followed_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (follower_id, followed_id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_follows_follower ON follows(follower_id);
+  CREATE INDEX IF NOT EXISTS idx_follows_followed ON follows(followed_id);
+`);
+
 // Référencements entrants — sites détectés via l'en-tête Referer
 db.exec(`
   CREATE TABLE IF NOT EXISTS referer_queue (
