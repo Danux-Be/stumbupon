@@ -13,6 +13,14 @@
     <p class="alert alert-success"><%= t('success_content_langs') %></p>
   <% } else if (success === 'digest') { %>
     <p class="alert alert-success"><%= t('success_digest') %></p>
+  <% } else if (success === 'avatar') { %>
+    <p class="alert alert-success"><%= t('success_avatar') %></p>
+  <% } else if (success === 'username') { %>
+    <p class="alert alert-success"><%= t('success_username') %></p>
+  <% } else if (success === 'email_pending') { %>
+    <p class="alert alert-success"><%= t('success_email_pending') %></p>
+  <% } else if (success === 'email_changed') { %>
+    <p class="alert alert-success"><%= t('success_email_changed') %></p>
   <% } else if (error === 'interests-min') { %>
     <p class="alert alert-error"><%= t('error_interests_min') %></p>
   <% } else if (error === 'delete_password_wrong') { %>
@@ -27,6 +35,7 @@
     <a href="#interface"  class="settings-nav__link"><span class="mdi mdi-palette-outline"></span> <%= t('settings_group_interface') %></a>
     <a href="#notifications" class="settings-nav__link"><span class="mdi mdi-email-outline"></span> <%= t('settings_group_notifications') %></a>
     <a href="#compte"     class="settings-nav__link"><span class="mdi mdi-shield-account-outline"></span> <%= t('settings_group_account') %></a>
+    <a href="#succes"     class="settings-nav__link"><span class="mdi mdi-trophy-outline"></span> <%= t('settings_group_achievements') %></a>
   </nav>
 
   <!-- ── Découverte ──────────────────────────────────────────────────────── -->
@@ -219,7 +228,94 @@
 
   <!-- ── Compte & sécurité ───────────────────────────────────────────────── -->
   <div id="compte" class="settings-group">
-    <p class="settings-group__title"><span class="mdi mdi-shield-account-outline"></span> <%= t('settings_group_account') %></p>
+    <p class="settings-group__title">
+      <span class="mdi mdi-shield-account-outline"></span> <%= t('settings_group_account') %>
+      <a href="/u/<%= currentUsername %>" class="btn btn-ghost btn-sm" style="margin-left:auto;font-size:0.78rem">
+        <span class="mdi mdi-account-circle-outline"></span> <%= t('nav_profile') %>
+      </a>
+    </p>
+
+    <!-- Avatar -->
+    <section class="settings-section">
+      <h2><%= t('settings_avatar_title') %></h2>
+      <p><%= t('settings_avatar_desc') %></p>
+
+      <div class="avatar-preview-row">
+        <% if (avatarUrl) { %>
+          <img src="<%= avatarUrl %>?v=<%= Date.now() %>" alt="Avatar" class="avatar-preview" />
+        <% } else { %>
+          <div class="avatar-placeholder"><span class="mdi mdi-account-circle-outline"></span></div>
+        <% } %>
+
+        <div style="display:flex;flex-direction:column;gap:0.5rem">
+          <form method="POST" action="/settings/avatar" enctype="multipart/form-data">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <label class="btn btn-secondary btn-sm" style="cursor:pointer;margin:0">
+              <span class="mdi mdi-upload-outline"></span> <%= t('settings_avatar_upload') %>
+              <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif"
+                     style="display:none" onchange="this.form.submit()" />
+            </label>
+          </form>
+          <% if (avatarUrl) { %>
+          <form method="POST" action="/settings/avatar/delete">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+            <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--color-danger)">
+              <span class="mdi mdi-delete-outline"></span> <%= t('settings_avatar_delete') %>
+            </button>
+          </form>
+          <% } %>
+        </div>
+      </div>
+      <p class="form-hint"><%= t('settings_avatar_hint') %></p>
+    </section>
+
+    <!-- Pseudo -->
+    <section class="settings-section">
+      <h2><%= t('settings_username_title') %></h2>
+      <p><%= t('settings_username_desc') %></p>
+
+      <% if (usernameChangesLeft > 0) { %>
+      <form method="POST" action="/settings/username" class="form-card form-card--inline">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="form-group">
+          <label for="new-username"><%= t('settings_username_label') %></label>
+          <input type="text" id="new-username" name="username"
+                 value="<%= currentUsername %>"
+                 minlength="3" maxlength="20"
+                 pattern="[a-zA-Z0-9_\-]+"
+                 autocomplete="username" required />
+          <span class="form-hint"><%- t('settings_username_changes_left', { count: usernameChangesLeft }) %></span>
+        </div>
+        <button type="submit" class="btn btn-primary"><%= t('settings_username_submit') %></button>
+      </form>
+      <% } else { %>
+        <p class="form-hint" style="margin-top:0.5rem"><%= t('settings_username_limit_reached') %></p>
+      <% } %>
+    </section>
+
+    <!-- Email -->
+    <section class="settings-section">
+      <h2><%= t('settings_email_title') %></h2>
+      <p><%= t('settings_email_desc') %></p>
+
+      <% if (pendingEmail) { %>
+        <div class="alert alert-info" style="margin:0.75rem 0">
+          <%- t('settings_email_pending', { email: '<strong>' + pendingEmail + '</strong>' }) %>
+        </div>
+      <% } %>
+
+      <form method="POST" action="/settings/email" class="form-card form-card--inline">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="form-group">
+          <label for="new-email"><%= t('settings_email_label') %></label>
+          <input type="email" id="new-email" name="email"
+                 value="<%= currentEmail %>"
+                 autocomplete="email" required />
+          <span class="form-hint"><%= t('settings_email_hint') %></span>
+        </div>
+        <button type="submit" class="btn btn-primary"><%= t('settings_email_submit') %></button>
+      </form>
+    </section>
 
     <!-- Données personnelles (RGPD) -->
     <section class="settings-section">
@@ -248,7 +344,7 @@
     </section>
 
     <!-- Mot de passe -->
-    <section class="settings-section">
+    <section class="settings-section" id="password-section">
       <h2><%= t('settings_password_title') %></h2>
 
       <form method="POST" action="/settings/password" class="form-card form-card--inline">
@@ -269,6 +365,38 @@
         </div>
         <button type="submit" class="btn btn-primary"><%= t('settings_password_submit') %></button>
       </form>
+    </section>
+  </div>
+
+  <!-- ── Succès ──────────────────────────────────────────────────────────── -->
+  <div id="succes" class="settings-group">
+    <p class="settings-group__title"><span class="mdi mdi-trophy-outline"></span> <%= t('settings_group_achievements') %></p>
+
+    <section class="settings-section">
+      <h2><%= t('settings_achievements_title') %></h2>
+      <p><%= t('settings_achievements_subtitle') %></p>
+
+      <% const earned = achievements.filter(a => a.earned).length; %>
+      <p class="achievements-progress">
+        <span class="achievements-count"><%= earned %> / <%= achievements.length %></span>
+      </p>
+
+      <div class="achievements-grid">
+        <% achievements.forEach(function(ach) { %>
+          <div class="achievement-card <%= ach.earned ? 'achievement-card--earned achievement-card--' + ach.rarity : 'achievement-card--locked' %>">
+            <div class="achievement-icon"><%= ach.icon %></div>
+            <div class="achievement-body">
+              <div class="achievement-name"><%= t('achievement_' + ach.id + '_name') %></div>
+              <div class="achievement-desc"><%= t('achievement_' + ach.id + '_desc') %></div>
+              <% if (ach.earned && ach.earnedAt) { %>
+                <div class="achievement-date"><%= t('achievement_earned_on') %> <%= ach.earnedAt.slice(0,10) %></div>
+              <% } else if (!ach.earned) { %>
+                <div class="achievement-date achievement-locked-label"><%= t('achievement_locked') %></div>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+      </div>
     </section>
   </div>
 </div>

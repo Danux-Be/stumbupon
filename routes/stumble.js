@@ -3,7 +3,8 @@ const db = require('../db/database');
 const { requireLogin } = require('../middleware/auth');
 const { verifyToken }  = require('../middleware/csrf');
 const { extractVideoId, toEmbedUrl } = require('../lib/youtube');
-const siteConfig       = require('../lib/config');
+const siteConfig         = require('../lib/config');
+const { checkAndGrant }  = require('../lib/achievements');
 
 const router = express.Router();
 
@@ -247,6 +248,8 @@ router.get('/stumble', (req, res) => {
 
   const site = weightedPick(candidates);
   recordView.run(userId, site.id);
+  const newAch = checkAndGrant(userId);
+  if (newAch.length) req.session._achievements_flash = newAch;
   res.redirect(`/stumble/${site.id}`);
 });
 
@@ -295,7 +298,8 @@ router.get('/stumble/:id', (req, res) => {
     embedUrl,
     isGuest,
     guestCount,
-    guestLimit: GUEST_LIMIT,
+    guestLimitEnabled: siteConfig.get('guest_limit_enabled') === '1',
+    guestLimit: parseInt(siteConfig.get('guest_limit_count') || '5', 10),
     currentUserId: userId || null,
     comments,
     submittedBy,
@@ -323,8 +327,9 @@ router.post('/stumble/:id/comment', requireLogin, verifyToken, (req, res) => {
   const body = (req.body.body || '').trim().slice(0, 500);
   if (!body) return res.status(400).json({ error: 'empty' });
 
-  const result = insertComment.run(req.session.userId, site.id, body);
-  const user   = db.prepare('SELECT username FROM users WHERE id = ?').get(req.session.userId);
+  const result  = insertComment.run(req.session.userId, site.id, body);
+  const newAch  = checkAndGrant(req.session.userId);
+  const user    = db.prepare('SELECT username FROM users WHERE id = ?').get(req.session.userId);
 
   res.json({
     comment: {
@@ -334,6 +339,17 @@ router.post('/stumble/:id/comment', requireLogin, verifyToken, (req, res) => {
       user_id: req.session.userId,
       created_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
     },
+    newAchievements: newAch.map(a => ({ id: a.id, icon: a.icon, rarity: a.rarity, name: req.t('achievement_' + a.id + '_name') })),
+  });
+});
+
+router.post('/stumble/:id/share', requireLogin, (req, res) => {
+  db.prepare('UPDATE users SET shares_count = COALESCE(shares_count, 0) + 1 WHERE id = ?')
+    .run(req.session.userId);
+  const newAch = checkAndGrant(req.session.userId);
+  res.json({
+    ok: true,
+    newAchievements: newAch.map(a => ({ id: a.id, icon: a.icon, rarity: a.rarity, name: req.t('achievement_' + a.id + '_name') })),
   });
 });
 

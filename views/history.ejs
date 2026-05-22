@@ -1,0 +1,46 @@
+<%- include('partials/header', { title: t('history_title') }) %>
+
+<div class="history-page">
+  <div class="history-header">
+    <h1><span class="mdi mdi-history"></span> <%= t('history_title') %></h1>
+    <p class="history-subtitle"><%- t('history_subtitle', { count: '<strong>' + total.toLocaleString(currentLang) + '</strong>' }) %></p>
+  </div>
+
+  <% if (!sites.length) { %>
+    <div class="history-empty">
+      <p class="history-empty__icon">🌀</p>
+      <p><%= t('history_empty') %></p>
+      <a href="/stumble" class="btn btn-primary"><%= t('stumble_btn') %></a>
+    </div>
+  <% } else { %>
+    <div class="history-list">
+      <% sites.forEach(function(s) { %>
+        <a href="/stumble/<%= s.id %>" class="history-card">
+          <div class="history-card__meta">
+            <span class="history-card__cats"><%= s.cats || '' %></span>
+            <span class="history-card__date"><%= new Date(s.viewed_at).toLocaleDateString(currentLang, { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
+          </div>
+          <div class="history-card__title"><%= s.title %></div>
+          <% if (s.description) { %>
+            <div class="history-card__desc"><%= s.description.slice(0, 120) %><%= s.description.length > 120 ? '…' : '' %></div>
+          <% } %>
+          <span class="history-card__url"><%= s.url.replace(/^https?:\/\//, '').split('/')[0] %></span>
+        </a>
+      <% }); %>
+    </div>
+
+    <% if (totalPages > 1) { %>
+    <nav class="pagination">
+      <% if (page > 1) { %>
+        <a href="/history?page=<%= page - 1 %>" class="btn btn-ghost btn-sm">← <%= t('pagination_prev') %></a>
+      <% } %>
+      <span class="pagination__info"><%= t('pagination_page', { page, total: totalPages }) %></span>
+      <% if (page < totalPages) { %>
+        <a href="/history?page=<%= page + 1 %>" class="btn btn-ghost btn-sm"><%= t('pagination_next') %> →</a>
+      <% } %>
+    </nav>
+    <% } %>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

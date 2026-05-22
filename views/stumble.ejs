@@ -46,6 +46,7 @@
       <a href="/" class="stumble-bar__logo" title="StumbUpon.com">🌀</a>
       <img src="https://<%= hostname %>/favicon.ico"
            class="stumble-bar__favicon" width="20" height="20" alt=""
+           id="bar-favicon"
            onerror="this.onerror=null;this.style.display='none'" />
       <div class="stumble-bar__site">
         <% if (isVideo) { %><span class="stumble-bar__badge mdi mdi-video-outline"></span><% } %>
@@ -100,6 +101,14 @@
     </div>
 
   </div>
+
+  <% if (isGuest && guestLimitEnabled && guestCount !== null && guestLimit) {
+       var remaining = Math.max(0, guestLimit - guestCount); %>
+  <div class="guest-banner">
+    <span class="guest-banner__text"><%= t('guest_banner', { count: remaining }) %></span>
+    <a href="/signup" class="guest-banner__cta"><%= t('guest_join_signup') %> →</a>
+  </div>
+  <% } %>
 
   <!-- ── Volet d'informations ─────────────────────────────────────────────── -->
   <div class="info-panel" id="info-panel" style="display:none">
@@ -244,6 +253,7 @@
       <div class="mobile-drawer__header-site">
         <img src="https://<%= hostname %>/favicon.ico"
              class="mobile-drawer__favicon" width="20" height="20" alt=""
+             id="mobile-favicon"
              onerror="this.onerror=null;this.style.display='none'" />
         <div style="min-width:0">
           <div class="stumble-bar__title"><% if (isVideo) { %><span class="stumble-bar__badge mdi mdi-video-outline" style="margin-right:0.3rem"></span><% } %><%= site.title %></div>
@@ -537,15 +547,29 @@
     var SHARE_URL   = window.location.origin + '/stumble/<%= site.id %>';
     var SHARE_TITLE = '<%= site.title.replace(/\\/g, "\\\\").replace(/'/g, "\\'") %>';
 
+    var SITE_ID = '<%= site.id %>';
+    var IS_LOGGED = <%= currentUserId ? 'true' : 'false' %>;
+
+    function trackShare() {
+      if (!IS_LOGGED) return;
+      fetch('/stumble/' + SITE_ID + '/share', { method: 'POST', credentials: 'same-origin' })
+        .then(function(r) { return r.json(); })
+        .then(function(d) { if (d.newAchievements) window.showAchievementToasts && window.showAchievementToasts(d.newAchievements); })
+        .catch(function() {});
+    }
+
     function doShare(btn) {
       if (navigator.share) {
-        navigator.share({ title: SHARE_TITLE, url: SHARE_URL }).catch(function() {});
+        navigator.share({ title: SHARE_TITLE, url: SHARE_URL })
+          .then(trackShare)
+          .catch(function() {});
         return;
       }
       navigator.clipboard.writeText(SHARE_URL).then(function() {
-        var orig = btn.textContent;
-        btn.textContent = '✅ Copié !';
-        setTimeout(function() { btn.textContent = orig; }, 2000);
+        trackShare();
+        var orig = btn.innerHTML;
+        btn.innerHTML = '✅ Copié !';
+        setTimeout(function() { btn.innerHTML = orig; }, 2000);
       }).catch(function() { window.prompt('Copie ce lien :', SHARE_URL); });
     }
 
@@ -696,6 +720,7 @@
           commentsList.scrollTop = commentsList.scrollHeight;
           var n = parseInt(commentsCount.textContent || '0') + 1;
           updateCount(n);
+          if (data.newAchievements) window.showAchievementToasts && window.showAchievementToasts(data.newAchievements);
         })
         .catch(function() { commentSubmit.disabled = false; });
       });
@@ -840,6 +865,7 @@
           mobileCommentsList.scrollTop = mobileCommentsList.scrollHeight;
           var n = parseInt((commentsCount && commentsCount.textContent) || '0') + 1;
           updateCount(n);
+          if (data.newAchievements) window.showAchievementToasts && window.showAchievementToasts(data.newAchievements);
         })
         .catch(function() { mobileCommentSubmit.disabled = false; });
       });
@@ -936,6 +962,15 @@
       flash.style.opacity    = '0';
       setTimeout(function() { flash.remove(); }, 500);
     }, 3000);
+
+    // Timeout favicon : masque après 2s si toujours pas chargé
+    ['bar-favicon', 'mobile-favicon'].forEach(function(id) {
+      var img = document.getElementById(id);
+      if (!img) return;
+      var t = setTimeout(function() { img.style.display = 'none'; }, 2000);
+      img.addEventListener('load',  function() { clearTimeout(t); });
+      img.addEventListener('error', function() { clearTimeout(t); });
+    });
   </script>
 </body>
 </html>

@@ -3,6 +3,8 @@ const db = require('../db/database');
 const { requireLogin } = require('../middleware/auth');
 const { verifyToken } = require('../middleware/csrf');
 
+const { checkAndGrant } = require('../lib/achievements');
+
 const router = express.Router();
 
 const VOTE_DELTA = 0.15;
@@ -50,6 +52,12 @@ router.post('/vote', requireLogin, verifyToken, (req, res) => {
     } else {
       adjustInterests(userId, siteId, direction * VOTE_DELTA);
     }
+  }
+
+  // Si c'est un upvote, vérifier les succès du soumetteur
+  if (direction === 1) {
+    const site = db.prepare('SELECT submitted_by FROM sites WHERE id = ?').get(siteId);
+    if (site?.submitted_by) checkAndGrant(site.submitted_by);
   }
 
   res.json({ ok: true });

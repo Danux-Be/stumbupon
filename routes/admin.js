@@ -342,12 +342,14 @@ router.post('/admin/flagged/:id/reject', requireAdmin, verifyToken, (req, res) =
 router.get('/admin/users', requireAdmin, (req, res) => {
   const users = db.prepare(`
     SELECT u.id, u.username, u.email, u.is_admin, u.is_banned, u.is_curator,
-           u.email_verified, u.created_at,
-           COUNT(DISTINCT s.id)  AS site_count,
-           COUNT(DISTINCT v.rowid) AS vote_count
+           u.email_verified, u.created_at, u.avatar,
+           COUNT(DISTINCT s.id)    AS site_count,
+           COUNT(DISTINCT v.rowid) AS vote_count,
+           COUNT(DISTINCT vw.site_id) AS view_count
     FROM users u
-    LEFT JOIN sites s ON s.submitted_by = u.id
-    LEFT JOIN votes v ON v.user_id = u.id
+    LEFT JOIN sites s  ON s.submitted_by = u.id
+    LEFT JOIN votes v  ON v.user_id = u.id
+    LEFT JOIN views vw ON vw.user_id = u.id
     GROUP BY u.id
     ORDER BY u.created_at DESC
   `).all();
@@ -394,6 +396,19 @@ router.post('/admin/users/:id/make-curator', requireAdmin, verifyToken, (req, re
 
 router.post('/admin/users/:id/unmake-curator', requireAdmin, verifyToken, (req, res) => {
   db.prepare('UPDATE users SET is_curator = 0 WHERE id = ?').run(Number(req.params.id));
+  res.redirect('/admin/users');
+});
+
+router.post('/admin/users/:id/delete', requireAdmin, verifyToken, (req, res) => {
+  const id = Number(req.params.id);
+  if (id === req.session.userId) return res.redirect('/admin/users');
+  db.prepare("DELETE FROM sessions WHERE json_extract(sess, '$.userId') = ?").run(id);
+  db.prepare('DELETE FROM votes WHERE user_id = ?').run(id);
+  db.prepare('DELETE FROM views WHERE user_id = ?').run(id);
+  db.prepare('DELETE FROM comments WHERE user_id = ?').run(id);
+  db.prepare('DELETE FROM user_achievements WHERE user_id = ?').run(id);
+  db.prepare('UPDATE sites SET submitted_by = NULL WHERE submitted_by = ?').run(id);
+  db.prepare('DELETE FROM users WHERE id = ?').run(id);
   res.redirect('/admin/users');
 });
 
@@ -552,8 +567,9 @@ router.get('/admin/config', requireAdmin, (req, res) => {
 });
 
 router.post('/admin/config', requireAdmin, verifyToken, (req, res) => {
-  siteConfig.set('less_of_this',        req.body.less_of_this        === '1' ? '1' : '0');
-  siteConfig.set('guest_limit_enabled', req.body.guest_limit_enabled === '1' ? '1' : '0');
+  const flag = v => [].concat(v).includes('1');
+  siteConfig.set('less_of_this',        flag(req.body.less_of_this)        ? '1' : '0');
+  siteConfig.set('guest_limit_enabled', flag(req.body.guest_limit_enabled) ? '1' : '0');
   const count = Math.max(1, Math.min(200, parseInt(req.body.guest_limit_count) || 5));
   siteConfig.set('guest_limit_count', String(count));
   res.redirect('/admin/config?success=1');

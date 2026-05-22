@@ -657,4 +657,412 @@ node -e "
 
 ---
 
+## Dark mode ✅
+**Commit :** `c8ff2ba`
+
+### Comportements implémentés
+- Trois modes : automatique (système), clair, sombre — toggle ☀️/🌙/🌗 dans la nav
+- Préférence stockée dans `localStorage` + classe `html.dark` appliquée immédiatement
+- Variables CSS doubles (`--color-bg`, `--color-text`, etc.) — aucun JS pour le rendu
+- `prefers-color-scheme: dark` respecté si mode auto sélectionné
+
+---
+
+## Raccourcis clavier ✅
+**Commit :** `64e655b`
+
+| Touche | Action |
+|---|---|
+| `Space` / `N` | Site suivant (GET /stumble) |
+| `V` | Ouvrir le site dans un nouvel onglet |
+| `L` | Upvote |
+| `D` | Downvote |
+
+---
+
+## Digest email hebdomadaire ✅
+**Commit :** `d63a3b9`
+
+### Fichiers créés/modifiés
+| Fichier | Rôle |
+|---|---|
+| `lib/mailer.js` | Ajout `sendDigestEmail(to, username, sites, lang, unsubUrl)` avec HTML + texte brut |
+| `scripts/digest.js` | Script cron — sélectionne 7 sites/user selon intérêts, envoie, log résultat |
+
+### Comportements
+- Opt-in par défaut (colonne `users.email_digest = 1`)
+- 7 sites sélectionnés parmi les `approved`, pondérés par intérêts de l'utilisateur, non déjà vus
+- HTML soigné (couleurs, liens, footer désabonnement) + fallback texte brut
+- Lien de désabonnement direct (`/settings`)
+- Cron suggéré : lundi 9h (`0 9 * * 1`)
+
+---
+
+## PWA — Progressive Web App ✅
+**Commit :** `a0b7118`
+
+### Fichiers créés
+| Fichier | Rôle |
+|---|---|
+| `public/manifest.json` | Nom, icônes, couleur thème, mode standalone |
+| `public/sw.js` | Service worker — cache statiques v1, offline fallback |
+| `public/icons/icon-192.svg` | Icône SVG 192px (🌀 stylisé) |
+| `public/icons/icon-512.svg` | Icône SVG 512px |
+| `views/offline.ejs` | Page servie hors ligne par le SW |
+
+---
+
+## Nav dropdown + sélecteur langue footer ✅
+**Commit :** `ce9e6c3`
+
+- Menu utilisateur en dropdown sur le pseudo (hover/click)
+- Sélecteur de langue déplacé dans le footer (plus discret)
+- Chevron animé à l'ouverture
+
+---
+
+## Stumble en mode invité ✅
+**Commit :** `93c5f3f`
+
+### Comportements
+- Les visiteurs non connectés peuvent explorer jusqu'à N sites (N configurable par l'admin)
+- Compteur de sessions invités via `req.session.guestCount`
+- Après N explorations → page `/stumble/join` (mur d'inscription)
+- `/stumble/join/skip` — ignorer le mur une fois (quota remis à zéro)
+- Bannière quota invité sur la carte stumble (affiche le nombre restant)
+
+---
+
+## Commentaires sur les sites ✅
+**Commit :** `e9d1d05`
+
+### Fonctionnalités
+- Tiroir commentaires latéral sur desktop, drawer mobile en bas
+- Soumission AJAX (`fetch` + JSON) — pas de rechargement de page
+- Modération admin : approuver/rejeter les commentaires signalés
+- Limite 500 caractères par commentaire
+- Suppression par l'auteur ou un admin
+
+---
+
+## Volet ℹ️ + barre stumble ✅
+**Commit :** `e9d1d05`
+
+- Volet latéral "Info" avec titre, description, catégories, URL, score
+- Bouton "Partager" dans la barre (`navigator.share` ou copie presse-papier)
+- Icônes MDI (Material Design Icons) via CDN
+
+---
+
+## Recherche full-text (FTS5) ✅
+**Commit :** `219ed79`
+
+### Fichiers créés
+| Fichier | Rôle |
+|---|---|
+| `routes/search.js` | `GET /search?q=` — recherche FTS5 avec pagination |
+| `views/search.ejs` | Résultats avec extraits mis en évidence |
+
+### Comportements
+- Index FTS5 sur `sites(title, description, url)` avec tokeniseur unicode61
+- Triggers `AFTER INSERT/UPDATE/DELETE` maintiennent l'index automatiquement
+- Recherche en mode `prefix*` — résultats en temps réel
+- Affichage du domaine + catégories + description sous chaque résultat
+
+---
+
+## OpenGraph + Twitter Card ✅
+**Commit :** `546432e`
+
+- `og:title`, `og:description`, `og:image`, `og:url` sur toutes les pages
+- `twitter:card`, `twitter:site` sur les pages stumble
+- Image par défaut `/og-image.png` (1200×630)
+- Image dynamique sur les profils publics (avatar si dispo)
+
+---
+
+## Page À propos ✅
+**Commit :** `1ff32ee`
+
+- `/about` — présentation du projet, philosophie, stack technique
+- Lien dans le footer
+
+---
+
+## Animation flip entre les stumbles ✅
+**Commit :** `d371eba`
+
+- Animation CSS 3D flip entre deux cartes au passage au site suivant
+- Désactivée par défaut (option dans les settings)
+- Respecte `prefers-reduced-motion`
+
+---
+
+## Rôle curateur ✅
+**Commit :** `cb03385`
+
+### Comportements
+- Nouveau rôle `is_curator` entre utilisateur et admin
+- Interface de curation `/curate` : valider/rejeter les sites en attente
+- Volet de curation desktop directement sur la page stumble (sans quitter)
+- Pagination des sites en attente dans l'interface admin
+- Curateurs visibles dans la nav (lien "Curation")
+
+---
+
+## Renommage StumbleClone → StumbUpon.com + SEO complet ✅
+**Commit :** `20b7f4f`
+
+### Fichiers modifiés/créés
+| Fichier | Rôle |
+|---|---|
+| `routes/seo.js` | `GET /sitemap.xml`, `GET /robots.txt`, `GET /feed.xml` (RSS) |
+| `views/home.ejs` | Refonte hero + cards — textes SEO, nouveau nom |
+| `public/og-image.png` | Image Open Graph 1200×630 |
+
+### SEO
+- Sitemap XML : pages statiques + 200 derniers sites approuvés avec `lastmod`
+- robots.txt : crawl autorisé, disallow admin/settings
+- RSS feed : 20 derniers sites approuvés
+- Balises hreflang pour les 14 langues supportées
+- Canonical URL automatique sur chaque page
+
+---
+
+## Barre mobile + page invitation invité ✅
+**Commit :** `e6a298d`
+
+- Barre de navigation fixe en bas sur mobile (Explorer, Info, Favoris, Menu)
+- Page `/stumble/join` redesignée avec 8 cartes de valeur traduites (14 langues)
+- Position de la barre (haut/bas) configurable dans les settings
+
+---
+
+## Import DMOZ/ODP RDF ✅
+**Commit :** `f6b25cd`
+
+### Fichiers créés
+| Fichier | Rôle |
+|---|---|
+| `scripts/import-dmoz.js` | Parse le dump RDF DMOZ (~3 Go) en streaming SAX, filtre et importe |
+
+### Comportements
+- Streaming SAX — ne charge pas tout le fichier en mémoire
+- Filtre par langue et score de risque
+- Classification automatique par catégories DMOZ → catégories internes
+- Import transactionnel par lots de 500
+
+---
+
+## Internationalisation étendue à 14 langues ✅
+
+Les 4 langues initiales (fr, en, nl, de) ont été étendues à :
+`fr · en · de · es · it · pt · nl · pl · da · ar · el · ja · ru · zh`
+
+Toutes les clés i18n existantes et nouvelles sont maintenues dans les 14 locales.
+
+---
+
+## Google OAuth ✅
+
+### Fichiers modifiés
+| Fichier | Rôle |
+|---|---|
+| `routes/auth.js` | Stratégie `GoogleStrategy`, routes `/auth/google` et `/auth/google/callback` |
+| `views/login.ejs` | Bouton "Continuer avec Google" (conditionnel si credentials configurés) |
+| `views/signup.ejs` | Idem |
+| `server.js` | `passport.initialize()` |
+
+### Comportements
+- `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET` dans `.env` activent le bouton automatiquement
+- Compte existant avec même email → liaison automatique du `google_id`
+- Nouveau compte → username généré depuis le `displayName` Google (avec suffixe si conflit)
+- `password_hash = 'oauth'` pour les comptes sans mot de passe
+- `session: false` dans Passport — session gérée manuellement via `req.session.regenerate()`
+
+---
+
+## Paramètres compte — Avatar, Pseudo, Email ✅
+
+### Avatar
+- Upload image (JPEG, PNG, WebP, GIF, max 2 Mo)
+- Stocké dans `public/avatars/` sous le nom `{userId}.{ext}`
+- Suppression de l'ancien fichier physique avant remplacement
+- Bouton de suppression de l'avatar
+- Multer placé **avant** `verifyToken` (req.body undefined sinon sur multipart)
+
+### Pseudo
+- Modification libre mais limitée à **2 fois par an** (compteur `username_changes_this_year` + `username_year`)
+- Compteur reset automatiquement au 1er janvier
+- Validation regex `^[a-zA-Z0-9_-]{3,20}$`
+- Vérification unicité en BDD
+- Session mise à jour immédiatement
+
+### Email
+- Changement avec **vérification obligatoire** de la nouvelle adresse
+- Flow : POST `/settings/email` → stocke `pending_email` + token (1h) → envoie mail → lien `/verify-email-change/:token`
+- L'ancien email reste actif jusqu'à confirmation
+- Token expiré → message d'erreur explicite
+
+---
+
+## Fix cache Cloudflare — déconnexion ✅
+
+**Problème :** la page d'accueil restait en cache côté CDN après déconnexion, affichant l'utilisateur comme toujours connecté.
+
+**Solution :**
+- Middleware global dans `server.js` : `Cache-Control: private, no-store` sur toutes les pages des sessions connectées
+- `Clear-Site-Data: "cache"` sur le header de réponse du `POST /logout`
+- Règle Cloudflare Cache mise à jour pour exclure les requêtes avec cookie `connect.sid`
+
+---
+
+## Système de succès (Achievements) ✅
+
+### Architecture
+| Fichier | Rôle |
+|---|---|
+| `lib/achievements.js` | Définitions des 19 succès + `checkAndGrant(userId)` + `getUserAchievements(userId)` |
+| `db/database.js` | Migration : table `user_achievements (user_id, achievement_id, earned_at)` |
+
+### 19 succès en 4 raretés
+
+| Succès | Condition | Rareté |
+|---|---|---|
+| 🏆 Fondateur | User ID ≤ 100 | Légendaire |
+| 🐦 Pionnier | User ID 101–500 | Rare |
+| ✅ Vérifié | Email confirmé | Commun |
+| ✨ Profil complet | Avatar + email vérifié + 3+ intérêts | Commun |
+| 🚀 Premier pas | 1 exploration | Commun |
+| 🔍 Curieux | 10 explorations | Commun |
+| 🗺️ Explorateur | 50 explorations | Peu commun |
+| 🌍 Grand voyageur | 200 explorations | Rare |
+| ⭐ Légende | 1 000 explorations | Légendaire |
+| 💬 Premier mot | 1 commentaire | Commun |
+| 🗣️ Contributeur | 10 commentaires | Peu commun |
+| 📤 Découvreur | 1 soumission | Commun |
+| 🤝 Curateur | 5 soumissions approuvées | Peu commun |
+| 🌟 Premier soutien | 1 upvote reçu sur ses soumissions | Commun |
+| 💫 Tendance | 10 upvotes reçus | Peu commun |
+| 🔥 Populaire | 50 upvotes reçus | Rare |
+| 👑 Viral | 100 upvotes reçus | Légendaire |
+| 🔗 Ambassadeur | 1 partage effectué | Commun |
+| 📣 Évangéliste | 10 partages effectués | Peu commun |
+
+### Hooks
+`checkAndGrant()` déclenché automatiquement après : exploration, commentaire, soumission, upload avatar, sélection intérêts, vérification email, upvote reçu, partage.
+
+### Notifications toast
+- Toast slide-in depuis la droite (couleur selon rareté) — disparaît après 4,5 s
+- Flux redirect : flash session → middleware → template → JS au chargement
+- Flux AJAX (commentaire, partage) : `newAchievements` dans la réponse JSON → `window.showAchievementToasts()`
+- Traduit dans les 14 langues
+
+### Affichage
+- Section "Succès" dans les paramètres — badges gagnés en couleur, non-gagnés grisés
+- Succès gagnés affichés sur le profil public
+
+---
+
+## Redistribution des sites bot vers de vrais profils ✅
+
+### Contexte
+Les 2 065 sites importés par les bots étaient attribués à `imported_by = 'bot:*'` et affichaient "Bot" comme soumetteur.
+
+### Solution
+- Création de **10 comptes membres** avec des dates d'inscription échelonnées (nov. 2025 → mars 2026)
+- `password_hash = 'locked'` (connexion impossible), `email @example.invalid`
+- Distribution aléatoire des 2 065 sites entre ces 10 membres (~200 sites chacun)
+- `imported_by` mis à `NULL` sur tous les sites → plus aucune mention "Bot"
+
+| Pseudo | Langue | Sites |
+|---|---|---|
+| alex_explore | en | ~192 |
+| MarcDubois | fr | ~201 |
+| JulieVoyage | fr | ~206 |
+| cybernaute42 | fr | ~210 |
+| pixel_surfer | en | ~212 |
+| wanderer_net | en | ~203 |
+| linkdiver | en | ~198 |
+| netpilot | en | ~214 |
+| webseeker | en | ~203 |
+| SofiaR | es | ~226 |
+
+---
+
+## Profil public `/u/:username` ✅
+
+### Fichiers créés
+| Fichier | Rôle |
+|---|---|
+| `routes/profile.js` | `GET /u/:username` + `GET /history` |
+| `views/profile.ejs` | Page profil public |
+| `views/history.ejs` | Historique personnel paginé |
+
+### Profil public — contenu
+- Avatar (grand, circulaire) ou initiale colorée si absent
+- Pseudo + date d'inscription (mois/année)
+- **4 stats** : découvertes · soumissions · votes reçus · succès obtenus
+- Badges de succès gagnés (couleur selon rareté)
+- Grille des **9 derniers sites soumis et approuvés** (cliquables → `/stumble/:id`)
+- Bouton "Partager ce profil" — `navigator.share` sur mobile, copie presse-papier sinon
+- CTA inscription pour les visiteurs non connectés
+
+### OG tags pour le partage social
+- `og:title` : `{username} sur StumbUpon.com`
+- `og:description` : `{N} découvertes · {N} soumissions · {N} succès`
+- `og:image` : avatar de l'utilisateur ou og-image.png par défaut
+- → Aperçu Twitter/LinkedIn soigné au partage du lien
+
+### Historique personnel `/history`
+- Liste chronologique inverse de tous les sites explorés (table `views`)
+- Date de visite, catégories, description, domaine
+- Pagination 20 par page
+
+### Navigation
+- "Mon profil" et "Historique" ajoutés dans le menu dropdown
+- Lien "Mon profil" dans la section Compte des paramètres
+
+---
+
+## État du projet au 2026-05-22
+
+### Chiffres
+| Indicateur | Valeur |
+|---|---|
+| Sites approuvés | 1 541 |
+| Membres | 19 (6 réels + 10 seeds + 3 tests) |
+| Catégories | 25 (traduites en 14 langues) |
+| Succès disponibles | 19 |
+| Langues UI | 14 (fr, en, de, es, it, pt, nl, pl, da, ar, el, ja, ru, zh) |
+
+### Stack
+- **Runtime** : Node.js 20 + Express 5
+- **DB** : SQLite (better-sqlite3) en mode WAL
+- **Templates** : EJS
+- **Auth** : sessions SQLite + bcrypt + Google OAuth (Passport.js)
+- **i18n** : i18next (14 langues)
+- **Email** : Nodemailer → OVH SMTP (ssl0.ovh.net:465)
+- **Uploads** : Multer (avatars)
+- **CDN** : Cloudflare (cache, Turnstile, DDoS)
+- **Reverse proxy** : Caddy (HTTPS automatique)
+- **Déploiement** : systemd + cron backup quotidien
+
+### Fonctionnalités actives
+- Découverte aléatoire pondérée (intérêts + filtrage collaboratif)
+- Votes 👍/👎 avec ajustement dynamique des poids
+- Commentaires AJAX avec modération
+- Signalements + quarantaine automatique
+- Soumissions utilisateurs (avec enrichissement, score de risque, limites anti-spam)
+- Bot de découverte (HN, Wiby, Lobsters, Marginalia, GitHub, Neocities…)
+- Mode invité avec quota configurable
+- Digest email hebdomadaire
+- Système de succès (19 badges) avec notifications toast
+- Profil public partageagle avec OG cards
+- Historique personnel
+- Dark mode + raccourcis clavier + PWA
+- SEO complet (sitemap, RSS, OG, hreflang)
+- RGPD (export données, suppression compte, opt-out propriétaires)
+- Admin complet (pending, reports, config, bot, opt-out, curateurs)
+
 <!-- Les étapes suivantes seront ajoutées au fil du développement -->

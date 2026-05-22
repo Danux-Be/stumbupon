@@ -68,6 +68,8 @@
             <span class="mdi mdi-chevron-down nav-chevron"></span>
           </button>
           <div class="nav-dropdown" role="menu">
+            <a href="/u/<%= user.username %>" class="nav-dropdown__item"><span class="mdi mdi-account-circle-outline"></span> <%= t('nav_profile') %></a>
+            <a href="/history" class="nav-dropdown__item"><span class="mdi mdi-history"></span> <%= t('nav_history') %></a>
             <a href="/favorites" class="nav-dropdown__item"><span class="mdi mdi-bookmark-outline"></span> <%= t('nav_favorites') %></a>
             <a href="/tastes" class="nav-dropdown__item"><span class="mdi mdi-tune-variant"></span> <%= t('nav_tastes') %></a>
             <a href="/submit" class="nav-dropdown__item"><span class="mdi mdi-plus"></span> <%= t('nav_submit') %></a>

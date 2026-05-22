@@ -1,6 +1,6 @@
   </main>
   <footer class="site-footer">
-    <p>&copy; <%= new Date().getFullYear() %> StumbUpon.com — <%= t('footer_tagline') %></p>
+    <p>&copy; <%= new Date().getFullYear() %> StumbUpon.com — <%= t('footer_tagline') %> <span class="footer-version">v<%= appVersion %></span></p>
     <p class="footer-legal">
       <a href="/about"><%= t('about_title') %></a> ·
       <a href="/legal"><%= t('legal_title') %></a> ·
@@ -16,5 +16,46 @@
     </div>
   </footer>
   <script src="/app.js"></script>
+
+  <!-- ── Toasts succès ───────────────────────────────────────────────────── -->
+  <div id="achievement-toasts" aria-live="polite"></div>
+
+  <script>
+  (function() {
+    var LABEL = '<%= t("achievement_unlocked") %>';
+    var container = document.getElementById('achievement-toasts');
+
+    function showToast(ach) {
+      var toast = document.createElement('div');
+      toast.className = 'achievement-toast achievement-toast--' + (ach.rarity || 'common');
+      toast.innerHTML =
+        '<div class="achievement-toast__icon">' + ach.icon + '</div>' +
+        '<div class="achievement-toast__body">' +
+          '<div class="achievement-toast__label">' + LABEL + '</div>' +
+          '<div class="achievement-toast__name">' + ach.name + '</div>' +
+        '</div>';
+      container.appendChild(toast);
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() { toast.classList.add('achievement-toast--visible'); });
+      });
+      setTimeout(function() {
+        toast.classList.remove('achievement-toast--visible');
+        toast.addEventListener('transitionend', function() { toast.remove(); }, { once: true });
+      }, 4500);
+    }
+
+    // Flash serveur (pages après redirect)
+    <% if (achievementFlash && achievementFlash.length) { %>
+      var flash = <%- JSON.stringify(achievementFlash.map(function(a) { return { id: a.id, icon: a.icon, rarity: a.rarity, name: t('achievement_' + a.id + '_name') }; })) %>;
+      flash.forEach(function(a, i) { setTimeout(function() { showToast(a); }, i * 600); });
+    <% } %>
+
+    // Exposition globale pour les appels AJAX (commentaires, partage)
+    window.showAchievementToasts = function(list) {
+      if (!list || !list.length) return;
+      list.forEach(function(a, i) { setTimeout(function() { showToast(a); }, i * 600); });
+    };
+  })();
+  </script>
 </body>
 </html>

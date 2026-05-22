@@ -12,10 +12,9 @@
       <thead>
         <tr>
           <th><%= t('admin_users_col_user') %></th>
-          <th><%= t('admin_users_col_email') %></th>
           <th><%= t('admin_users_col_joined') %></th>
-          <th><%= t('admin_users_col_sites') %></th>
           <th><%= t('admin_users_col_votes') %></th>
+          <th>Pages vues</th>
           <th><%= t('admin_users_col_actions') %></th>
         </tr>
       </thead>
@@ -23,24 +22,27 @@
         <% for (const u of users) { %>
         <tr class="<%= u.is_banned ? 'admin-table__row--banned' : '' %>">
           <td>
-            <strong><%= u.username %></strong>
-            <% if (u.is_admin) { %>
-              <span class="user-badge user-badge--admin">admin</span>
-            <% } %>
-            <% if (u.is_curator) { %>
-              <span class="user-badge user-badge--curator">curateur</span>
-            <% } %>
-            <% if (u.is_banned) { %>
-              <span class="user-badge user-badge--banned"><%= t('admin_badge_banned') %></span>
-            <% } %>
-            <% if (!u.email_verified) { %>
-              <span class="user-badge user-badge--unverified"><%= t('admin_badge_unverified') %></span>
-            <% } %>
+            <div style="display:flex;align-items:center;gap:0.5rem">
+              <% if (u.avatar) { %>
+                <img src="/avatars/<%= u.avatar %>" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0">
+              <% } else { %>
+                <span class="mdi mdi-account-circle" style="font-size:28px;color:var(--muted);flex-shrink:0"></span>
+              <% } %>
+              <div>
+                <div style="display:flex;align-items:center;gap:0.3rem;flex-wrap:wrap">
+                  <strong><%= u.username %></strong>
+                  <% if (u.is_admin) { %><span class="user-badge user-badge--admin">admin</span><% } %>
+                  <% if (u.is_curator) { %><span class="user-badge user-badge--curator">curateur</span><% } %>
+                  <% if (u.is_banned) { %><span class="user-badge user-badge--banned"><%= t('admin_badge_banned') %></span><% } %>
+                  <% if (!u.email_verified) { %><span class="user-badge user-badge--unverified"><%= t('admin_badge_unverified') %></span><% } %>
+                </div>
+                <span class="admin-table__muted" style="font-size:0.78rem"><%= u.email %></span>
+              </div>
+            </div>
           </td>
-          <td class="admin-table__muted"><%= u.email %></td>
           <td class="admin-table__muted"><%= new Date(u.created_at).toLocaleDateString() %></td>
-          <td><%= u.site_count %></td>
           <td><%= u.vote_count %></td>
+          <td><%= u.view_count %></td>
           <td class="admin-table__actions">
             <% if (u.id !== currentUserId) { %>
               <% if (u.is_banned) { %>
@@ -76,6 +78,13 @@
                   <button class="btn btn-ghost btn-sm">+ Curateur</button>
                 </form>
               <% } %>
+              <form method="POST" action="/admin/users/<%= u.id %>/delete" style="display:inline"
+                    onsubmit="return confirm('Supprimer le compte de <%= u.username %> ?\nCette action est irréversible.')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+                <button class="btn btn-reject btn-sm" title="Supprimer le compte">
+                  <span class="mdi mdi-delete"></span>
+                </button>
+              </form>
             <% } else { %>
               <span class="admin-table__muted">(vous)</span>
             <% } %>

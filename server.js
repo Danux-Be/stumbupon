@@ -3,6 +3,7 @@ const express     = require('express');
 const path        = require('path');
 const session     = require('express-session');
 const cookieParser = require('cookie-parser');
+const passport    = require('passport');
 
 // Initialise la BDD et applique le schéma + migrations au démarrage
 require('./db/database');
@@ -28,8 +29,10 @@ const accountRoutes   = require('./routes/account');
 const searchRoutes    = require('./routes/search');
 const curateRoutes    = require('./routes/curate');
 const seoRoutes       = require('./routes/seo');
+const profileRoutes   = require('./routes/profile');
 
 const fs   = require('fs');
+const { version: APP_VERSION } = require('./package.json');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
@@ -70,6 +73,7 @@ app.use(session({
 // Parsing des formulaires
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(passport.initialize());
 
 // i18n — doit être après cookieParser et session
 app.use(i18nMiddleware.handle(i18next));
@@ -82,10 +86,24 @@ app.use((req, res, next) => {
     : null;
   res.locals.baseUrl    = process.env.BASE_URL || 'https://stumbupon.com';
   res.locals.cssVersion = CSS_VERSION;
+  res.locals.appVersion = APP_VERSION;
   res.locals.siteConfig = siteConfig.getAll();
+
+  // Empêche tout cache (navigateur + CDN) pour les pages personnalisées
+  if (req.session.userId) {
+    res.set('Cache-Control', 'private, no-store');
+  }
+
   next();
 });
 app.use(generateToken);
+
+// Flash succès — lit et vide la session à chaque rendu
+app.use((req, res, next) => {
+  res.locals.achievementFlash = req.session._achievements_flash || [];
+  delete req.session._achievements_flash;
+  next();
+});
 
 // URL canonique automatique pour toutes les pages
 app.use((req, res, next) => {
@@ -125,6 +143,7 @@ app.use(accountRoutes);
 app.use(searchRoutes);
 app.use(curateRoutes);
 app.use(seoRoutes);
+app.use(profileRoutes);
 
 const db = require('./db/database');
 const stmtRecentSites = db.prepare(`

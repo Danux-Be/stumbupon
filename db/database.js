@@ -191,6 +191,23 @@ db.exec(`
   ins.run('guest_limit_count',   '5');
 }
 
+// Compteur de partages
+const userCols8 = db.prepare('PRAGMA table_info(users)').all().map(c => c.name);
+if (!userCols8.includes('shares_count')) {
+  db.exec('ALTER TABLE users ADD COLUMN shares_count INTEGER DEFAULT 0');
+}
+
+// Succès utilisateurs
+db.exec(`
+  CREATE TABLE IF NOT EXISTS user_achievements (
+    user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    achievement_id TEXT NOT NULL,
+    earned_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, achievement_id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_achievements_user ON user_achievements(user_id);
+`);
+
 // Référencements entrants — sites détectés via l'en-tête Referer
 db.exec(`
   CREATE TABLE IF NOT EXISTS referer_queue (

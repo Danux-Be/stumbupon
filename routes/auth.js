@@ -2,10 +2,13 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const db = require('../db/database');
 const { verifyToken } = require('../middleware/csrf');
 const { SUPPORTED } = require('../middleware/lang');
 const { sendVerificationEmail, sendPasswordResetEmail } = require('../lib/mailer');
+const { checkAndGrant } = require('../lib/achievements');
 const { verifyTurnstile } = require('../lib/turnstile');
 
 const router = express.Router();
@@ -21,10 +24,12 @@ const authLimiter = rateLimit({
 
 // ── Inscription ──────────────────────────────────────────────────────────────
 
+const googleEnabled = () => !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+
 router.get('/signup', (req, res) => {
   if (req.session.userId) return res.redirect('/');
   const siteKey = process.env.TURNSTILE_SITE_KEY || null;
-  res.render('signup', { title: req.t('signup_title'), error: null, fields: {}, turnstileSiteKey: siteKey });
+  res.render('signup', { title: req.t('signup_title'), error: null, fields: {}, turnstileSiteKey: siteKey, googleEnabled: googleEnabled() });
 });
 
 router.post('/signup', authLimiter, verifyToken, async (req, res) => {
@@ -35,7 +40,7 @@ router.post('/signup', authLimiter, verifyToken, async (req, res) => {
   const siteKey = process.env.TURNSTILE_SITE_KEY || null;
 
   const fail = (key) => res.render('signup', {
-    title: t('signup_title'), error: t(key), fields, turnstileSiteKey: siteKey,
+    title: t('signup_title'), error: t(key), fields, turnstileSiteKey: siteKey, googleEnabled: googleEnabled(),
   });
 
   if (!username || !email || !password || !confirm) return fail('error_fields_required');
@@ -93,7 +98,9 @@ router.get('/verify-email/:token', (req, res) => {
     'UPDATE users SET email_verified = 1, email_verification_token = NULL WHERE id = ?'
   ).run(user.id);
 
-  // Mettre à jour la session si c'est l'utilisateur connecté
+  const newAch = checkAndGrant(user.id);
+  if (newAch.length && req.session.userId === user.id) req.session._achievements_flash = newAch;
+
   if (req.session.userId === user.id) {
     req.session.emailVerified = true;
   }
@@ -130,14 +137,15 @@ router.post('/resend-verification', authLimiter, (req, res) => {
 
 router.get('/login', (req, res) => {
   if (req.session.userId) return res.redirect('/');
-  res.render('login', { title: req.t('login_title'), error: null });
+  const errorParam = req.query.error === 'google' ? req.t('error_google_auth') : null;
+  res.render('login', { title: req.t('login_title'), error: errorParam, googleEnabled: googleEnabled() });
 });
 
 router.post('/login', authLimiter, verifyToken, async (req, res) => {
   const { email, password } = req.body;
   const t = req.t.bind(req);
 
-  const fail = (key) => res.render('login', { title: t('login_title'), error: t(key) });
+  const fail = (key) => res.render('login', { title: t('login_title'), error: t(key), googleEnabled: googleEnabled() });
 
   if (!email || !password) return fail('error_login_required');
 
@@ -251,10 +259,77 @@ router.post('/reset-password/:token', authLimiter, verifyToken, async (req, res)
   });
 });
 
+// ── Google OAuth ─────────────────────────────────────────────────────────────
+
+const stmtByGoogleId  = db.prepare('SELECT * FROM users WHERE google_id = ?');
+const stmtByEmail     = db.prepare('SELECT * FROM users WHERE email = ?');
+const stmtLinkGoogle  = db.prepare('UPDATE users SET google_id = ?, email_verified = 1 WHERE id = ?');
+const stmtCreateOAuth = db.prepare(`
+  INSERT INTO users (username, email, google_id, email_verified, password_hash, created_at)
+  VALUES (?, ?, ?, 1, 'oauth', datetime('now'))
+`);
+
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  passport.use(new GoogleStrategy({
+    clientID:     process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL:  (process.env.BASE_URL || 'https://stumbupon.com') + '/auth/google/callback',
+  }, (accessToken, refreshToken, profile, done) => {
+    const googleId = profile.id;
+    const email    = profile.emails?.[0]?.value || null;
+
+    // Compte existant lié à Google
+    let user = stmtByGoogleId.get(googleId);
+    if (user) return done(null, user);
+
+    // Email déjà enregistré → on lie le compte Google
+    if (email) {
+      user = stmtByEmail.get(email);
+      if (user) {
+        stmtLinkGoogle.run(googleId, user.id);
+        return done(null, { ...user, google_id: googleId });
+      }
+    }
+
+    // Nouveau compte : génère un username unique depuis le displayName Google
+    let base = (profile.displayName || 'user').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 20) || 'user';
+    let username = base;
+    let suffix = 1;
+    while (db.prepare('SELECT 1 FROM users WHERE username = ?').get(username)) {
+      username = base + suffix++;
+    }
+
+    const result = stmtCreateOAuth.run(username, email, googleId);
+    user = db.prepare('SELECT * FROM users WHERE id = ?').get(result.lastInsertRowid);
+    return done(null, user);
+  }));
+
+  router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
+
+  router.get('/auth/google/callback',
+    passport.authenticate('google', { session: false, failureRedirect: '/login?error=google' }),
+    (req, res) => {
+      const user = req.user;
+      req.session.regenerate((err) => {
+        if (err) return res.redirect('/login?error=google');
+        req.session.userId    = user.id;
+        req.session.username  = user.username;
+        req.session.isAdmin   = !!user.is_admin;
+        req.session.isCurator = !!user.is_curator;
+        const dest = user.is_admin || user.is_curator ? '/stumble' : '/interests';
+        res.redirect(dest);
+      });
+    }
+  );
+}
+
 // ── Déconnexion ──────────────────────────────────────────────────────────────
 
 router.post('/logout', (req, res) => {
-  req.session.destroy(() => res.redirect('/'));
+  req.session.destroy(() => {
+    res.set('Clear-Site-Data', '"cache"');
+    res.redirect('/');
+  });
 });
 
 // ── Changement de langue rapide ───────────────────────────────────────────────

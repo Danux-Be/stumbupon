@@ -6,6 +6,7 @@ const { validateUrl } = require('../lib/validators');
 const { enrichUrl } = require('../lib/enricher');
 const { verifyTurnstile } = require('../lib/turnstile');
 const { sendAdminAlert } = require('../lib/mailer');
+const { checkAndGrant }  = require('../lib/achievements');
 const { isYouTubeUrl, extractVideoId, toWatchUrl, fetchYouTubeMeta } = require('../lib/youtube');
 
 const router = express.Router();
@@ -149,6 +150,8 @@ router.post('/submit', requireLogin, verifyToken, async (req, res) => {
   }
 
   const submitter = db.prepare('SELECT username FROM users WHERE id = ?').get(userId)?.username || '?';
+  const newAch = checkAndGrant(userId);
+  if (newAch.length) req.session._achievements_flash = newAch;
   sendAdminAlert(
     `Nouvelle soumission — ${finalTitle.slice(0, 60)}`,
     `Soumis par : ${submitter}\nURL : ${url.trim()}\nScore de risque : ${riskScore}/100\n\nModérer : ${process.env.BASE_URL || 'http://localhost:4000'}/admin/pending`

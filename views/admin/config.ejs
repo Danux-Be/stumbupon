@@ -7,10 +7,13 @@
     <p class="alert alert-success">Configuration enregistrée.</p>
   <% } %>
 
-  <a href="/admin" class="btn btn-secondary btn-sm" style="margin-bottom:1.5rem"><span class="mdi mdi-arrow-left"></span> Retour</a>
-
   <form method="POST" action="/admin/config">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+      <a href="/admin" class="btn btn-secondary btn-sm"><span class="mdi mdi-arrow-left"></span> Retour</a>
+      <button type="submit" class="btn btn-primary btn-sm"><span class="mdi mdi-content-save-outline"></span> Enregistrer</button>
+    </div>
 
     <!-- ── Fonctionnalités invités ───────────────────────────────────────── -->
     <div class="settings-group" style="margin-bottom:1.5rem">
@@ -57,7 +60,6 @@
       </section>
     </div>
 
-    <button type="submit" class="btn btn-primary">Enregistrer</button>
   </form>
 
   <!-- ── Maintenance ──────────────────────────────────────────────────────── -->

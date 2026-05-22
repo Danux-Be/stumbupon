@@ -1,0 +1,132 @@
+<%- include('partials/header', { title, ogTitle, ogDescription, ogImage, ogUrl }) %>
+
+<div class="profile-page">
+
+<% if (notFound) { %>
+  <div class="profile-not-found">
+    <p class="profile-not-found__icon">🌀</p>
+    <h1><%= t('profile_not_found_title') %></h1>
+    <p><%= t('profile_not_found_desc') %></p>
+    <a href="/" class="btn btn-primary"><%= t('nav_home') %></a>
+  </div>
+<% } else { %>
+
+  <!-- ── En-tête ─────────────────────────────────────────────────────── -->
+  <div class="profile-header">
+    <div class="profile-avatar-wrap">
+      <% if (avatarUrl) { %>
+        <img src="<%= avatarUrl %>" alt="<%= profile.username %>" class="profile-avatar" />
+      <% } else { %>
+        <div class="profile-avatar profile-avatar--placeholder">
+          <%= profile.username.charAt(0).toUpperCase() %>
+        </div>
+      <% } %>
+    </div>
+
+    <div class="profile-identity">
+      <h1 class="profile-username"><%= profile.username %></h1>
+      <p class="profile-since">
+        <span class="mdi mdi-calendar-outline"></span>
+        <%= t('profile_member_since') %> <%= new Date(profile.created_at).toLocaleDateString(currentLang, { year: 'numeric', month: 'long' }) %>
+      </p>
+      <% if (isOwnProfile) { %>
+        <div class="profile-own-actions">
+          <a href="/settings" class="btn btn-ghost btn-sm"><span class="mdi mdi-cog-outline"></span> <%= t('settings_title') %></a>
+          <button class="btn btn-ghost btn-sm" id="profile-share-btn">
+            <span class="mdi mdi-share-variant"></span> <%= t('profile_share') %>
+          </button>
+        </div>
+      <% } else { %>
+        <button class="btn btn-ghost btn-sm" id="profile-share-btn">
+          <span class="mdi mdi-share-variant"></span> <%= t('profile_share') %>
+        </button>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- ── Stats ────────────────────────────────────────────────────────── -->
+  <div class="profile-stats">
+    <div class="profile-stat">
+      <span class="profile-stat__value"><%= stats.discoveries.toLocaleString(currentLang) %></span>
+      <span class="profile-stat__label"><span class="mdi mdi-compass-outline"></span> <%= t('profile_stat_discoveries') %></span>
+    </div>
+    <div class="profile-stat">
+      <span class="profile-stat__value"><%= stats.submissions.toLocaleString(currentLang) %></span>
+      <span class="profile-stat__label"><span class="mdi mdi-upload-outline"></span> <%= t('profile_stat_submissions') %></span>
+    </div>
+    <div class="profile-stat">
+      <span class="profile-stat__value"><%= stats.upvotes.toLocaleString(currentLang) %></span>
+      <span class="profile-stat__label"><span class="mdi mdi-thumb-up-outline"></span> <%= t('profile_stat_upvotes') %></span>
+    </div>
+    <div class="profile-stat">
+      <span class="profile-stat__value"><%= achievements.length %></span>
+      <span class="profile-stat__label"><span class="mdi mdi-trophy-outline"></span> <%= t('profile_stat_achievements') %></span>
+    </div>
+  </div>
+
+  <!-- ── Succès ────────────────────────────────────────────────────────── -->
+  <% if (achievements.length) { %>
+  <section class="profile-section">
+    <h2 class="profile-section__title"><span class="mdi mdi-trophy-outline"></span> <%= t('profile_achievements_title') %></h2>
+    <div class="profile-badges">
+      <% achievements.forEach(function(ach) { %>
+        <div class="profile-badge profile-badge--<%= ach.rarity %>" title="<%= t('achievement_' + ach.id + '_name') %> — <%= t('achievement_' + ach.id + '_desc') %>">
+          <span class="profile-badge__icon"><%= ach.icon %></span>
+          <span class="profile-badge__name"><%= t('achievement_' + ach.id + '_name') %></span>
+        </div>
+      <% }); %>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- ── Soumissions récentes ──────────────────────────────────────────── -->
+  <% if (submissions.length) { %>
+  <section class="profile-section">
+    <h2 class="profile-section__title"><span class="mdi mdi-web"></span> <%= t('profile_submissions_title') %></h2>
+    <div class="profile-submissions">
+      <% submissions.forEach(function(s) { %>
+        <a href="/stumble/<%= s.id %>" class="profile-submission-card">
+          <div class="profile-submission-card__cats"><%= s.cats || '' %></div>
+          <div class="profile-submission-card__title"><%= s.title %></div>
+          <% if (s.description) { %>
+            <div class="profile-submission-card__desc"><%= s.description.slice(0, 100) %><%= s.description.length > 100 ? '…' : '' %></div>
+          <% } %>
+        </a>
+      <% }); %>
+    </div>
+  </section>
+  <% } %>
+
+  <!-- ── CTA pour les visiteurs ───────────────────────────────────────── -->
+  <% if (!locals.user) { %>
+  <div class="profile-cta">
+    <p class="profile-cta__text"><%- t('profile_cta', { username: '<strong>' + profile.username + '</strong>' }) %></p>
+    <a href="/signup" class="btn btn-primary"><%= t('signup_title') %></a>
+    <a href="/stumble" class="btn btn-ghost"><%= t('stumble_btn') %></a>
+  </div>
+  <% } %>
+
+<% } %>
+</div>
+
+<script>
+(function() {
+  var btn = document.getElementById('profile-share-btn');
+  if (!btn) return;
+  var url  = '<%= ogUrl %>';
+  var text = '<%= t("profile_share_text", { username: profile ? profile.username : "" }) %>';
+  btn.addEventListener('click', function() {
+    if (navigator.share) {
+      navigator.share({ title: text, url: url }).catch(function(){});
+    } else {
+      navigator.clipboard.writeText(url).then(function() {
+        var orig = btn.innerHTML;
+        btn.innerHTML = '<span class="mdi mdi-check"></span> <%= t("profile_link_copied") %>';
+        setTimeout(function() { btn.innerHTML = orig; }, 2500);
+      }).catch(function() { window.prompt('', url); });
+    }
+  });
+})();
+</script>
+
+<%- include('partials/footer') %>
