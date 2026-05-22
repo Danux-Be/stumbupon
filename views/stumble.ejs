@@ -145,7 +145,7 @@
       <% if (submittedBy) { %>
       <div class="info-panel__section">
         <span class="info-panel__label">👤 <%= t('stumble_submitted_by') %></span>
-        <span class="info-panel__value"><%= submittedBy %></span>
+        <span class="info-panel__value"><a href="/u/<%= submittedBy %>" class="info-panel__link"><%= submittedBy %></a></span>
       </div>
       <% } %>
 
@@ -321,7 +321,7 @@
         </div>
         <% } %>
         <% if (submittedBy) { %>
-          <div class="info-panel__label" style="margin:0">👤 <%= t('stumble_submitted_by') %> : <span style="font-weight:400;text-transform:none;letter-spacing:0"><%= submittedBy %></span></div>
+          <div class="info-panel__label" style="margin:0">👤 <%= t('stumble_submitted_by') %> : <a href="/u/<%= submittedBy %>" class="info-panel__link" style="font-weight:400;text-transform:none;letter-spacing:0"><%= submittedBy %></a></div>
         <% } %>
       </div>
       <% } %>
