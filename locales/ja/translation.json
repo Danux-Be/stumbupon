@@ -456,5 +456,6 @@
   "settings_social_instagram": "Instagram",
   "settings_social_handle_hint": "@なしのユーザー名",
   "settings_profile_submit": "保存",
-  "success_profile": "プロフィールを更新しました。"
+  "success_profile": "プロフィールを更新しました。",
+  "settings_social_reddit": "Reddit"
 }

@@ -456,5 +456,6 @@
   "settings_social_instagram": "Instagram",
   "settings_social_handle_hint": "Όνομα χρήστη χωρίς @",
   "settings_profile_submit": "Αποθήκευση",
-  "success_profile": "Το προφίλ ενημερώθηκε."
+  "success_profile": "Το προφίλ ενημερώθηκε.",
+  "settings_social_reddit": "Reddit"
 }

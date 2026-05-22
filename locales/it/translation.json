@@ -472,5 +472,6 @@
   "settings_social_instagram": "Instagram",
   "settings_social_handle_hint": "Username senza @",
   "settings_profile_submit": "Salva",
-  "success_profile": "Profilo aggiornato."
+  "success_profile": "Profilo aggiornato.",
+  "settings_social_reddit": "Reddit"
 }

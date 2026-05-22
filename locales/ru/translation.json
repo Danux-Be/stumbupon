@@ -456,5 +456,6 @@
   "settings_social_instagram": "Instagram",
   "settings_social_handle_hint": "Имя пользователя без @",
   "settings_profile_submit": "Сохранить",
-  "success_profile": "Профиль обновлён."
+  "success_profile": "Профиль обновлён.",
+  "settings_social_reddit": "Reddit"
 }

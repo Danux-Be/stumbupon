@@ -456,5 +456,6 @@
   "settings_social_instagram": "Instagram",
   "settings_social_handle_hint": "Gebruikersnaam zonder @",
   "settings_profile_submit": "Opslaan",
-  "success_profile": "Profiel bijgewerkt."
+  "success_profile": "Profiel bijgewerkt.",
+  "settings_social_reddit": "Reddit"
 }

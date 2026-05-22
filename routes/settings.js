@@ -49,7 +49,7 @@ router.get('/settings', requireLogin, (req, res) => {
     'SELECT category_id FROM user_interests WHERE user_id = ?'
   ).all(req.session.userId).map(r => r.category_id);
 
-  const user = db.prepare('SELECT content_languages, email_digest, include_videos, avatar, username, username_changes_this_year, username_year, email, pending_email, bio, social_website, social_twitter, social_github, social_mastodon, social_linkedin, social_instagram FROM users WHERE id = ?').get(req.session.userId);
+  const user = db.prepare('SELECT content_languages, email_digest, include_videos, avatar, username, username_changes_this_year, username_year, email, pending_email, bio, social_website, social_twitter, social_github, social_mastodon, social_linkedin, social_instagram, social_reddit FROM users WHERE id = ?').get(req.session.userId);
   const rawLangs = user?.content_languages;
   const contentLangs = (!rawLangs || rawLangs === 'all')
     ? [...ALL_LANGS]
@@ -81,6 +81,7 @@ router.get('/settings', requireLogin, (req, res) => {
     socialMastodon: user?.social_mastodon || '',
     socialLinkedin: user?.social_linkedin || '',
     socialInstagram: user?.social_instagram || '',
+    socialReddit: user?.social_reddit || '',
     success: req.query.success || null,
     error: req.query.error || null,
   });
@@ -171,11 +172,12 @@ router.post('/settings/profile', requireLogin, verifyToken, (req, res) => {
   const mastodon  = sanitizeUrl(req.body.social_mastodon);
   const linkedin  = sanitizeHandle(req.body.social_linkedin);
   const instagram = sanitizeHandle(req.body.social_instagram);
+  const reddit    = sanitizeHandle(req.body.social_reddit);
 
   db.prepare(`
     UPDATE users SET bio=?, social_website=?, social_twitter=?, social_github=?,
-      social_mastodon=?, social_linkedin=?, social_instagram=? WHERE id=?
-  `).run(bio, website, twitter, github, mastodon, linkedin, instagram, req.session.userId);
+      social_mastodon=?, social_linkedin=?, social_instagram=?, social_reddit=? WHERE id=?
+  `).run(bio, website, twitter, github, mastodon, linkedin, instagram, reddit, req.session.userId);
 
   res.redirect('/settings?success=profile#compte');
 });

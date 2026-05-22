@@ -456,5 +456,6 @@
   "settings_social_instagram": "Instagram",
   "settings_social_handle_hint": "Nazwa użytkownika bez @",
   "settings_profile_submit": "Zapisz",
-  "success_profile": "Profil zaktualizowany."
+  "success_profile": "Profil zaktualizowany.",
+  "settings_social_reddit": "Reddit"
 }

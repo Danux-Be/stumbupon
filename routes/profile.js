@@ -11,7 +11,7 @@ const PER_PAGE = 20;
 
 const stmtUser = db.prepare(`
   SELECT id, username, avatar, language, created_at, bio,
-    social_website, social_twitter, social_github, social_mastodon, social_linkedin, social_instagram
+    social_website, social_twitter, social_github, social_mastodon, social_linkedin, social_instagram, social_reddit
   FROM users WHERE username = ? AND is_banned = 0
 `);
 const stmtStats = db.prepare(`

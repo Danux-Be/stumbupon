@@ -456,5 +456,6 @@
   "settings_social_instagram": "Instagram",
   "settings_social_handle_hint": "用户名（不含@）",
   "settings_profile_submit": "保存",
-  "success_profile": "资料已更新。"
+  "success_profile": "资料已更新。",
+  "settings_social_reddit": "Reddit"
 }

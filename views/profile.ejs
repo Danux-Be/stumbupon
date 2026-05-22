@@ -45,7 +45,7 @@
   </div>
 
   <!-- ── Bio & réseaux sociaux ───────────────────────────────────────── -->
-  <% if (profile.bio || profile.social_website || profile.social_twitter || profile.social_github || profile.social_mastodon || profile.social_linkedin || profile.social_instagram) { %>
+  <% if (profile.bio || profile.social_website || profile.social_twitter || profile.social_github || profile.social_mastodon || profile.social_linkedin || profile.social_instagram || profile.social_reddit) { %>
   <div class="profile-bio-block">
     <% if (profile.bio) { %>
       <p class="profile-bio"><%= profile.bio %></p>
@@ -57,6 +57,7 @@
       profile.social_mastodon  ? { icon: 'mdi-mastodon',  href: profile.social_mastodon,                             label: profile.social_mastodon.replace(/^https?:\/\//, '') } : null,
       profile.social_linkedin  ? { icon: 'mdi-linkedin',  href: 'https://linkedin.com/in/' + profile.social_linkedin, label: profile.social_linkedin } : null,
       profile.social_instagram ? { icon: 'mdi-instagram', href: 'https://instagram.com/' + profile.social_instagram,  label: '@' + profile.social_instagram } : null,
+      profile.social_reddit    ? { icon: 'mdi-reddit',    href: 'https://reddit.com/u/' + profile.social_reddit,       label: 'u/' + profile.social_reddit } : null,
     ].filter(Boolean); %>
     <% if (socials.length) { %>
     <div class="profile-socials">

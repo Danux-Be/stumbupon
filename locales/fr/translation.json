@@ -485,5 +485,6 @@
   "settings_social_instagram": "Instagram",
   "settings_social_handle_hint": "Pseudo sans @",
   "settings_profile_submit": "Enregistrer",
-  "success_profile": "Profil mis à jour."
+  "success_profile": "Profil mis à jour.",
+  "settings_social_reddit": "Reddit"
 }

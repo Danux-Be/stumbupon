@@ -219,6 +219,10 @@ if (!userCols9.includes('bio')) {
   db.exec('ALTER TABLE users ADD COLUMN social_linkedin TEXT DEFAULT NULL');
   db.exec('ALTER TABLE users ADD COLUMN social_instagram TEXT DEFAULT NULL');
 }
+const userCols10 = db.prepare('PRAGMA table_info(users)').all().map(c => c.name);
+if (!userCols10.includes('social_reddit')) {
+  db.exec('ALTER TABLE users ADD COLUMN social_reddit TEXT DEFAULT NULL');
+}
 
 // Référencements entrants — sites détectés via l'en-tête Referer
 db.exec(`

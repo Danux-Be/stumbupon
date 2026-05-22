@@ -456,5 +456,6 @@
   "settings_social_instagram": "Instagram",
   "settings_social_handle_hint": "Brugernavn uden @",
   "settings_profile_submit": "Gem",
-  "success_profile": "Profil opdateret."
+  "success_profile": "Profil opdateret.",
+  "settings_social_reddit": "Reddit"
 }
