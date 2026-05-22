@@ -1,5 +1,6 @@
 node_modules/
 .env
+.env.*
 db/stumble.db
 db/stumble.db-shm
 db/stumble.db-wal
@@ -7,3 +8,11 @@ backups/
 logs/
 db/stumbleclone.md
 *.log
+nohup.out
+data.db
+content.rdf.u8
+majestic_million.csv
+public/avatars/
+scripts/fetch-wiby.js
+scripts/watchdog.sh
+.claude/
